@@ -7,7 +7,7 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 - [Installation](#installation)
 - [Usage](#usage)
 - [Attributes](#attributes)
-- [Question?](#question?)
+- [Question?](#question)
 - [License](#license)
 - [Source Code](#source-code)
 
