@@ -3,18 +3,18 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 
 <!-- TOC depthFrom:2 depthTo:6 withLinks:true orderedList:false updateOnSave:true -->
 
-- [Features](#Features)
-- [Installation](#Installation)
-- [Usage](#Usage)
-- [Attributes](#Attributes)
-- [Question?](#Question?)
-- [License](#License)
-- [Source Code](#Source Code)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Attributes](#attributes)
+- [Question?](#question?)
+- [License](#license)
+- [Source Code](#source-code)
 
 <!-- /TOC -->
 
 ## Features
-- Auto linking via anchor tags
+- Auto linking via anchor tags `# A 1` → `#a-1`
 - Depth control[1-6] with `depthFrom:1` and `depthTo:6`
 - Enable or disable links with `withLinks:true`
 - Refresh list on save with `updateOnSave:true`

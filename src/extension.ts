@@ -16,9 +16,9 @@ import {
     
 const REGEXP_TOC_START = /\s*<!--(.*)TOC(.*)-->/gi;
 const REGEXP_TOC_STOP = /\s*<!--(.*)\/TOC(.*)-->/gi;
-const REGEXP_TOC_CONFIG = /\w+(:|=)(\d+|true|false|yes|no)\b/gi;
+const REGEXP_TOC_CONFIG = /\w+(:|=)(\d+|true|false)\b/gi;
 const REGEXP_TOC_CONFIG_KEY = /\w+/;
-const REGEXP_TOC_CONFIG_VALUE = /(\d+|true|false|yes|no)\b/gi;
+const REGEXP_TOC_CONFIG_VALUE = /(\d+|true|false)\b/gi;
 
 // This method is called when your extension is activated. Activation is
 // controlled by the activation events defined in package.json.
@@ -229,7 +229,7 @@ class MarkdownTocTools {
                 continue;
             }
             let lineText = doc.lineAt(index).text;
-            let result = lineText.match("\#{1,6}");
+            let result = lineText.match(/^\#{1,6}/);
             if ((result != null) && (result[0].length >= this.options.depthFrom) && (result[0].length <= this.options.depthTo)) {
                 headerList.push({
                     depth : result[0].length,
@@ -241,11 +241,20 @@ class MarkdownTocTools {
     }
     
     private createLink(headername : string) {
+        let hash = headername.toLocaleLowerCase();
+        hash = hash.replace(/\s+/g, '-');
+        hash = hash.replace(/[^a-z0-9\u4e00-\u9fa5äüö\-]/g, '');
+        if (hash.indexOf("--") > -1) {
+            hash = hash.replace(/(-)+/g, "-");
+        }
+        if (hash.indexOf(":-") > -1) {
+            hash = hash.replace(/:-/g, "-");
+        }
         let link = []
         link.push('[');
         link.push(headername);
         link.push('](#');
-        link.push(headername)
+        link.push(hash)
         link.push(')');
         return link.join('');
     }
@@ -262,11 +271,7 @@ class MarkdownTocTools {
     }
     
     private parseBool(input : string) {
-        input = input.toLocaleLowerCase();
-        if ((input == 'true') || (input == "1") || (input == "yes") || (input == "y") || (input == "t")) {
-            return true;
-        }
-        return false;
+        return input.toLocaleLowerCase() == 'true';
     }
 
     dispose() {
