@@ -1,8 +1,8 @@
 {
     "name": "markdown-toc",
     "displayName": "Markdown-Toc",
-    "description": "",
-    "version": "0.0.1",
+    "description": "MarkdownTOC(Table Of Contents) Plugin for Visual Studio Code.",
+    "version": "1.0.0",
     "publisher": "AlanWalk",
     "engines": {
         "vscode": "^1.0.0"

@@ -134,9 +134,12 @@ class MarkdownTocTools {
             let value = element.match(REGEXP_TOC_CONFIG_VALUE)[0];
             
             if (key == "depthfrom") {
-                this.options.depthFrom = parseInt(value);
+                this.options.depthFrom = this.parseValidBool(value);
             } else if (key == "depthto") {
-                this.options.depthTo = parseInt(value);
+                this.options.depthTo = this.parseValidBool(value);
+                if (this.options.depthFrom > this.options.depthTo) {
+                    this.options.depthTo = this.options.depthFrom;
+                }
             } else if (key == "withlinks") {
                 this.options.withLinks = this.parseBool(value);
             } else if (key == "orderedlist") {
@@ -179,7 +182,7 @@ class MarkdownTocTools {
     
     private createTocString(tocRange : Range) {
         let headerList = this.updateHeaderList(tocRange);
-        if (headerList.length <= 0) {
+        if ((tocRange == null) && (headerList.length <= 0)) {
             return '';
         }
         
@@ -193,7 +196,7 @@ class MarkdownTocTools {
             let row = [];
             row.push('    '.repeat(element.depth - this.options.depthFrom));
             if (this.options.orderedList) {
-                row.push(++indicesOfDepth[element.depth - 1] + ". ");
+                row.push(++indicesOfDepth[element.depth - this.options.depthFrom] + ". ");
             } else {
                 row.push('- ');
             }
@@ -247,9 +250,20 @@ class MarkdownTocTools {
         return link.join('');
     }
     
+    private parseValidBool(input : string) {
+        let num = parseInt(input);
+        if (num < 1) {
+            return 1;
+        }
+        if (num > 6) {
+            return 6;
+        }
+        return num;
+    }
+    
     private parseBool(input : string) {
         input = input.toLocaleLowerCase();
-        if ((input == 'true') || (input == "1") || (input == "yes")) {
+        if ((input == 'true') || (input == "1") || (input == "yes") || (input == "y") || (input == "t")) {
             return true;
         }
         return false;

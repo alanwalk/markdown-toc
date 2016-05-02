@@ -1,13 +1,54 @@
-# README
-## This is the README for your extension "markdown-toc"
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+# Markdown-TOC
+Generate TOC (table of contents) of headlines from parsed [markdown](https://en.wikipedia.org/wiki/Markdown) file.
 
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
+<!-- TOC depthFrom:2 depthTo:6 withLinks:true orderedList:false updateOnSave:true -->
 
-### For more information
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+- [Features](#Features)
+- [Installation](#Installation)
+- [Usage](#Usage)
+- [Attributes](#Attributes)
+- [Question?](#Question?)
+- [License](#License)
+- [Source Code](#Source Code)
 
-**Enjoy!**
+<!-- /TOC -->
+
+## Features
+- Auto linking via anchor tags
+- Depth control[1-6] with `depthFrom:1` and `depthTo:6`
+- Enable or disable links with `withLinks:true`
+- Refresh list on save with `updateOnSave:true`
+- Use ordered list (1. ..., 2. ...) with `orderedList:true`
+
+## Installation
+```
+ext install markdown-toc
+```
+
+## Usage
+1. Open Markdown files.
+1. Move cursor to position where you want to insert TOC.
+1. Ctrl+Shift+P / F1.
+1. Input 'TOC Create'.
+1. TOC has inserted into document!
+
+## Attributes
+|attributes|values|defaults|
+|---|---|---|
+|depthFrom|uint(1-6)|1|
+|depthTo|uint(1-6)|6|
+|withLinks|true or false|true|
+|orderedList|true or false|false|
+|updateOnSave|true or false|true|
+
+## Question?
+Contact with me : 
+- Mail : [alanwalk93@gmail.com](mailto:alanwalk93@gmail.com)
+- Twitter : [@AlanWalk93](https://twitter.com/AlanWalk93)
+- Github : [AlanWalk](https://github.com/AlanWalk)
+
+## License
+The package is Open Source Software released under the [License](Liscense). It's developed by AlanWalk.
+
+## Source Code
+[Github](https://github.com/AlanWalk/Markdown-TOC)
