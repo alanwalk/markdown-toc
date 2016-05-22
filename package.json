@@ -2,7 +2,7 @@
     "name": "markdown-toc",
     "displayName": "Markdown-Toc",
     "description": "MarkdownTOC(Table Of Contents) Plugin for Visual Studio Code.",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "publisher": "AlanWalk",
     "engines": {
         "vscode": "^1.0.0"
@@ -11,9 +11,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.createMarkdownToc",
-        "onCommand:extension.updateMarkdownToc",
-        "onCommand:extension.deleteMarkdownToc"
+        "onLanguage:markdown"
     ],
     "main": "./out/src/extension",
     "contributes": {
