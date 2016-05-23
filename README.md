@@ -47,6 +47,10 @@ ext install markdown-toc
 |updateOnSave|true or false|true|
 
 ## ChangeLog
+**1.1.2**
+- Fix : Recognised code to header list
+- Fix : Delete anchor failed sometime
+
 **1.1.1**
 - Update : Just update document
 
@@ -57,6 +61,7 @@ ext install markdown-toc
 
 ## Contributors
 rovest (Feature: insert anchor)
+zhiguang Wang(Fix: Recognised code to header list)
 
 ## Question
 If you have any question, you can contact with me: 

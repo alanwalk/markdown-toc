@@ -20,8 +20,9 @@ const REGEXP_TOC_STOP           = /\s*<!--(.*)\/TOC(.*)-->/gi;
 const REGEXP_TOC_CONFIG         = /\w+(:|=)(\d+|true|false)\b/gi;
 const REGEXP_TOC_CONFIG_KEY     = /\w+/;
 const REGEXP_TOC_CONFIG_VALUE   = /(\d+|true|false)\b/gi;
-const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-([a-z]|[0-9]|\-)+" name="([a-z]|[0-9]|\-)+"><\/a\>/;
+const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-.+" name=".+"><\/a\>/;
 const REGEXP_HEADER             = /^\#{1,6}/;
+const REGEXP_CODE_BLOCK         = /^```/
 
 const DEPTH_FROM                = "depthFrom";
 const DEPTH_TO                  = "depthTo";
@@ -232,12 +233,17 @@ class MarkdownTocTools {
     private getHeaderList(tocRange : Range) {
         let doc = window.activeTextEditor.document;
         let headerList = [];
+        let isInCode = false;
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
-            let result = lineText.match(REGEXP_HEADER);
-            if (result == null) continue;
+            let codeResult = lineText.match(REGEXP_CODE_BLOCK);
+            if (codeResult != null) isInCode = !isInCode;
+            if (isInCode) return;
             
-            let depth = result[0].length;
+            let headerResult = lineText.match(REGEXP_HEADER);
+            if (headerResult == null) continue;
+            
+            let depth = headerResult[0].length;
             if (depth < this.options.DEPTH_FROM) continue;
             
             let title = lineText.substr(depth).trim();
