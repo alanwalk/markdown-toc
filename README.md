@@ -41,11 +41,15 @@ ext install markdown-toc
 |---|---|---|
 |depthFrom|uint(1-6)|1|
 |depthTo|uint(1-6)|6|
+|insertAnchor|true or false|false|
 |withLinks|true or false|true|
 |orderedList|true or false|false|
 |updateOnSave|true or false|true|
 
 ## ChangeLog
+**1.1.1**
+- Update : Just update document
+
 **1.1.0**
 - Add : Auto active extensions on markdown
 - Add : Auto insert anchor for header
