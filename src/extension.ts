@@ -234,11 +234,17 @@ class MarkdownTocTools {
         let doc = window.activeTextEditor.document;
         let headerList = [];
         let isInCode = false;
+        let isInCodeCount = 0;
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
             let codeResult = lineText.match(REGEXP_CODE_BLOCK);
-            if (codeResult != null) isInCode = !isInCode;
-            if (isInCode) return;
+            if (codeResult != null) {
+                isInCode = true;
+                isInCodeCount++;
+                (isInCodeCount == 2) ? (isInCode = false, isInCodeCount = 0) : false;
+            } else if (isInCode && isInCodeCount < 2 ){
+                continue;
+            }; 
             
             let headerResult = lineText.match(REGEXP_HEADER);
             if (headerResult == null) continue;
