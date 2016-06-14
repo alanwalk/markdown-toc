@@ -60,8 +60,10 @@ ext install markdown-toc
 - Fix : Update on save is valid on other language
 
 ## Contributors
-rovest (Feature: insert anchor)
-zhiguang Wang(Fix: Recognised code to header list)
+- rovest (Feature: Insert anchor)
+- zhiguang Wang(Fix: Recognised code to header list)
+- jgroom33 (Fix: Codeblock error)
+- satokaz (Fix: Codeblock error)
 
 ## Question
 If you have any question, you can contact with me: 
