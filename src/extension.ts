@@ -238,7 +238,7 @@ class MarkdownTocTools {
             let lineText = doc.lineAt(index).text;
             let codeResult = lineText.match(REGEXP_CODE_BLOCK);
             if (codeResult != null) isInCode = !isInCode;
-            if (isInCode) return;
+            if (isInCode) continue;
             
             let headerResult = lineText.match(REGEXP_HEADER);
             if (headerResult == null) continue;
