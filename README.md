@@ -49,6 +49,7 @@ ext install markdown-toc
 
 ### Default Settings
 To change the default configuration settings for the Markdown-TOC extension, edit the user or workspace settings as described here. The available settings are as follows:
+
 |attributes|values|defaults|
 |---|---|---|
 |markdown-toc.depthFrom|number(1-6)|1|
