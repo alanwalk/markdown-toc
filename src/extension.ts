@@ -72,7 +72,7 @@ class MarkdownTocTools {
     
     // Public function
     public create() {
-        this.update();
+        this.update();        
     }
     
     public update(isBySave : boolean = false) {
@@ -136,7 +136,8 @@ class MarkdownTocTools {
             if ((start == null) && (lineText.match(REGEXP_TOC_START))) {
                 start = new Position(index, 0);
             } else if (lineText.match(REGEXP_TOC_STOP)) {
-                stop = new Position(index, lineText.length); 
+                stop = new Position(index, lineText.length);
+                break;
             }
         }
         if ((start != null) && (stop != null)) {
@@ -146,6 +147,13 @@ class MarkdownTocTools {
     }
     
     private updateOptions(tocRange : Range) {
+        this.options.DEPTH_FROM     = <number>  workspace.getConfiguration('markdown-toc').get('depthFrom');
+        this.options.DEPTH_TO       = <number>  workspace.getConfiguration('markdown-toc').get('depthTo');
+        this.options.INSERT_ANCHOR  = <boolean> workspace.getConfiguration('markdown-toc').get('insertAnchor');
+        this.options.WITH_LINKS     = <boolean> workspace.getConfiguration('markdown-toc').get('withLinks');
+        this.options.ORDERED_LIST   = <boolean> workspace.getConfiguration('markdown-toc').get('orderedList');
+        this.options.UPDATE_ON_SAVE = <boolean> workspace.getConfiguration('markdown-toc').get('updateOnSave');
+
         if (tocRange == null) return;
         let optionsText = window.activeTextEditor.document.lineAt(tocRange.start.line).text;
         let optionArray = optionsText.match(REGEXP_TOC_CONFIG);

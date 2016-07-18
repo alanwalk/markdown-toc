@@ -6,8 +6,9 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Attributes](#attributes)
-- [ChangeLog](#changelog)
+- [Configuration](#configuration)
+	- [Default Settings](#default-settings)
+	- [Unique Settings](#unique-settings)
 - [Contributors](#contributors)
 - [Question](#question)
 - [License](#license)
@@ -36,7 +37,7 @@ ext install markdown-toc
 1. Input 'TOC Create'.
 1. TOC has inserted into document!
 
-## Attributes
+## Configuration
 |attributes|values|defaults|
 |---|---|---|
 |depthFrom|uint(1-6)|1|
@@ -46,18 +47,24 @@ ext install markdown-toc
 |orderedList|true or false|false|
 |updateOnSave|true or false|true|
 
-## ChangeLog
-**1.1.2**
-- Fix : Recognised code to header list
-- Fix : Delete anchor failed sometime
+### Default Settings
+To change the default configuration settings for the Markdown-TOC extension, edit the user or workspace settings as described here. The available settings are as follows:
+|attributes|values|defaults|
+|---|---|---|
+|markdown-toc.depthFrom|number(1-6)|1|
+|markdown-toc.depthTo|number(1-6)|6|
+|markdown-toc.insertAnchor|bool|false|
+|markdown-toc.withLinks|bool|true|
+|markdown-toc.orderedList|bool|false|
+|markdown-toc.updateOnSave|bool|true|
 
-**1.1.1**
-- Update : Just update document
+### Unique Settings
+If you want to use a unique setting for a file, you can add attributes to `<!-- TOC -->` , just like:
+```
+<!-- TOC depthFrom:2 depthTo:6 orderedList:true -->
 
-**1.1.0**
-- Add : Auto active extensions on markdown
-- Add : Auto insert anchor for header
-- Fix : Update on save is valid on other language
+<!-- /TOC -->
+```
 
 ## Contributors
 - rovest (Feature: Insert anchor)

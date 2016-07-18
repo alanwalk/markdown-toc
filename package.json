@@ -2,7 +2,15 @@
     "name": "markdown-toc",
     "displayName": "Markdown-Toc",
     "description": "MarkdownTOC(Table Of Contents) Plugin for Visual Studio Code.",
-    "version": "1.1.3",
+    "version": "1.2.0",
+    "icon": "img/markdown-toc.png",
+    "bugs": {
+        "url": "https://github.com/AlanWalk/Markdown-TOC/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/AlanWalk/Markdown-TOC.git"
+    },
     "publisher": "AlanWalk",
     "engines": {
         "vscode": "^1.0.0"
@@ -26,7 +34,43 @@
         {
             "command": "extension.deleteMarkdownToc",
             "title": "Markdown Toc: Delete"
-        }]
+        }],
+        "configuration": {
+            "type": "object",
+            "title": "Markdown Toc configuration",
+            "properties": {
+                "markdown-toc.depthFrom": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Depth control [1-6]."
+                },
+                "markdown-toc.depthTo": {
+                    "type": "number",
+                    "default": 6,
+                    "description": "Depth control [1-6]."
+                },
+                "markdown-toc.insertAnchor": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Auto insert anchor for link."
+                },
+                "markdown-toc.withLinks": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Auto insert link."
+                },
+                "markdown-toc.orderedList": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use ordered list (1. ..., 2. ...)."
+                },
+                "markdown-toc.updateOnSave": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Auto update on save."
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
