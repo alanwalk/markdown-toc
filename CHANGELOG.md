@@ -1,3 +1,6 @@
+**1.2.2**
+- Update : Just update document
+
 **1.2.1**
 - Update : Remove attributes in<!-- TOC -->. 
 - Fix : DepthTo is not valid.
