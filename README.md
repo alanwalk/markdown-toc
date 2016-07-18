@@ -1,7 +1,7 @@
 # Markdown-TOC
 Generate TOC (table of contents) of headlines from parsed [markdown](https://en.wikipedia.org/wiki/Markdown) file.
 
-<!-- TOC depthFrom:2 depthTo:6 insertAnchor:false orderedList:false updateOnSave:true withLinks:true -->
+<!-- TOC depthFrom:2 -->
 
 - [Features](#features)
 - [Installation](#installation)
@@ -61,7 +61,7 @@ To change the default configuration settings for the Markdown-TOC extension, edi
 ### Unique Settings
 If you want to use a unique setting for a file, you can add attributes to `<!-- TOC -->` , just like:
 ```
-<!-- TOC depthFrom:2 depthTo:6 orderedList:true -->
+<!-- TOC depthFrom:2 orderedList:true -->
 
 <!-- /TOC -->
 ```
