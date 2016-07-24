@@ -1,7 +1,7 @@
 {
     "name": "markdown-toc",
-    "displayName": "Markdown-Toc",
-    "description": "MarkdownTOC(Table Of Contents) Plugin for Visual Studio Code.",
+    "displayName": "Markdown Toc",
+    "description": "Markdown TOC(Table Of Contents) Plugin for Visual Studio Code.",
     "version": "1.2.2",
     "icon": "img/markdown-toc.png",
     "bugs": {
