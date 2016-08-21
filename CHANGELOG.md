@@ -1,12 +1,15 @@
+**1.2.3**
+- Fix : Error when none attributes
+
 **1.2.2**
 - Update : Just update document
 
 **1.2.1**
-- Update : Remove attributes in<!-- TOC -->. 
+- Update : Remove attributes in<!-- TOC -->.
 - Fix : DepthTo is not valid.
 
 **1.2.0**
-- Add : Load default config from vscode settings. 
+- Add : Load default config from vscode settings.
 
 **1.1.3**
 - Fix : Codeblock error

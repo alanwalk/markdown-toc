@@ -1,12 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the necessary extensibility types to use in your code below
 import {
-    window, 
-    commands, 
-    Disposable, 
-    ExtensionContext, 
-    StatusBarAlignment, 
-    StatusBarItem, 
+    window,
+    commands,
+    Disposable,
+    ExtensionContext,
+    StatusBarAlignment,
+    StatusBarItem,
     TextDocument,
     workspace,
     Position,
@@ -14,7 +14,7 @@ import {
     TextEditor,
     TextEditorEdit
 } from 'vscode';
-    
+
 const REGEXP_TOC_START          = /\s*<!--(.*)TOC(.*)-->/gi;
 const REGEXP_TOC_STOP           = /\s*<!--(.*)\/TOC(.*)-->/gi;
 const REGEXP_TOC_CONFIG         = /\w+(:|=)(\d+|true|false)\b/gi;
@@ -42,11 +42,11 @@ export function activate(context: ExtensionContext) {
 
     // create a MarkdownTocTools
     let markdownTocTools = new MarkdownTocTools();
-    
+
     let disposable_createMarkdownToc = commands.registerCommand('extension.createMarkdownToc', () => { markdownTocTools.create(); });
     let disposable_updateMarkdownToc = commands.registerCommand('extension.updateMarkdownToc', () => { markdownTocTools.update(); });
     let disposable_deleteMarkdownToc = commands.registerCommand('extension.deleteMarkdownToc', () => { markdownTocTools.delete(); });
-    
+
     // register document save event
     let disposable_saveMarkdownToc = workspace.onDidSaveTextDocument((doc : TextDocument) => { markdownTocTools.notifyDocumentSave(); });
 
@@ -58,7 +58,7 @@ export function activate(context: ExtensionContext) {
 }
 
 class MarkdownTocTools {
-    
+
     options = {
         DEPTH_FROM       : 1,
         DEPTH_TO         : 6,
@@ -69,23 +69,23 @@ class MarkdownTocTools {
     };
     optionsFlag = [];
     saveBySelf = false;
-    
+
     // Public function
     public create() {
-        this.update();        
+        this.update();
     }
-    
+
     public update(isBySave : boolean = false) {
         let editor = window.activeTextEditor;
         let markdownTocTools = this;
-        
+
         window.activeTextEditor.edit(function(editBuilder) {
             let tocRange = markdownTocTools.getTocRange();
             let insertPosition = editor.selection.active;
-            
+
             markdownTocTools.updateOptions(tocRange);
             if (isBySave && ((!markdownTocTools.options.UPDATE_ON_SAVE) || (tocRange == null))) return false;
-            
+
             // save options, and delete last insert
             if (tocRange != null) {
                 insertPosition = tocRange.start;
@@ -93,25 +93,25 @@ class MarkdownTocTools {
                 markdownTocTools.deleteAnchor(editBuilder);
             }
             let headerList = markdownTocTools.getHeaderList(tocRange);
-            
+
             markdownTocTools.createToc(editBuilder, headerList, insertPosition);
             markdownTocTools.insertAnchor(editBuilder, headerList);
         });
         return true;
     }
-    
+
     public delete() {
         let markdownTocTools = this;
-        
+
         window.activeTextEditor.edit(function(editBuilder) {
             let tocRange = markdownTocTools.getTocRange();
             if (tocRange == null) return;
-            
+
             editBuilder.delete(tocRange);
             markdownTocTools.deleteAnchor(editBuilder);
         });
     }
-    
+
     public notifyDocumentSave() {
         // Prevent save again
         if (this.saveBySelf) {
@@ -125,12 +125,12 @@ class MarkdownTocTools {
             this.saveBySelf = true;
         }
     }
-    
-    // Private function    
+
+    // Private function
     private getTocRange() {
         let doc = window.activeTextEditor.document;
         let start, stop : Position;
-        
+
         for(let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
             if ((start == null) && (lineText.match(REGEXP_TOC_START))) {
@@ -145,7 +145,7 @@ class MarkdownTocTools {
         }
         return null;
     }
-    
+
     private updateOptions(tocRange : Range) {
         this.options.DEPTH_FROM     = <number>  workspace.getConfiguration('markdown-toc').get('depthFrom');
         this.options.DEPTH_TO       = <number>  workspace.getConfiguration('markdown-toc').get('depthTo');
@@ -157,12 +157,13 @@ class MarkdownTocTools {
         if (tocRange == null) return;
         let optionsText = window.activeTextEditor.document.lineAt(tocRange.start.line).text;
         let optionArray = optionsText.match(REGEXP_TOC_CONFIG);
-        
+        if (optionArray == null) return;
+
         this.optionsFlag = [];
         optionArray.forEach(element => {
             let key = element.match(REGEXP_TOC_CONFIG_KEY)[0].toLocaleLowerCase();
             let value = element.match(REGEXP_TOC_CONFIG_VALUE)[0];
-            
+
             switch (key) {
                 case LOWER_DEPTH_FROM:
                     this.optionsFlag.push(DEPTH_FROM);
@@ -194,7 +195,7 @@ class MarkdownTocTools {
             }
         });
     }
-    
+
     private insertAnchor(editBuilder : TextEditorEdit, headerList : any[])
     {
         if (!this.options.INSERT_ANCHOR) return;
@@ -204,18 +205,18 @@ class MarkdownTocTools {
             editBuilder.insert(insertPosition, text.join(''));
         });
     }
-    
+
     private deleteAnchor(editBuilder : TextEditorEdit) {
         let doc = window.activeTextEditor.document;
         for(let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
             if(lineText.match(REGEXP_MARKDOWN_ANCHOR) == null) continue;
-            
+
             let range = new Range(new Position(index, 0), new Position(index + 1, 0));
             editBuilder.delete(range);
         }
     }
-    
+
     private createToc(editBuilder : TextEditorEdit, headerList : any[], insertPosition : Position) {
         let optionsText = [];
         optionsText.push('<!-- TOC ');
@@ -229,7 +230,7 @@ class MarkdownTocTools {
 
         let text = [];
         text.push(optionsText.join(''));
-        
+
         let indicesOfDepth = Array.apply(null, new Array(this.options.DEPTH_TO - this.options.DEPTH_FROM + 1)).map(Number.prototype.valueOf, 0);
         headerList.forEach(element => {
             if (element.depth <= this.options.DEPTH_TO) {
@@ -242,11 +243,11 @@ class MarkdownTocTools {
                 text.push(row.join(''));
             }
         });
-        
+
         text.push("\n<!-- /TOC -->");
         editBuilder.insert(insertPosition, text.join('\n'));
     }
-    
+
     private getHeaderList(tocRange : Range) {
         let doc = window.activeTextEditor.document;
         let headerList = [];
@@ -256,13 +257,13 @@ class MarkdownTocTools {
             let codeResult = lineText.match(REGEXP_CODE_BLOCK);
             if (codeResult != null) isInCode = !isInCode;
             if (isInCode) continue;
-            
+
             let headerResult = lineText.match(REGEXP_HEADER);
             if (headerResult == null) continue;
-            
+
             let depth = headerResult[0].length;
             if (depth < this.options.DEPTH_FROM) continue;
-            
+
             let title = lineText.substr(depth).trim();
             let hash = this.getHash(title);
             headerList.push({
@@ -274,7 +275,7 @@ class MarkdownTocTools {
         }
         return headerList;
     }
-    
+
     private getHash(headername : string) {
         let hash = headername.toLocaleLowerCase();
         hash = hash.replace(/\s+/g, '-');
@@ -287,7 +288,7 @@ class MarkdownTocTools {
         }
         return hash;
     }
-    
+
     private parseValidNumber(input : string) {
         let num = parseInt(input);
         if (num < 1) {
@@ -298,7 +299,7 @@ class MarkdownTocTools {
         }
         return num;
     }
-    
+
     private parseBool(input : string) {
         return input.toLocaleLowerCase() == 'true';
     }
