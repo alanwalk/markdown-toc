@@ -218,9 +218,9 @@ class MarkdownTocTools {
     }
 
     private createToc(editBuilder : TextEditorEdit, headerList : any[], insertPosition : Position) {
-        let lineEnding =   <string>  workspace.getConfiguration("files").get("eol");
-        let tabSize =      <number>  workspace.getConfiguration("editor").get("tabSize");
-        let insertSpaces = <boolean> workspace.getConfiguration("editor").get("insertSpaces");
+        let lineEnding      = <string>  workspace.getConfiguration("files").get("eol");
+        let tabSize         = <number>  workspace.getConfiguration("editor").get("tabSize");
+        let insertSpaces    = <boolean> workspace.getConfiguration("editor").get("insertSpaces");
 
         let tab = '\t';
         if (insertSpaces && tabSize > 0) {
@@ -241,9 +241,15 @@ class MarkdownTocTools {
         text.push(optionsText.join(''));
 
         let indicesOfDepth = Array.apply(null, new Array(this.options.DEPTH_TO - this.options.DEPTH_FROM + 1)).map(Number.prototype.valueOf, 0);
+        let minDepth = 6;
+        headerList.forEach(element => {
+            minDepth = Math.min(element.depth, minDepth);
+        });
+        let startDepth = Math.max(minDepth , this.options.DEPTH_FROM);
+        
         headerList.forEach(element => {
             if (element.depth <= this.options.DEPTH_TO) {
-                let length = element.depth - this.options.DEPTH_FROM;
+                let length = element.depth - startDepth;
                 let row = [
                     tab.repeat(length),
                     this.options.ORDERED_LIST ? (++indicesOfDepth[length] + '. ') : '- ',
