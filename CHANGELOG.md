@@ -1,3 +1,7 @@
+**1.3.0**
+- Add : Use Workspace Settings for Tabs and EOL (kevindaub‘s code)
+- Update : Auto remove extra space when depthFrom is not startFrom
+
 **1.2.3**
 - Fix : Error when none attributes
 
@@ -5,11 +9,11 @@
 - Update : Just update document
 
 **1.2.1**
-- Update : Remove attributes in<!-- TOC -->.
-- Fix : DepthTo is not valid.
+- Update : Remove attributes in<!-- TOC -->
+- Fix : DepthTo is not valid
 
 **1.2.0**
-- Add : Load default config from vscode settings.
+- Add : Load default config from vscode settings
 
 **1.1.3**
 - Fix : Codeblock error

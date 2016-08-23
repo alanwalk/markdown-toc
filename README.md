@@ -10,6 +10,7 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 	- [Default Settings](#default-settings)
 	- [Unique Settings](#unique-settings)
 - [Contributors](#contributors)
+- [Change Log](#change-log)
 - [Question](#question)
 - [License](#license)
 - [Links](#links)
@@ -68,10 +69,14 @@ If you want to use a unique setting for a file, you can add attributes to `<!-- 
 ```
 
 ## Contributors
+- kevindaub (Add : Use Workspace Settings for Tabs and EOL)
 - rovest (Feature: Insert anchor)
 - zhiguang Wang(Fix: Recognised code to header list)
 - jgroom33 (Fix: Codeblock error)
 - satokaz (Fix: Codeblock error)
+
+## Change Log
+[Change Log](https://github.com/AlanWalk/Markdown-TOC/blob/master/CHANGELOG.md)
 
 ## Question
 If you have any question, you can contact with me: 
