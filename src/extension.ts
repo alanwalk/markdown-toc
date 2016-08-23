@@ -218,6 +218,15 @@ class MarkdownTocTools {
     }
 
     private createToc(editBuilder : TextEditorEdit, headerList : any[], insertPosition : Position) {
+        let lineEnding =   <string>  workspace.getConfiguration("files").get("eol");
+        let tabSize =      <number>  workspace.getConfiguration("editor").get("tabSize");
+        let insertSpaces = <boolean> workspace.getConfiguration("editor").get("insertSpaces");
+
+        let tab = '\t';
+        if (insertSpaces && tabSize > 0) {
+            tab = " ".repeat(tabSize);
+        }
+
         let optionsText = [];
         optionsText.push('<!-- TOC ');
         if (this.optionsFlag.indexOf(DEPTH_FROM)    != -1) optionsText.push(DEPTH_FROM	    + ':' + this.options.DEPTH_FROM     +' ');
@@ -226,7 +235,7 @@ class MarkdownTocTools {
         if (this.optionsFlag.indexOf(ORDERED_LIST)  != -1) optionsText.push(ORDERED_LIST    + ':' + this.options.ORDERED_LIST   +' ');
         if (this.optionsFlag.indexOf(UPDATE_ON_SAVE)!= -1) optionsText.push(UPDATE_ON_SAVE  + ':' + this.options.UPDATE_ON_SAVE +' ');
         if (this.optionsFlag.indexOf(WITH_LINKS)    != -1) optionsText.push(WITH_LINKS      + ':' + this.options.WITH_LINKS     +' ');
-        optionsText.push('-->\n');
+        optionsText.push('-->' + lineEnding);
 
         let text = [];
         text.push(optionsText.join(''));
@@ -236,7 +245,7 @@ class MarkdownTocTools {
             if (element.depth <= this.options.DEPTH_TO) {
                 let length = element.depth - this.options.DEPTH_FROM;
                 let row = [
-                    '\t'.repeat(length),
+                    tab.repeat(length),
                     this.options.ORDERED_LIST ? (++indicesOfDepth[length] + '. ') : '- ',
                     this.options.WITH_LINKS ? ('[' + element.title + '](#' + element.hash + ')') : element.title
                 ];
@@ -244,8 +253,8 @@ class MarkdownTocTools {
             }
         });
 
-        text.push("\n<!-- /TOC -->");
-        editBuilder.insert(insertPosition, text.join('\n'));
+        text.push(lineEnding + "<!-- /TOC -->");
+        editBuilder.insert(insertPosition, text.join(lineEnding));
     }
 
     private getHeaderList(tocRange : Range) {
