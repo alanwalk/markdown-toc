@@ -294,7 +294,6 @@ class MarkdownTocTools {
     private getHash(headername : string) {
         let hash = headername.toLocaleLowerCase();
         hash = hash.replace(/\s+/g, '-');
-        hash = hash.replace(/'/g, '');
         // escape codes
         hash = hash.replace(/%([abcdef]|\d){2,2}/ig, '')
         // single chars that are removed
