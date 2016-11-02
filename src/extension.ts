@@ -294,14 +294,22 @@ class MarkdownTocTools {
     private getHash(headername : string) {
         let hash = headername.toLocaleLowerCase();
         hash = hash.replace(/\s+/g, '-');
-        hash = hash.replace(/[^a-z0-9\u4e00-\u9fa5äüö\-]/g, '');
+        hash = hash.replace(/'/g, '');
+        // escape codes
+        hash = hash.replace(/%([abcdef]|\d){2,2}/ig, '')
+        // single chars that are removed
+        hash = hash.replace(/[\/?!:\[\]`.,()*"';{}+=<>~\$|#@&–—]/g,'')
+        // CJK punctuations that are removed
+        hash = hash.replace(/[。？！，、；：“”【】（）〔〕［］﹃﹄“ ”‘’﹁﹂—…－～《》〈〉「」]/g, '')
+
+        //hash = hash.replace(/[^a-z0-9\u4e00-\u9fa5äüö\-]/g, '');
         if (hash.indexOf("--") > -1) {
             hash = hash.replace(/(-)+/g, "-");
         }
         if (hash.indexOf(":-") > -1) {
             hash = hash.replace(/:-/g, "-");
         }
-        return hash;
+        return encodeURIComponent(hash);
     }
 
     private parseValidNumber(input : string) {
