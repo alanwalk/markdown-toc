@@ -1,3 +1,9 @@
+**1.4.2**
+- Fix : Modify Dependencies.
+
+**1.4.1**
+- Fix : Modify Dependencies.
+
 **1.4.0**
 - Add : Add anchor mode, you can use anchor in other site.
 - Update : Based on GitHub markdown anchor generation (chriscamicas‘s code)

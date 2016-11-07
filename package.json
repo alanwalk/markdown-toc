@@ -2,8 +2,9 @@
     "name": "markdown-toc",
     "displayName": "Markdown Toc",
     "description": "Markdown TOC(Table Of Contents) Plugin for Visual Studio Code.",
-    "version": "1.4.0",
+    "version": "1.4.2",
     "icon": "img/markdown-toc.png",
+    "license": "MIT",
     "bugs": {
         "url": "https://github.com/AlanWalk/Markdown-TOC/issues"
     },
@@ -89,7 +90,11 @@
         "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
+    "dependencies": {
+        "anchor-markdown-header": "^0.5.6"
+    },
     "devDependencies": {
+        "anchor-markdown-header": "^0.5.6",
         "typescript": "^1.8.5",
         "vscode": "^0.11.0"
     }

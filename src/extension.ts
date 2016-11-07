@@ -311,7 +311,7 @@ class MarkdownTocTools {
 
     private getHash(headername : string, mode : string) {
         let anchor = require('anchor-markdown-header');
-        return anchor(headername, mode); ;
+        return anchor(headername, mode);
     }
 
     private parseValidNumber(input : string) {
