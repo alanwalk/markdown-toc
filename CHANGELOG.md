@@ -1,3 +1,7 @@
+**1.4.0**
+- Add : Add anchor mode, you can use anchor in other site.
+- Update : Based on GitHub markdown anchor generation (chriscamicas‘s code)
+
 **1.3.0**
 - Add : Use Workspace Settings for Tabs and EOL (kevindaub‘s code)
 - Update : Auto remove extra space when depthFrom is not startFrom

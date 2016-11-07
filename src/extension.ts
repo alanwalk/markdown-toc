@@ -17,9 +17,8 @@ import {
 
 const REGEXP_TOC_START          = /\s*<!--(.*)TOC(.*)-->/gi;
 const REGEXP_TOC_STOP           = /\s*<!--(.*)\/TOC(.*)-->/gi;
-const REGEXP_TOC_CONFIG         = /\w+(:|=)(\d+|true|false)\b/gi;
-const REGEXP_TOC_CONFIG_KEY     = /\w+/;
-const REGEXP_TOC_CONFIG_VALUE   = /(\d+|true|false)\b/gi;
+const REGEXP_TOC_CONFIG         = /\w+[:=][\w.]+/gi;
+const REGEXP_TOC_CONFIG_ITEM    = /(\w+)[:=]([\w.]+)/;
 const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-.+" name=".+"><\/a\>/;
 const REGEXP_HEADER             = /^\#{1,6}/;
 const REGEXP_CODE_BLOCK         = /^```/
@@ -30,6 +29,7 @@ const INSERT_ANCHOR             = "insertAnchor";
 const WITH_LINKS                = "withLinks";
 const ORDERED_LIST              = "orderedList";
 const UPDATE_ON_SAVE            = "updateOnSave";
+const ANCHOR_MODE               = "anchorMode";
 
 const LOWER_DEPTH_FROM          = DEPTH_FROM.toLocaleLowerCase();
 const LOWER_DEPTH_TO            = DEPTH_TO.toLocaleLowerCase();
@@ -37,6 +37,16 @@ const LOWER_INSERT_ANCHOR       = INSERT_ANCHOR.toLocaleLowerCase();
 const LOWER_WITH_LINKS          = WITH_LINKS.toLocaleLowerCase();
 const LOWER_ORDERED_LIST        = ORDERED_LIST.toLocaleLowerCase();
 const LOWER_UPDATE_ON_SAVE      = UPDATE_ON_SAVE.toLocaleLowerCase();
+const LOWER_ANCHOR_MODE         = ANCHOR_MODE.toLocaleLowerCase();
+
+const ANCHOR_MODE_LIST          =
+[
+    "github.com",
+    "nodejs.org",
+    "bitbucket.org",
+    "ghost.org",
+    "gitlab.com"
+]
 
 export function activate(context: ExtensionContext) {
 
@@ -60,12 +70,13 @@ export function activate(context: ExtensionContext) {
 class MarkdownTocTools {
 
     options = {
-        DEPTH_FROM       : 1,
-        DEPTH_TO         : 6,
-        INSERT_ANCHOR    : false,
-        WITH_LINKS       : true,
-        ORDERED_LIST     : false,
-        UPDATE_ON_SAVE   : true
+        DEPTH_FROM      : 1,
+        DEPTH_TO        : 6,
+        INSERT_ANCHOR   : false,
+        WITH_LINKS      : true,
+        ORDERED_LIST    : false,
+        UPDATE_ON_SAVE  : true,
+        ANCHOR_MODE     : ANCHOR_MODE_LIST[0]
     };
     optionsFlag = [];
     saveBySelf = false;
@@ -153,16 +164,18 @@ class MarkdownTocTools {
         this.options.WITH_LINKS     = <boolean> workspace.getConfiguration('markdown-toc').get('withLinks');
         this.options.ORDERED_LIST   = <boolean> workspace.getConfiguration('markdown-toc').get('orderedList');
         this.options.UPDATE_ON_SAVE = <boolean> workspace.getConfiguration('markdown-toc').get('updateOnSave');
+        this.options.ANCHOR_MODE    = <string> workspace.getConfiguration('markdown-toc').get('anchorMode');
 
         if (tocRange == null) return;
         let optionsText = window.activeTextEditor.document.lineAt(tocRange.start.line).text;
         let optionArray = optionsText.match(REGEXP_TOC_CONFIG);
         if (optionArray == null) return;
-
+                
         this.optionsFlag = [];
         optionArray.forEach(element => {
-            let key = element.match(REGEXP_TOC_CONFIG_KEY)[0].toLocaleLowerCase();
-            let value = element.match(REGEXP_TOC_CONFIG_VALUE)[0];
+            let pair = REGEXP_TOC_CONFIG_ITEM.exec(element)
+            let key = pair[1].toLocaleLowerCase();
+            let value = pair[2];
 
             switch (key) {
                 case LOWER_DEPTH_FROM:
@@ -191,6 +204,10 @@ class MarkdownTocTools {
                 case LOWER_UPDATE_ON_SAVE:
                     this.optionsFlag.push(UPDATE_ON_SAVE);
                     this.options.UPDATE_ON_SAVE = this.parseBool(value);
+                    break;
+                case LOWER_ANCHOR_MODE:
+                    this.optionsFlag.push(ANCHOR_MODE);
+                    this.options.ANCHOR_MODE = this.parseValidAnchorMode(value);
                     break;
             }
         });
@@ -235,6 +252,7 @@ class MarkdownTocTools {
         if (this.optionsFlag.indexOf(ORDERED_LIST)  != -1) optionsText.push(ORDERED_LIST    + ':' + this.options.ORDERED_LIST   +' ');
         if (this.optionsFlag.indexOf(UPDATE_ON_SAVE)!= -1) optionsText.push(UPDATE_ON_SAVE  + ':' + this.options.UPDATE_ON_SAVE +' ');
         if (this.optionsFlag.indexOf(WITH_LINKS)    != -1) optionsText.push(WITH_LINKS      + ':' + this.options.WITH_LINKS     +' ');
+        if (this.optionsFlag.indexOf(ANCHOR_MODE)   != -1) optionsText.push(ANCHOR_MODE     + ':' + this.options.ANCHOR_MODE    +' ');
         optionsText.push('-->' + lineEnding);
 
         let text = [];
@@ -253,7 +271,7 @@ class MarkdownTocTools {
                 let row = [
                     tab.repeat(length),
                     this.options.ORDERED_LIST ? (++indicesOfDepth[length] + '. ') : '- ',
-                    this.options.WITH_LINKS ? ('[' + element.title + '](#' + element.hash + ')') : element.title
+                    this.options.WITH_LINKS ? element.hash : element.title
                 ];
                 text.push(row.join(''));
             }
@@ -280,7 +298,7 @@ class MarkdownTocTools {
             if (depth < this.options.DEPTH_FROM) continue;
 
             let title = lineText.substr(depth).trim();
-            let hash = this.getHash(title);
+            let hash = this.getHash(title, this.options.ANCHOR_MODE);
             headerList.push({
                 line : index,
                 depth : depth,
@@ -291,17 +309,9 @@ class MarkdownTocTools {
         return headerList;
     }
 
-    private getHash(headername : string) {
-        let hash = headername.toLocaleLowerCase();
-        hash = hash.replace(/\s+/g, '-');
-        hash = hash.replace(/[^a-z0-9\u4e00-\u9fa5äüö\-]/g, '');
-        if (hash.indexOf("--") > -1) {
-            hash = hash.replace(/(-)+/g, "-");
-        }
-        if (hash.indexOf(":-") > -1) {
-            hash = hash.replace(/:-/g, "-");
-        }
-        return hash;
+    private getHash(headername : string, mode : string) {
+        let anchor = require('anchor-markdown-header');
+        return anchor(headername, mode); ;
     }
 
     private parseValidNumber(input : string) {
@@ -313,6 +323,13 @@ class MarkdownTocTools {
             return 6;
         }
         return num;
+    }
+
+    private parseValidAnchorMode(value : string) {
+        if (ANCHOR_MODE_LIST.indexOf(value) != -1) {
+            return value;
+        }
+        return ANCHOR_MODE_LIST[0];
     }
 
     private parseBool(input : string) {

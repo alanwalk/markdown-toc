@@ -7,8 +7,8 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
-	- [Default Settings](#default-settings)
-	- [Unique Settings](#unique-settings)
+    - [Default Settings](#default-settings)
+    - [Unique Settings](#unique-settings)
 - [Contributors](#contributors)
 - [Change Log](#change-log)
 - [Question](#question)
@@ -25,6 +25,7 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 - Enable or disable links with `withLinks:true`
 - Refresh list on save with `updateOnSave:true`
 - Use ordered list (1. ..., 2. ...) with `orderedList:true`
+- Anchor support for (github.com|nodejs.org|bitbucket.org|ghost.org|gitlab.com).
 
 ## Installation
 ```
@@ -43,10 +44,11 @@ ext install markdown-toc
 |---|---|---|
 |depthFrom|uint(1-6)|1|
 |depthTo|uint(1-6)|6|
-|insertAnchor|true or false|false|
-|withLinks|true or false|true|
-|orderedList|true or false|false|
-|updateOnSave|true or false|true|
+|insertAnchor|bool|false|
+|withLinks|bool|true|
+|orderedList|bool|false|
+|updateOnSave|bool|true|
+|anchorMode|(github.com|nodejs.org|bitbucket.org|ghost.org|gitlab.com)|github.com|
 
 ### Default Settings
 To change the default configuration settings for the Markdown-TOC extension, edit the user or workspace settings as described here. The available settings are as follows:
@@ -59,6 +61,7 @@ To change the default configuration settings for the Markdown-TOC extension, edi
 |markdown-toc.withLinks|bool|true|
 |markdown-toc.orderedList|bool|false|
 |markdown-toc.updateOnSave|bool|true|
+|markdown-toc.anchorMode|enum|github.com|
 
 ### Unique Settings
 If you want to use a unique setting for a file, you can add attributes to `<!-- TOC -->` , just like:
@@ -69,6 +72,7 @@ If you want to use a unique setting for a file, you can add attributes to `<!-- 
 ```
 
 ## Contributors
+- chriscamicas (Update: Anchor generation)
 - kevindaub (Add : Use Workspace Settings for Tabs and EOL)
 - rovest (Feature: Insert anchor)
 - zhiguang Wang(Fix: Recognised code to header list)
