@@ -1,3 +1,6 @@
+**1.4.3**
+- Update : support header lines with trailing slashes (MarioSchwalbe‘s code)
+
 **1.4.2**
 - Fix : Modify Dependencies.
 

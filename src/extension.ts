@@ -298,6 +298,7 @@ class MarkdownTocTools {
             if (depth < this.options.DEPTH_FROM) continue;
 
             let title = lineText.substr(depth).trim();
+            title = title.replace(/\#*$/, "").trim(); 
             let hash = this.getHash(title, this.options.ANCHOR_MODE);
             headerList.push({
                 line : index,
