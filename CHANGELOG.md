@@ -1,3 +1,6 @@
+**1.4.4**
+- Update : Decode Unicode for anchor
+
 **1.4.3**
 - Update : support header lines with trailing slashes (MarioSchwalbe‘s code)
 
