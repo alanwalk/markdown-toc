@@ -259,6 +259,8 @@ class MarkdownTocTools {
         text.push(optionsText.join(''));
 
         let indicesOfDepth = Array.apply(null, new Array(this.options.DEPTH_TO - this.options.DEPTH_FROM + 1)).map(Number.prototype.valueOf, 0);
+        let waitResetList = Array.apply(null, new Array(indicesOfDepth.length)).map(Boolean.prototype.valueOf, false);
+
         let minDepth = 6;
         headerList.forEach(element => {
             minDepth = Math.min(element.depth, minDepth);
@@ -268,12 +270,20 @@ class MarkdownTocTools {
         headerList.forEach(element => {
             if (element.depth <= this.options.DEPTH_TO) {
                 let length = element.depth - startDepth;
+                for (var index = 0; index < waitResetList.length; index++) {
+                    if (waitResetList[index] && (length < index)) {
+                        indicesOfDepth[index] = 0;
+                        waitResetList[index] = false;
+                    }
+                }
+                
                 let row = [
                     tab.repeat(length),
                     this.options.ORDERED_LIST ? (++indicesOfDepth[length] + '. ') : '- ',
                     this.options.WITH_LINKS ? element.hash : element.title
                 ];
                 text.push(row.join(''));
+                waitResetList[length] = true;
             }
         });
 

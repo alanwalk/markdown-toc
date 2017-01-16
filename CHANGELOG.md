@@ -1,8 +1,11 @@
+**1.4.5**
+- Fix : RrderedList option should reset sub-order
+
 **1.4.4**
 - Update : Decode Unicode for anchor
 
 **1.4.3**
-- Update : support header lines with trailing slashes (MarioSchwalbe‘s code)
+- Update : Support header lines with trailing slashes (MarioSchwalbe‘s code)
 
 **1.4.2**
 - Fix : Modify Dependencies.
