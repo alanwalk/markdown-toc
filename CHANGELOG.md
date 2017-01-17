@@ -1,3 +1,6 @@
+**1.4.6**
+- Fix : Identical headers will link to first occurrence in text
+
 **1.4.5**
 - Fix : RrderedList option should reset sub-order
 

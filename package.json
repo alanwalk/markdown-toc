@@ -1,8 +1,8 @@
 {
     "name": "markdown-toc",
-    "displayName": "Markdown Toc",
+    "displayName": "Markdown TOC",
     "description": "Markdown TOC(Table Of Contents) Plugin for Visual Studio Code.",
-    "version": "1.4.5",
+    "version": "1.4.6",
     "icon": "img/markdown-toc.png",
     "license": "MIT",
     "author": {
@@ -37,19 +37,19 @@
     "contributes": {
         "commands": [{
             "command": "extension.createMarkdownToc",
-            "title": "Markdown Toc: Create"
+            "title": "Markdown TOC: Create"
         },
         {
             "command": "extension.updateMarkdownToc",
-            "title": "Markdown Toc: Update"
+            "title": "Markdown TOC: Update"
         },
         {
             "command": "extension.deleteMarkdownToc",
-            "title": "Markdown Toc: Delete"
+            "title": "Markdown TOC: Delete"
         }],
         "configuration": {
             "type": "object",
-            "title": "Markdown Toc configuration",
+            "title": "Markdown TOC configuration",
             "properties": {
                 "markdown-toc.depthFrom": {
                     "type": "number",

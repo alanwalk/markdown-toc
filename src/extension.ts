@@ -294,6 +294,7 @@ class MarkdownTocTools {
     private getHeaderList(tocRange : Range) {
         let doc = window.activeTextEditor.document;
         let headerList = [];
+        let hashMap = {};
         let isInCode = false;
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
@@ -309,7 +310,14 @@ class MarkdownTocTools {
 
             let title = lineText.substr(depth).trim();
             title = title.replace(/\#*$/, "").trim(); 
-            let hash = this.getHash(title, this.options.ANCHOR_MODE);
+            
+            if (hashMap[title] == null) {
+                hashMap[title] = 0
+            } else {
+                hashMap[title] += 1;
+            }
+            
+            let hash = this.getHash(title, this.options.ANCHOR_MODE, hashMap[title]);
             headerList.push({
                 line : index,
                 depth : depth,
@@ -320,9 +328,9 @@ class MarkdownTocTools {
         return headerList;
     }
 
-    private getHash(headername : string, mode : string) {
+    private getHash(headername : string, mode : string, repetition : number) {
         let anchor = require('anchor-markdown-header');
-        return decodeURI(anchor(headername, mode));
+        return decodeURI(anchor(headername, mode, repetition));
     }
 
     private parseValidNumber(input : string) {
