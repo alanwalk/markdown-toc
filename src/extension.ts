@@ -20,7 +20,7 @@ const REGEXP_TOC_STOP           = /\s*<!--(.*)\/TOC(.*)-->/gi;
 const REGEXP_TOC_CONFIG         = /\w+[:=][\w.]+/gi;
 const REGEXP_TOC_CONFIG_ITEM    = /(\w+)[:=]([\w.]+)/;
 const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-.+" name=".+"><\/a\>/;
-const REGEXP_HEADER             = /^(\#{1,6})\s*([.1-9]*)\s*(.+)/;
+const REGEXP_HEADER             = /^(\#{1,6})\s*([.0-9]*)\s*(.+)/;
 const REGEXP_CODE_BLOCK         = /^```/
 
 const DEPTH_FROM                = "depthFrom";
@@ -52,11 +52,9 @@ export function activate(context: ExtensionContext) {
     // create a MarkdownTocTools
     let markdownTocTools = new MarkdownTocTools();
 
-    let disposable_createMarkdownToc = commands.registerCommand('extension.createMarkdownToc', () => { markdownTocTools.updateMarkdownToc(); });
     let disposable_updateMarkdownToc = commands.registerCommand('extension.updateMarkdownToc', () => { markdownTocTools.updateMarkdownToc(); });
     let disposable_deleteMarkdownToc = commands.registerCommand('extension.deleteMarkdownToc', () => { markdownTocTools.deleteMarkdownToc(); });
 
-    let disposable_insertMarkdownSections = commands.registerCommand('extension.insertMarkdownSections', () => { markdownTocTools.updateMarkdownSections(); });
     let disposable_updateMarkdownSections = commands.registerCommand('extension.updateMarkdownSections', () => { markdownTocTools.updateMarkdownSections(); });
     let disposable_deleteMarkdownSections = commands.registerCommand('extension.deleteMarkdownSections', () => { markdownTocTools.deleteMarkdownSections(); });
 
@@ -64,10 +62,9 @@ export function activate(context: ExtensionContext) {
     let disposable_saveMarkdownToc = workspace.onDidSaveTextDocument((doc : TextDocument) => { markdownTocTools.notifyDocumentSave(); });
 
     // Add to a list of disposables which are disposed when this extension is deactivated.
-    context.subscriptions.push(disposable_createMarkdownToc);
     context.subscriptions.push(disposable_updateMarkdownToc);
     context.subscriptions.push(disposable_deleteMarkdownToc);
-    context.subscriptions.push(disposable_insertMarkdownSections);
+    
     context.subscriptions.push(disposable_updateMarkdownSections);
     context.subscriptions.push(disposable_deleteMarkdownSections);
     context.subscriptions.push(disposable_saveMarkdownToc);
@@ -187,21 +184,28 @@ class MarkdownTocTools {
     }
 
     private updateOptions(tocRange : Range) {
+        this.loadConfigurations();
+        this.loadCustomOptions(tocRange);
+    }
+
+    private loadConfigurations() {
         this.options.DEPTH_FROM     = <number>  workspace.getConfiguration('markdown-toc').get('depthFrom');
         this.options.DEPTH_TO       = <number>  workspace.getConfiguration('markdown-toc').get('depthTo');
         this.options.INSERT_ANCHOR  = <boolean> workspace.getConfiguration('markdown-toc').get('insertAnchor');
         this.options.WITH_LINKS     = <boolean> workspace.getConfiguration('markdown-toc').get('withLinks');
         this.options.ORDERED_LIST   = <boolean> workspace.getConfiguration('markdown-toc').get('orderedList');
         this.options.UPDATE_ON_SAVE = <boolean> workspace.getConfiguration('markdown-toc').get('updateOnSave');
-        this.options.ANCHOR_MODE    = <string> workspace.getConfiguration('markdown-toc').get('anchorMode');
+        this.options.ANCHOR_MODE    = <string>  workspace.getConfiguration('markdown-toc').get('anchorMode');
+    }
 
+    private loadCustomOptions(tocRange : Range) {
         if (tocRange == null) return;
         let optionsText = window.activeTextEditor.document.lineAt(tocRange.start.line).text;
-        let optionArray = optionsText.match(REGEXP_TOC_CONFIG);
-        if (optionArray == null) return;
+        let options = optionsText.match(REGEXP_TOC_CONFIG);
+        if (options == null) return;
                 
         this.optionsFlag = [];
-        optionArray.forEach(element => {
+        options.forEach(element => {
             let pair = REGEXP_TOC_CONFIG_ITEM.exec(element)
             let key = pair[1].toLocaleLowerCase();
             let value = pair[2];
@@ -213,10 +217,7 @@ class MarkdownTocTools {
                     break;
                 case LOWER_DEPTH_TO:
                     this.optionsFlag.push(DEPTH_TO);
-                    this.options.DEPTH_TO = this.parseValidNumber(value);
-                    if (this.options.DEPTH_FROM > this.options.DEPTH_TO) {
-                        this.options.DEPTH_TO = this.options.DEPTH_FROM; // Revise Value
-                    }
+                    this.options.DEPTH_TO = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM);
                     break;
                 case LOWER_INSERT_ANCHOR:
                     this.optionsFlag.push(INSERT_ANCHOR);
@@ -242,8 +243,7 @@ class MarkdownTocTools {
         });
     }
 
-    private insertAnchor(editBuilder : TextEditorEdit, headerList : any[])
-    {
+    private insertAnchor(editBuilder : TextEditorEdit, headerList : any[]) {
         if (!this.options.INSERT_ANCHOR) return;
         headerList.forEach(element => {
             let text = [ '<a id="markdown-', element.hash, '" name="', element.hash, '"></a>\n' ];
@@ -267,7 +267,6 @@ class MarkdownTocTools {
         let lineEnding      = <string>  workspace.getConfiguration("files").get("eol");
         let tabSize         = <number>  workspace.getConfiguration("editor").get("tabSize");
         let insertSpaces    = <boolean> workspace.getConfiguration("editor").get("insertSpaces");
-
         let tab = '\t';
         if (insertSpaces && tabSize > 0) {
             tab = " ".repeat(tabSize);
@@ -379,8 +378,8 @@ class MarkdownTocTools {
         return decodeURI(anchor(headername, mode, repetition));
     }
 
-    private parseValidNumber(input : string) {
-        let num = parseInt(input);
+    private parseValidNumber(value : string) {
+        let num = parseInt(value);
         if (num < 1) {
             return 1;
         }
@@ -397,8 +396,8 @@ class MarkdownTocTools {
         return ANCHOR_MODE_LIST[0];
     }
 
-    private parseBool(input : string) {
-        return input.toLocaleLowerCase() == 'true';
+    private parseBool(value : string) {
+        return value.toLocaleLowerCase() == 'true';
     }
 
     dispose() {

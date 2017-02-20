@@ -21,7 +21,6 @@
         "markdown",
         "toc"
     ],
-    "preview": true,
     "homepage": "https://github.com/AlanWalk/Markdown-TOC",
     "publisher": "AlanWalk",
     "engines": {
@@ -59,6 +58,38 @@
             "command": "extension.deleteMarkdownSections",
             "title": "Markdown Sections: Delete"
         }],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "extension.createMarkdownToc"
+                },
+                {
+                    "command": "extension.updateMarkdownToc"
+                },
+                {
+                    "command": "extension.deleteMarkdownToc"
+                },
+                {
+                    "command": "extension.insertMarkdownSections"
+                },
+                {
+                    "command": "extension.updateMarkdownSections"
+                },
+                {
+                    "command": "extension.deleteMarkdownSections"
+                }
+            ]
+        },
+        "keybindings":[
+            {
+                "command": "extension.createMarkdownToc",
+                "key": "ctrl+m t"
+            },
+            {
+                "command": "extension.insertMarkdownSections",
+                "key": "ctrl+m s"
+            }
+        ],
         "configuration": {
             "type": "object",
             "title": "Markdown TOC configuration",
@@ -103,11 +134,6 @@
 						"ghost.org",
                         "gitlab.com"
 					]
-                },
-                "markdown-toc.insertOrderedList": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Insert ordered list in front of title."
                 }
             }
         }
