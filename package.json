@@ -2,7 +2,7 @@
     "name": "markdown-toc",
     "displayName": "Markdown TOC",
     "description": "Markdown TOC(Table Of Contents) Plugin for Visual Studio Code.",
-    "version": "1.4.6",
+    "version": "1.5.0",
     "icon": "img/markdown-toc.png",
     "license": "MIT",
     "author": {
@@ -46,6 +46,18 @@
         {
             "command": "extension.deleteMarkdownToc",
             "title": "Markdown TOC: Delete"
+        },
+        {
+            "command": "extension.insertMarkdownSections",
+            "title": "Markdown Sections: Insert"
+        },
+        {
+            "command": "extension.updateMarkdownSections",
+            "title": "Markdown Sections: Update"
+        },
+        {
+            "command": "extension.deleteMarkdownSections",
+            "title": "Markdown Sections: Delete"
         }],
         "configuration": {
             "type": "object",
@@ -87,11 +99,15 @@
                     "description": "anchor mode.",
 					"enum": [
 						"github.com",
-						"nodejs.org",
 						"bitbucket.org",
 						"ghost.org",
                         "gitlab.com"
 					]
+                },
+                "markdown-toc.insertOrderedList": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Insert ordered list in front of title."
                 }
             }
         }
