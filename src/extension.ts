@@ -54,17 +54,13 @@ export function activate(context: ExtensionContext) {
 
     let disposable_updateMarkdownToc = commands.registerCommand('extension.updateMarkdownToc', () => { markdownTocTools.updateMarkdownToc(); });
     let disposable_deleteMarkdownToc = commands.registerCommand('extension.deleteMarkdownToc', () => { markdownTocTools.deleteMarkdownToc(); });
-
     let disposable_updateMarkdownSections = commands.registerCommand('extension.updateMarkdownSections', () => { markdownTocTools.updateMarkdownSections(); });
     let disposable_deleteMarkdownSections = commands.registerCommand('extension.deleteMarkdownSections', () => { markdownTocTools.deleteMarkdownSections(); });
-
-    // register document save event
     let disposable_saveMarkdownToc = workspace.onDidSaveTextDocument((doc : TextDocument) => { markdownTocTools.notifyDocumentSave(); });
 
     // Add to a list of disposables which are disposed when this extension is deactivated.
     context.subscriptions.push(disposable_updateMarkdownToc);
     context.subscriptions.push(disposable_deleteMarkdownToc);
-    
     context.subscriptions.push(disposable_updateMarkdownSections);
     context.subscriptions.push(disposable_deleteMarkdownSections);
     context.subscriptions.push(disposable_saveMarkdownToc);
@@ -199,12 +195,12 @@ class MarkdownTocTools {
     }
 
     private loadCustomOptions(tocRange : Range) {
+        this.optionsFlag = [];
         if (tocRange == null) return;
         let optionsText = window.activeTextEditor.document.lineAt(tocRange.start.line).text;
         let options = optionsText.match(REGEXP_TOC_CONFIG);
         if (options == null) return;
-                
-        this.optionsFlag = [];
+        
         options.forEach(element => {
             let pair = REGEXP_TOC_CONFIG_ITEM.exec(element)
             let key = pair[1].toLocaleLowerCase();

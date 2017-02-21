@@ -34,25 +34,18 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [{
-            "command": "extension.createMarkdownToc",
-            "title": "Markdown TOC: Create"
-        },
+        "commands": [
         {
             "command": "extension.updateMarkdownToc",
-            "title": "Markdown TOC: Update"
+            "title": "Markdown TOC: Insert/Update"
         },
         {
             "command": "extension.deleteMarkdownToc",
             "title": "Markdown TOC: Delete"
         },
         {
-            "command": "extension.insertMarkdownSections",
-            "title": "Markdown Sections: Insert"
-        },
-        {
             "command": "extension.updateMarkdownSections",
-            "title": "Markdown Sections: Update"
+            "title": "Markdown Sections: Insert/Update"
         },
         {
             "command": "extension.deleteMarkdownSections",
@@ -61,16 +54,10 @@
         "menus": {
             "editor/context": [
                 {
-                    "command": "extension.createMarkdownToc"
-                },
-                {
                     "command": "extension.updateMarkdownToc"
                 },
                 {
                     "command": "extension.deleteMarkdownToc"
-                },
-                {
-                    "command": "extension.insertMarkdownSections"
                 },
                 {
                     "command": "extension.updateMarkdownSections"
@@ -82,11 +69,11 @@
         },
         "keybindings":[
             {
-                "command": "extension.createMarkdownToc",
+                "command": "extension.updateMarkdownToc",
                 "key": "ctrl+m t"
             },
             {
-                "command": "extension.insertMarkdownSections",
+                "command": "extension.updateMarkdownSections",
                 "key": "ctrl+m s"
             }
         ],
