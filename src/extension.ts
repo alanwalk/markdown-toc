@@ -22,6 +22,7 @@ const REGEXP_TOC_CONFIG_ITEM    = /(\w+)[:=]([\w.]+)/;
 const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-.+" name=".+"><\/a\>/;
 const REGEXP_HEADER             = /^(\#{1,6})\s*([.0-9]*)\s*(.+)/;
 const REGEXP_CODE_BLOCK         = /^```/
+const REGEXP_ANCHOR             = /\[.+\]\(#(.+)\)/
 
 const DEPTH_FROM                = "depthFrom";
 const DEPTH_TO                  = "depthTo";
@@ -242,7 +243,8 @@ class MarkdownTocTools {
     private insertAnchor(editBuilder : TextEditorEdit, headerList : any[]) {
         if (!this.options.INSERT_ANCHOR) return;
         headerList.forEach(element => {
-            let text = [ '<a id="markdown-', element.hash, '" name="', element.hash, '"></a>\n' ];
+            let name = element.hash.match(REGEXP_ANCHOR)[1];
+            let text = [ '<a id="markdown-', name, '" name="', name, '"></a>\n' ];
             let insertPosition = new Position(element.line, 0);
             editBuilder.insert(insertPosition, text.join(''));
         });
