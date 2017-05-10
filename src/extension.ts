@@ -263,8 +263,14 @@ class MarkdownTocTools {
 
     private createToc(editBuilder : TextEditorEdit, headerList : any[], insertPosition : Position) {
         let lineEnding      = <string>  workspace.getConfiguration("files").get("eol");
-        let tabSize         = <number>  workspace.getConfiguration("editor").get("tabSize");
-        let insertSpaces    = <boolean> workspace.getConfiguration("editor").get("insertSpaces");
+        let tabSize         = <number>  workspace.getConfiguration("[markdown]")["editor.tabSize"];
+        if(tabSize === undefined || tabSize === null)
+            tabSize = <number> workspace.getConfiguration("editor").get("tabSize");
+
+        let insertSpaces    = <boolean> workspace.getConfiguration("[markdown]")["editor.insertSpaces"];
+        if(insertSpaces === undefined || insertSpaces === null)
+            insertSpaces = <boolean> workspace.getConfiguration("editor").get("insertSpaces");
+            
         let tab = '\t';
         if (insertSpaces && tabSize > 0) {
             tab = " ".repeat(tabSize);
