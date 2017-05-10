@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.2] - 2017-05-10
+### Changed
+- using `tabSize` and `insertSpaces` from `[markdown]` configuration (junian's code).
+- only display right click menus when editing markdown files (junian's code).
+
 ## [1.5.1] - 2017-03-25
 ### Fixed
 - Inserted anchor is correct.
@@ -34,7 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.4.3] - 2016-11-11
 ### Changed
-- Support header lines with trailing slashes (MarioSchwalbe‘s code).
+- Support header lines with trailing slashes (MarioSchwalbe's code).
 
 ## [1.4.2] - 2016-11-07
 ### Fixed
@@ -48,11 +53,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Add anchor mode, you can use anchor in other site.
 ### Changed
-- Based on GitHub markdown anchor generation (chriscamicas‘s code).
+- Based on GitHub markdown anchor generation (chriscamicas's code).
 
 ## [1.3.0] - 2016-08-23
 ### Added
-- Use Workspace Settings for Tabs and EOL (kevindaub‘s code).
+- Use Workspace Settings for Tabs and EOL (kevindaub's code).
 ### Changed
 - Auto remove extra space when depthFrom is not startFrom.
 

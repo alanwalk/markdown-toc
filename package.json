@@ -2,7 +2,7 @@
     "name": "markdown-toc",
     "displayName": "Markdown TOC",
     "description": "Markdown TOC(Table Of Contents) Plugin for Visual Studio Code.",
-    "version": "1.5.1",
+    "version": "1.5.2",
     "icon": "img/markdown-toc.png",
     "license": "MIT",
     "author": {
