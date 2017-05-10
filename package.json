@@ -54,15 +54,19 @@
         "menus": {
             "editor/context": [
                 {
+                    "when": "editorLangId == 'markdown'",
                     "command": "extension.updateMarkdownToc"
                 },
                 {
+                    "when": "editorLangId == 'markdown'",
                     "command": "extension.deleteMarkdownToc"
                 },
                 {
+                    "when": "editorLangId == 'markdown'",
                     "command": "extension.updateMarkdownSections"
                 },
                 {
+                    "when": "editorLangId == 'markdown'",
                     "command": "extension.deleteMarkdownSections"
                 }
             ]
