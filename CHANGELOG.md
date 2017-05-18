@@ -4,10 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.3] - 2017-05-18
+### Changed
+- Fixed section header numbering not resetting (CapitalistHippie's code).
+
 ## [1.5.2] - 2017-05-10
 ### Changed
-- using `tabSize` and `insertSpaces` from `[markdown]` configuration (junian's code).
-- only display right click menus when editing markdown files (junian's code).
+- Using `tabSize` and `insertSpaces` from `[markdown]` configuration (junian's code).
+- Only display right click menus when editing markdown files (junian's code).
 
 ## [1.5.1] - 2017-03-25
 ### Fixed
