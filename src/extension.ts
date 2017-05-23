@@ -21,7 +21,8 @@ const REGEXP_TOC_CONFIG         = /\w+[:=][\w.]+/gi;
 const REGEXP_TOC_CONFIG_ITEM    = /(\w+)[:=]([\w.]+)/;
 const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-.+" name=".+"><\/a\>/;
 const REGEXP_HEADER             = /^(\#{1,6})\s*([.0-9]*)\s*(.+)/;
-const REGEXP_CODE_BLOCK         = /^```/
+const REGEXP_CODE_BLOCK1         = /^```/;
+const REGEXP_CODE_BLOCK2         = /^~~~/;
 const REGEXP_ANCHOR             = /\[.+\]\(#(.+)\)/
 
 const DEPTH_FROM                = "depthFrom";
@@ -327,13 +328,20 @@ class MarkdownTocTools {
         let doc = window.activeTextEditor.document;
         let headerList = [];
         let hashMap = {};
-        let isInCode = false;
+        let isInCode = 0;
         let indicesOfDepth = Array.apply(null, new Array(6)).map(Number.prototype.valueOf, 0);
         let lastDepth = 6;
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
-            let codeResult = lineText.match(REGEXP_CODE_BLOCK);
-            if (codeResult != null) isInCode = !isInCode;
+            let codeResult1 = lineText.match(REGEXP_CODE_BLOCK1);
+            let codeResult2 = lineText.match(REGEXP_CODE_BLOCK2);
+            if (isInCode == 0) {
+                isInCode = codeResult1 != null ? 1 : (codeResult2 != null ? 2 : isInCode);
+            } else if (isInCode == 1) {
+                isInCode = codeResult1 != null ? 0 : isInCode;
+            } else if (isInCode == 2) {
+                isInCode = codeResult2 != null ? 0 : isInCode;
+            }
             if (isInCode) continue;
 
             let headerResult = lineText.match(REGEXP_HEADER);
