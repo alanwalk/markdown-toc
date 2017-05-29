@@ -349,6 +349,7 @@ class MarkdownTocTools {
 
             let depth = headerResult[1].length;
             if (depth < this.options.DEPTH_FROM) continue;
+            if (depth > this.options.DEPTH_TO) continue;
 
             for (var i = depth; i <= lastDepth; i++) {
                 indicesOfDepth[depth] = 0;
