@@ -127,7 +127,7 @@ class MarkdownTocTools {
         let headerList = this.getHeaderList();
         
         window.activeTextEditor.edit(function(editBuilder) {
-            headerList.forEach(element => {
+            headerList.forEach(element => {                
                 let newHeader = element.header + " " + element.orderedList + " " + element.baseTitle
                 editBuilder.replace(element.range, newHeader);
             });
@@ -265,17 +265,19 @@ class MarkdownTocTools {
     private createToc(editBuilder : TextEditorEdit, headerList : any[], insertPosition : Position) {
         let lineEnding      = <string>  workspace.getConfiguration("files").get("eol");
         let tabSize         = <number>  workspace.getConfiguration("[markdown]")["editor.tabSize"];
-        if(tabSize === undefined || tabSize === null)
-            tabSize = <number> workspace.getConfiguration("editor").get("tabSize");
-
         let insertSpaces    = <boolean> workspace.getConfiguration("[markdown]")["editor.insertSpaces"];
-        if(insertSpaces === undefined || insertSpaces === null)
-            insertSpaces = <boolean> workspace.getConfiguration("editor").get("insertSpaces");
             
+        if(tabSize === undefined || tabSize === null) {
+            tabSize = <number> workspace.getConfiguration("editor").get("tabSize");
+        }
+        if(insertSpaces === undefined || insertSpaces === null) {
+            insertSpaces = <boolean> workspace.getConfiguration("editor").get("insertSpaces");
+        }
+
         let tab = '\t';
         if (insertSpaces && tabSize > 0) {
             tab = " ".repeat(tabSize);
-        }
+        }       
 
         let optionsText = [];
         optionsText.push('<!-- TOC ');
@@ -330,7 +332,6 @@ class MarkdownTocTools {
         let hashMap = {};
         let isInCode = 0;
         let indicesOfDepth = Array.apply(null, new Array(6)).map(Number.prototype.valueOf, 0);
-        let lastDepth = 6;
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
             let codeResult1 = lineText.match(REGEXP_CODE_BLOCK1);
@@ -351,10 +352,9 @@ class MarkdownTocTools {
             if (depth < this.options.DEPTH_FROM) continue;
             if (depth > this.options.DEPTH_TO) continue;
 
-            for (var i = depth; i <= lastDepth; i++) {
+            for (var i = depth; i <= this.options.DEPTH_TO; i++) {
                 indicesOfDepth[depth] = 0;
             }
-            lastDepth = depth;
             indicesOfDepth[depth - 1]++;
 
             let orderedListStr = ""

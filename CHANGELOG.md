@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.6] - 2017-07-25
+### Fixed
+- Fixed wrong section numbe.
+- Fixed depthTo option is not recognized.
+
 ## [1.5.5] - 2017-05-23
 ### Fixed
 - Fixed code block using tildes is not in code (kentakei's code).
