@@ -21,9 +21,10 @@ const REGEXP_TOC_CONFIG         = /\w+[:=][\w.]+/gi;
 const REGEXP_TOC_CONFIG_ITEM    = /(\w+)[:=]([\w.]+)/;
 const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-.+" name=".+"><\/a\>/;
 const REGEXP_HEADER             = /^(\#{1,6})\s*([.0-9]*)\s*(.+)/;
-const REGEXP_CODE_BLOCK1         = /^```/;
-const REGEXP_CODE_BLOCK2         = /^~~~/;
+const REGEXP_CODE_BLOCK1        = /^```/;
+const REGEXP_CODE_BLOCK2        = /^~~~/;
 const REGEXP_ANCHOR             = /\[.+\]\(#(.+)\)/
+const REGEXP_IGNORE_TITLE       = /<!-- TOC ignore:true -->/
 
 const DEPTH_FROM                = "depthFrom";
 const DEPTH_TO                  = "depthTo";
@@ -352,6 +353,8 @@ class MarkdownTocTools {
             if (depth < this.options.DEPTH_FROM) continue;
             if (depth > this.options.DEPTH_TO) continue;
 
+            if (lineText.match(REGEXP_IGNORE_TITLE)) continue;
+
             for (var i = depth; i <= this.options.DEPTH_TO; i++) {
                 indicesOfDepth[depth] = 0;
             }
@@ -363,7 +366,9 @@ class MarkdownTocTools {
             }
 
             let title = lineText.substr(depth).trim();
-            title = title.replace(/\#*$/, "").trim(); 
+            title = title.replace(/\[(.+)]\([^)]*\)/gi, "$1");  // replace link
+            title = title.replace(/<!--.+-->/gi, "");           // replace comment
+            title = title.replace(/\#*_/gi, "").trim();         // replace special char
             
             if (hashMap[title] == null) {
                 hashMap[title] = 0

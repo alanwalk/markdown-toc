@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.0] - 2017-07-25
+### Added
+- A way to ignore certain headings.
+
+### Fixed
+- Fixed anchors may have invalid chars that break the links.
+
 ## [1.5.6] - 2017-07-25
 ### Fixed
 - Fixed wrong section numbe.
