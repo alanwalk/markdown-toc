@@ -15,8 +15,8 @@ import {
     TextEditorEdit
 } from 'vscode';
 
-const REGEXP_TOC_START          = /\s*<!--(.*)TOC(.*)-->/gi;
-const REGEXP_TOC_STOP           = /\s*<!--(.*)\/TOC(.*)-->/gi;
+const REGEXP_TOC_START          = /\s*\[comment\]: \# \((.*)TOC(.*)\)/gi;
+const REGEXP_TOC_STOP           = /\s*\[comment\]: \# \((.*)\/TOC(.*)\)/gi;
 const REGEXP_TOC_CONFIG         = /\w+[:=][\w.]+/gi;
 const REGEXP_TOC_CONFIG_ITEM    = /(\w+)[:=]([\w.]+)/;
 const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-.+" name=".+"><\/a\>/;
@@ -24,7 +24,7 @@ const REGEXP_HEADER             = /^(\#{1,6})\s*([.0-9]*)\s*(.+)/;
 const REGEXP_CODE_BLOCK1        = /^```/;
 const REGEXP_CODE_BLOCK2        = /^~~~/;
 const REGEXP_ANCHOR             = /\[.+\]\(#(.+)\)/
-const REGEXP_IGNORE_TITLE       = /<!-- TOC ignore:true -->/
+const REGEXP_IGNORE_TITLE       = /\[comment\]: \# \(TOC ignore:true)/
 
 const DEPTH_FROM                = "depthFrom";
 const DEPTH_TO                  = "depthTo";
@@ -281,7 +281,7 @@ class MarkdownTocTools {
         }       
 
         let optionsText = [];
-        optionsText.push('<!-- TOC ');
+        optionsText.push('[comment]: # (TOC ');
         if (this.optionsFlag.indexOf(DEPTH_FROM)    != -1) optionsText.push(DEPTH_FROM	    + ':' + this.options.DEPTH_FROM     +' ');
         if (this.optionsFlag.indexOf(DEPTH_TO)      != -1) optionsText.push(DEPTH_TO        + ':' + this.options.DEPTH_TO	    +' ');
         if (this.optionsFlag.indexOf(INSERT_ANCHOR) != -1) optionsText.push(INSERT_ANCHOR   + ':' + this.options.INSERT_ANCHOR  +' ');
@@ -289,7 +289,7 @@ class MarkdownTocTools {
         if (this.optionsFlag.indexOf(UPDATE_ON_SAVE)!= -1) optionsText.push(UPDATE_ON_SAVE  + ':' + this.options.UPDATE_ON_SAVE +' ');
         if (this.optionsFlag.indexOf(WITH_LINKS)    != -1) optionsText.push(WITH_LINKS      + ':' + this.options.WITH_LINKS     +' ');
         if (this.optionsFlag.indexOf(ANCHOR_MODE)   != -1) optionsText.push(ANCHOR_MODE     + ':' + this.options.ANCHOR_MODE    +' ');
-        optionsText.push('-->' + lineEnding);
+        optionsText.push(')' + lineEnding);
 
         let text = [];
         text.push(optionsText.join(''));
@@ -323,7 +323,7 @@ class MarkdownTocTools {
             }
         });
 
-        text.push(lineEnding + "<!-- /TOC -->");
+        text.push(lineEnding + "[comment]: # (/TOC)");
         editBuilder.insert(insertPosition, text.join(lineEnding));
     }
 

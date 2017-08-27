@@ -1,7 +1,7 @@
 # Markdown-TOC
 Generate TOC (table of contents) of headlines from parsed [markdown](https://en.wikipedia.org/wiki/Markdown) file.
 
-<!-- TOC depthFrom:2 -->
+[comment]: # (TOC depthFrom:2)
 
 - [1. Features](#1-features)
 - [2. Installation](#2-installation)
@@ -17,7 +17,7 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 - [8. License](#8-license)
 - [9. Links](#9-links)
 
-<!-- /TOC -->
+[comment]: # (/TOC)
 
 ## 1. Features
 - Insert header number sections.
@@ -69,11 +69,11 @@ To change the default configuration settings for the Markdown-TOC extension, edi
 |markdown-toc.anchorMode|enum|github.com|
 
 ### 4.2. Unique Settings
-If you want to use a unique setting for a file, you can add attributes to `<!-- TOC -->` , just like:
+If you want to use a unique setting for a file, you can add attributes to `[comment]: # (TOC)` , just like:
 ```
-<!-- TOC depthFrom:2 orderedList:true -->
+[comment]: # (TOC depthFrom:2 orderedList:true)
 
-<!-- /TOC -->
+[comment]: # (/TOC)
 ```
 
 ## 5. Contributors
