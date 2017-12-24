@@ -1,6 +1,8 @@
 'use strict';
 
 import * as vscode from "vscode";
+import * as utils from './utils';
+import { MarkdownHeader } from "./markdownHeader";
 
 export class MarkdownHeaderProvider implements vscode.TreeDataProvider<MarkdownHeaderNode>
 {
@@ -9,6 +11,10 @@ export class MarkdownHeaderProvider implements vscode.TreeDataProvider<MarkdownH
 
 	private _onDidChangeTreeData: vscode.EventEmitter<MarkdownHeaderNode | undefined> = new vscode.EventEmitter<MarkdownHeaderNode | undefined>();
 	readonly onDidChangeTreeData: vscode.Event<MarkdownHeaderNode | undefined> = this._onDidChangeTreeData.event;
+
+	constructor() {
+		vscode.commands.registerCommand('extension.selectTOCHeader', range => utils.revealLine(range.start.line));
+	}
 
 	getTreeItem(element: MarkdownHeaderNode): MarkdownHeaderNode {
 		return element;
@@ -23,51 +29,19 @@ export class MarkdownHeaderProvider implements vscode.TreeDataProvider<MarkdownH
 		}
 	}
 
-	revealHeader(range: vscode.Range) {
-		let line = range.start.line + 19
-        let reviewType: vscode.TextEditorRevealType = vscode.TextEditorRevealType.InCenter;
-        if (line === vscode.window.activeTextEditor.selection.active.line) {
-            reviewType = vscode.TextEditorRevealType.InCenterIfOutsideViewport;
-        }
-        let newSe = new vscode.Selection(line, 0, line, 0);
-        vscode.window.activeTextEditor.selection = newSe;
-        vscode.window.activeTextEditor.revealRange(newSe, reviewType);
-	}
-
-	updateHeaderList(headerList) {
-		this.tree = [];
-		let minDepth = 6;
-		headerList.forEach(element => {
-			minDepth = Math.min(element.depth, minDepth);
-		});
-		for (let index = 0; index < headerList.length; index++) {
-			const element = headerList[index];
-			if (element.depth == minDepth) {
-				this.tree.push(this.generateNode(headerList, index));
-			}
-		}
-		// for (let index = 0; index < headerList.length; index++) {
-		// 	const element = headerList[index];
-		// 	this.tree.push(new MarkdownHeaderNode("#".repeat(element.depth) + element.title,
-		// 		vscode.TreeItemCollapsibleState.None,
-		// 		{
-		// 			command: 'extension.selectTOCHeader',
-		// 			title: '',
-		// 			arguments: [element.range]
-		// 		}
-		// 	));
-		// }
+	setHeaderNodes(nodes: MarkdownHeaderNode[]) {
+		this.tree = nodes;
 		this._onDidChangeTreeData.fire();
 	}
 
-	private generateNode(headerList, rootIndex): MarkdownHeaderNode {		
-		const curElement = headerList[rootIndex];
+	private generateNode(headers: MarkdownHeader[], rootIndex: number): MarkdownHeaderNode {		
+		const curElement = headers[rootIndex];
 		let curDepth = curElement.depth
 		let childNodes: MarkdownHeaderNode[] = []
-		for (let index = rootIndex + 1; index < headerList.length; index++) {
-			const element = headerList[index];
-			if (curDepth + 1 == element.depth) {
-				childNodes.push(this.generateNode(headerList, index));
+		for (let index = rootIndex + 1; index < headers.length; index++) {
+			const element = headers[index];
+			if (curDepth + 1 === element.depth) {
+				childNodes.push(this.generateNode(headers, index));
 			}
 			else {
 				break;
@@ -85,7 +59,11 @@ export class MarkdownHeaderProvider implements vscode.TreeDataProvider<MarkdownH
 	}
 }
 
-class MarkdownHeaderNode extends vscode.TreeItem {
+export class MarkdownHeaderNode extends vscode.TreeItem {
+
+	public depth: number;
+	public title: string;
+	public titleWithLink: string;
 
 	constructor(
 		public readonly label: string,
