@@ -20,7 +20,7 @@ const REGEXP_TOC_STOP           = /\s*<!--(.*)\/TOC(.*)-->/gi;
 const REGEXP_TOC_CONFIG         = /\w+[:=][\w.]+/gi;
 const REGEXP_TOC_CONFIG_ITEM    = /(\w+)[:=]([\w.]+)/;
 const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-.+" name=".+"><\/a\>/;
-const REGEXP_HEADER             = /^(\#{1,6})\s*([.0-9]*)\s*(.+)/;
+const REGEXP_HEADER             = /^(\#{1,6})\s*(.+)/;
 const REGEXP_CODE_BLOCK1        = /^```/;
 const REGEXP_CODE_BLOCK2        = /^~~~/;
 const REGEXP_ANCHOR             = /\[.+\]\(#(.+)\)/
@@ -366,10 +366,11 @@ class MarkdownTocTools {
             }
 
             let title = lineText.substr(depth).trim();
+            let baseTitle = title.replace(/^(?:\d+\.)+/, "").trim(); // title without section number
             title = title.replace(/\[(.+)]\([^)]*\)/gi, "$1");  // replace link
             title = title.replace(/<!--.+-->/gi, "");           // replace comment
             title = title.replace(/\#*_/gi, "").trim();         // replace special char
-            
+
             if (hashMap[title] == null) {
                 hashMap[title] = 0
             } else {
@@ -385,7 +386,7 @@ class MarkdownTocTools {
                 range : new Range(index, 0, index, lineText.length),
                 header : headerResult[1],
                 orderedList : orderedListStr,
-                baseTitle : headerResult[3]
+                baseTitle : baseTitle
             });
         }
         return headerList;
