@@ -34,14 +34,14 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "views": {
-            "explorer": [
-                {
-                    "id": "MarkdownToc",
-                    "name": "Markdown TOC"
-                }
-            ]
-        },
+		"views": {
+			"explorer": [
+				{
+					"id": "MarkdownToc",
+					"name": "Markdown TOC"
+				}
+			]
+		},
         "commands": [
             {
                 "command": "extension.updateMarkdownToc",
