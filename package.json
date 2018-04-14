@@ -95,6 +95,11 @@
                     "default": 6,
                     "description": "Depth control [1-6]."
                 },
+                "markdown-toc.startFrom": {
+                    "type": "number",
+                    "default": 1,
+                    "description": "Section control [0-x]"
+                },
                 "markdown-toc.insertAnchor": {
                     "type": "boolean",
                     "default": false,
