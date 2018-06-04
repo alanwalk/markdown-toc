@@ -15,8 +15,8 @@ import {
     TextEditorEdit
 } from 'vscode';
 
-const REGEXP_TOC_START          = /\s*<!--(.*)TOC(.*)-->/gi;
-const REGEXP_TOC_STOP           = /\s*<!--(.*)\/TOC(.*)-->/gi;
+const REGEXP_TOC_START          = /\s*<!--\s*TOC(\s(\.*))?-->/gi;
+const REGEXP_TOC_STOP           = /\s*<!--\s\/TOC(\s(\.*))?-->/gi;
 const REGEXP_TOC_CONFIG         = /\w+[:=][\w.]+/gi;
 const REGEXP_TOC_CONFIG_ITEM    = /(\w+)[:=]([\w.]+)/;
 const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-.+" name=".+"><\/a\>/;
