@@ -246,7 +246,7 @@ class MarkdownTocTools {
         if (!this.options.INSERT_ANCHOR) return;
         headerList.forEach(element => {
             let name = element.hash.match(REGEXP_ANCHOR)[1];
-            let text = [ '<a id="markdown-', name, '" name="', name, '"></a>\n' ];
+            let text = [ '<a id="markdown-', name, '" name="', name, '"></a>\n\n' ];
             let insertPosition = new Position(element.line, 0);
             editBuilder.insert(insertPosition, text.join(''));
         });
@@ -258,7 +258,8 @@ class MarkdownTocTools {
             let lineText = doc.lineAt(index).text;
             if(lineText.match(REGEXP_MARKDOWN_ANCHOR) == null) continue;
 
-            let range = new Range(new Position(index, 0), new Position(index + 1, 0));
+            let deleteLineCount = (index + 1 < doc.lineCount && doc.lineAt(index + 1).text.trim() === '') ? 2 : 1;
+            let range = new Range(new Position(index, 0), new Position(index + deleteLineCount, 0));
             editBuilder.delete(range);
         }
     }
