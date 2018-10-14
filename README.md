@@ -95,7 +95,7 @@ If you have any question, you can contact with me:
 - Github : [AlanWalk](https://github.com/AlanWalk)
 
 ## 8. License
-The package is Open Source Software released under the [License](LICENSE). It's developed by AlanWalk.
+The package is Open Source Software released under the [MIT License](LICENSE). It's developed by AlanWalk.
 
 ## 9. Links
 - [Source Code](https://github.com/AlanWalk/Markdown-TOC)
