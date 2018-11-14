@@ -126,9 +126,9 @@ class MarkdownTocTools {
         let tocRange = this.getTocRange();
         this.updateOptions(tocRange);
         let headerList = this.getHeaderList();
-        
+
         window.activeTextEditor.edit(function(editBuilder) {
-            headerList.forEach(element => {                
+            headerList.forEach(element => {
                 let newHeader = element.header + " " + element.orderedList + " " + element.baseTitle
                 editBuilder.replace(element.range, newHeader);
             });
@@ -203,7 +203,7 @@ class MarkdownTocTools {
         let optionsText = window.activeTextEditor.document.lineAt(tocRange.start.line).text;
         let options = optionsText.match(REGEXP_TOC_CONFIG);
         if (options == null) return;
-        
+
         options.forEach(element => {
             let pair = REGEXP_TOC_CONFIG_ITEM.exec(element)
             let key = pair[1].toLocaleLowerCase();
@@ -265,9 +265,12 @@ class MarkdownTocTools {
 
     private createToc(editBuilder : TextEditorEdit, headerList : any[], insertPosition : Position) {
         let lineEnding      = <string>  workspace.getConfiguration("files").get("eol");
+        if (lineEnding === "auto") {
+            lineEnding = "\n";
+        }
         let tabSize         = <number>  workspace.getConfiguration("[markdown]")["editor.tabSize"];
         let insertSpaces    = <boolean> workspace.getConfiguration("[markdown]")["editor.insertSpaces"];
-            
+
         if(tabSize === undefined || tabSize === null) {
             tabSize = <number> workspace.getConfiguration("editor").get("tabSize");
         }
@@ -278,7 +281,7 @@ class MarkdownTocTools {
         let tab = '\t';
         if (insertSpaces && tabSize > 0) {
             tab = " ".repeat(tabSize);
-        }       
+        }
 
         let optionsText = [];
         optionsText.push('<!-- TOC ');
@@ -302,7 +305,7 @@ class MarkdownTocTools {
             minDepth = Math.min(element.depth, minDepth);
         });
         let startDepth = Math.max(minDepth , this.options.DEPTH_FROM);
-        
+
         headerList.forEach(element => {
             if (element.depth <= this.options.DEPTH_TO) {
                 let length = element.depth - startDepth;
@@ -312,7 +315,7 @@ class MarkdownTocTools {
                         waitResetList[index] = false;
                     }
                 }
-                
+
                 let row = [
                     tab.repeat(length),
                     this.options.ORDERED_LIST ? (++indicesOfDepth[length] + '. ') : '- ',
@@ -376,7 +379,7 @@ class MarkdownTocTools {
             } else {
                 hashMap[title] += 1;
             }
-            
+
             let hash = this.getHash(title, this.options.ANCHOR_MODE, hashMap[title]);
             headerList.push({
                 line : index,
