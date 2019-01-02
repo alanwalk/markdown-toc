@@ -267,7 +267,13 @@ class MarkdownTocTools {
         let lineEnding      = <string>  workspace.getConfiguration("files").get("eol");
         let tabSize         = <number>  workspace.getConfiguration("[markdown]")["editor.tabSize"];
         let insertSpaces    = <boolean> workspace.getConfiguration("[markdown]")["editor.insertSpaces"];
-            
+        
+        if(lineEnding === undefined || lineEnding === null || lineEnding === "auto") {
+            // Default back to "\n" in case of VSCode update 1.29.0,
+            // where `Files > EOL` was set to the string value "auto".
+            // See https://github.com/AlanWalk/markdown-toc/issues/65 
+            lineEnding = "\n"; 
+        }
         if(tabSize === undefined || tabSize === null) {
             tabSize = <number> workspace.getConfiguration("editor").get("tabSize");
         }
