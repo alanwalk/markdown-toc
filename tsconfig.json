@@ -5,7 +5,11 @@
         "outDir": "out",
         "noLib": true,
         "sourceMap": true,
-        "rootDir": "."
+        "rootDir": ".",
+        "moduleResolution": "node",
+        "types": [
+            "node"
+        ]
     },
     "exclude": [
         "node_modules"
