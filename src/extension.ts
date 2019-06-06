@@ -33,6 +33,7 @@ const WITH_LINKS                = "withLinks";
 const ORDERED_LIST              = "orderedList";
 const UPDATE_ON_SAVE            = "updateOnSave";
 const ANCHOR_MODE               = "anchorMode";
+const START_FROM                = "startFrom";
 
 const LOWER_DEPTH_FROM          = DEPTH_FROM.toLocaleLowerCase();
 const LOWER_DEPTH_TO            = DEPTH_TO.toLocaleLowerCase();
@@ -41,6 +42,7 @@ const LOWER_WITH_LINKS          = WITH_LINKS.toLocaleLowerCase();
 const LOWER_ORDERED_LIST        = ORDERED_LIST.toLocaleLowerCase();
 const LOWER_UPDATE_ON_SAVE      = UPDATE_ON_SAVE.toLocaleLowerCase();
 const LOWER_ANCHOR_MODE         = ANCHOR_MODE.toLocaleLowerCase();
+const LOWER_START_FROM          = START_FROM.toLocaleLowerCase();
 
 const ANCHOR_MODE_LIST          =
 [
@@ -78,7 +80,8 @@ class MarkdownTocTools {
         WITH_LINKS      : true,
         ORDERED_LIST    : false,
         UPDATE_ON_SAVE  : true,
-        ANCHOR_MODE     : ANCHOR_MODE_LIST[0]
+        ANCHOR_MODE     : ANCHOR_MODE_LIST[0],
+        START_FROM      : 1,
     };
     optionsFlag = [];
     saveBySelf = false;
@@ -195,6 +198,7 @@ class MarkdownTocTools {
         this.options.ORDERED_LIST   = <boolean> workspace.getConfiguration('markdown-toc').get('orderedList');
         this.options.UPDATE_ON_SAVE = <boolean> workspace.getConfiguration('markdown-toc').get('updateOnSave');
         this.options.ANCHOR_MODE    = <string>  workspace.getConfiguration('markdown-toc').get('anchorMode');
+        this.options.START_FROM     = Math.max(<number>  workspace.getConfiguration('markdown-toc').get('startFrom'), 0);
     }
 
     private loadCustomOptions(tocRange : Range) {
@@ -238,6 +242,9 @@ class MarkdownTocTools {
                     this.optionsFlag.push(ANCHOR_MODE);
                     this.options.ANCHOR_MODE = this.parseValidAnchorMode(value);
                     break;
+                case LOWER_START_FROM:
+                    this.optionsFlag.push(START_FROM);
+                    this.options.START_FROM = Math.max(this.parseValidNumber(value), 0);
             }
         });
     }
@@ -289,6 +296,7 @@ class MarkdownTocTools {
         if (this.optionsFlag.indexOf(UPDATE_ON_SAVE)!= -1) optionsText.push(UPDATE_ON_SAVE  + ':' + this.options.UPDATE_ON_SAVE +' ');
         if (this.optionsFlag.indexOf(WITH_LINKS)    != -1) optionsText.push(WITH_LINKS      + ':' + this.options.WITH_LINKS     +' ');
         if (this.optionsFlag.indexOf(ANCHOR_MODE)   != -1) optionsText.push(ANCHOR_MODE     + ':' + this.options.ANCHOR_MODE    +' ');
+        if (this.optionsFlag.indexOf(START_FROM)    != -1) optionsText.push(START_FROM      + ':' + this.options.START_FROM     +' ');
         optionsText.push('-->' + lineEnding);
 
         let text = [];
@@ -332,7 +340,9 @@ class MarkdownTocTools {
         let headerList = [];
         let hashMap = {};
         let isInCode = 0;
-        let indicesOfDepth = Array.apply(null, new Array(6)).map(Number.prototype.valueOf, 0);
+        let indicesOfDepth = Array.apply(null, new Array(6)).map(Number.prototype.valueOf, 0)
+        indicesOfDepth[this.options.DEPTH_FROM -1] += this.options.START_FROM -1;
+
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
             let codeResult1 = lineText.match(REGEXP_CODE_BLOCK1);
