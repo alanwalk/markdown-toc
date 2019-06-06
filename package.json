@@ -35,22 +35,23 @@
     "main": "./out/src/extension",
     "contributes": {
         "commands": [
-        {
-            "command": "extension.updateMarkdownToc",
-            "title": "Markdown TOC: Insert/Update"
-        },
-        {
-            "command": "extension.deleteMarkdownToc",
-            "title": "Markdown TOC: Delete"
-        },
-        {
-            "command": "extension.updateMarkdownSections",
-            "title": "Markdown Sections: Insert/Update"
-        },
-        {
-            "command": "extension.deleteMarkdownSections",
-            "title": "Markdown Sections: Delete"
-        }],
+            {
+                "command": "extension.updateMarkdownToc",
+                "title": "Markdown TOC: Insert/Update"
+            },
+            {
+                "command": "extension.deleteMarkdownToc",
+                "title": "Markdown TOC: Delete"
+            },
+            {
+                "command": "extension.updateMarkdownSections",
+                "title": "Markdown Sections: Insert/Update"
+            },
+            {
+                "command": "extension.deleteMarkdownSections",
+                "title": "Markdown Sections: Delete"
+            }
+        ],
         "menus": {
             "editor/context": [
                 {
@@ -71,7 +72,7 @@
                 }
             ]
         },
-        "keybindings":[
+        "keybindings": [
             {
                 "command": "extension.updateMarkdownToc",
                 "key": "ctrl+m t"
@@ -119,12 +120,12 @@
                     "type": "string",
                     "default": "github.com",
                     "description": "anchor mode.",
-					"enum": [
-						"github.com",
-						"bitbucket.org",
-						"ghost.org",
+                    "enum": [
+                        "github.com",
+                        "bitbucket.org",
+                        "ghost.org",
                         "gitlab.com"
-					]
+                    ]
                 }
             }
         }
@@ -135,6 +136,7 @@
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "dependencies": {
+        "@types/node": "^10.12.18",
         "anchor-markdown-header": "^0.5.7"
     },
     "devDependencies": {
