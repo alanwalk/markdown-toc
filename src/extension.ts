@@ -50,6 +50,8 @@ const ANCHOR_MODE_LIST          =
     "gitlab.com"
 ]
 
+const EOL = require('os').EOL;
+
 export function activate(context: ExtensionContext) {
 
     // create a MarkdownTocTools
@@ -267,7 +269,10 @@ class MarkdownTocTools {
         let lineEnding      = <string>  workspace.getConfiguration("files").get("eol");
         let tabSize         = <number>  workspace.getConfiguration("[markdown]")["editor.tabSize"];
         let insertSpaces    = <boolean> workspace.getConfiguration("[markdown]")["editor.insertSpaces"];
-            
+
+        if (lineEnding === 'auto') {
+            lineEnding = <string> EOL;
+        }
         if(tabSize === undefined || tabSize === null) {
             tabSize = <number> workspace.getConfiguration("editor").get("tabSize");
         }
