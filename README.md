@@ -88,11 +88,14 @@ If you want to use a unique setting for a file, you can add attributes to `<!-- 
 ## 6. What's New?
 [CHANGELOG](https://github.com/AlanWalk/Markdown-TOC/blob/master/CHANGELOG.md)
 
-## 7. Question
-If you have any question, you can contact with me: 
+
+## 7. Authors
+This extension is created by Alan Walk. If you have any questions, contact him at:
 - Mail : [alanwalk93@gmail.com](mailto:alanwalk93@gmail.com)
 - Twitter : [@AlanWalk93](https://twitter.com/AlanWalk93)
 - Github : [AlanWalk](https://github.com/AlanWalk)
+
+This forked repository is maintained by me and anyone who would like to contribute. The EOL fixed was contributed by [roborourke](https://github.com/roborourke/markdown-toc.git) and any one open new pull request with the hope of fixing the problem
 
 ## 8. License
 The package is Open Source Software released under the [MIT License](LICENSE). It's developed by AlanWalk.
