@@ -2,29 +2,29 @@
     "name": "markdown-toc",
     "displayName": "Markdown TOC",
     "description": "Markdown TOC(Table Of Contents) Plugin for Visual Studio Code.",
-    "version": "1.6.0",
+    "version": "1.6.1",
     "icon": "img/markdown-toc.png",
     "license": "MIT",
     "author": {
-        "email": "alanwalk93@gmail.com",
-        "name": "Alan Walk",
-        "url": "https://blog.otorb.com"
+        "email": "hunter.tran.92@gmail.com",
+        "name": "Hunter Tran",
+        "url": "https://coding4food.net/"
     },
     "bugs": {
-        "url": "https://github.com/AlanWalk/Markdown-TOC/issues"
+        "url": "https://github.com/huntertran/markdown-toc/issues"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/AlanWalk/Markdown-TOC.git"
+        "url": "https://github.com/huntertran/markdown-toc.git"
     },
     "keywords": [
         "markdown",
         "toc"
     ],
-    "homepage": "https://github.com/AlanWalk/Markdown-TOC",
-    "publisher": "AlanWalk",
+    "homepage": "https://github.com/huntertran/markdown-toc",
+    "publisher": "hunter.tran",
     "engines": {
-        "vscode": "^1.0.0"
+        "vscode": "^1.34.0"
     },
     "categories": [
         "Other"
@@ -32,25 +32,26 @@
     "activationEvents": [
         "onLanguage:markdown"
     ],
-    "main": "./out/src/extension",
+    "main": "./out/extension.js",
     "contributes": {
         "commands": [
-        {
-            "command": "extension.updateMarkdownToc",
-            "title": "Markdown TOC: Insert/Update"
-        },
-        {
-            "command": "extension.deleteMarkdownToc",
-            "title": "Markdown TOC: Delete"
-        },
-        {
-            "command": "extension.updateMarkdownSections",
-            "title": "Markdown Sections: Insert/Update"
-        },
-        {
-            "command": "extension.deleteMarkdownSections",
-            "title": "Markdown Sections: Delete"
-        }],
+            {
+                "command": "extension.updateMarkdownToc",
+                "title": "Markdown TOC: Insert/Update"
+            },
+            {
+                "command": "extension.deleteMarkdownToc",
+                "title": "Markdown TOC: Delete"
+            },
+            {
+                "command": "extension.updateMarkdownSections",
+                "title": "Markdown Sections: Insert/Update"
+            },
+            {
+                "command": "extension.deleteMarkdownSections",
+                "title": "Markdown Sections: Delete"
+            }
+        ],
         "menus": {
             "editor/context": [
                 {
@@ -71,7 +72,7 @@
                 }
             ]
         },
-        "keybindings":[
+        "keybindings": [
             {
                 "command": "extension.updateMarkdownToc",
                 "key": "ctrl+m t"
@@ -119,27 +120,30 @@
                     "type": "string",
                     "default": "github.com",
                     "description": "anchor mode.",
-					"enum": [
-						"github.com",
-						"bitbucket.org",
-						"ghost.org",
+                    "enum": [
+                        "github.com",
+                        "bitbucket.org",
+                        "ghost.org",
                         "gitlab.com"
-					]
+                    ]
                 }
             }
         }
     },
     "scripts": {
-        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "lint": "tslint -p ./",
+        "watch": "tsc -watch -p ./"
     },
     "dependencies": {
         "anchor-markdown-header": "^0.5.7"
     },
     "devDependencies": {
         "anchor-markdown-header": "^0.5.7",
-        "typescript": "^1.8.5",
-        "vscode": "^0.11.0"
+        "@types/node": "^8.10.25",
+        "@types/vscode": "^1.34.0",
+        "tslint": "^5.16.0",
+        "typescript": "^3.5.1"
     }
 }
