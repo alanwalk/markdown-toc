@@ -22,7 +22,7 @@
         "toc"
     ],
     "homepage": "https://github.com/huntertran/markdown-toc",
-    "publisher": "hunter.tran",
+    "publisher": "huntertran",
     "engines": {
         "vscode": "^1.34.0"
     },
