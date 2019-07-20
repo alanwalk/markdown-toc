@@ -196,7 +196,7 @@ class MarkdownTocTools {
 
         let doc = editor.document;
 
-        let start, stop: Position;
+        let start, stop: Position | undefined;
 
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
