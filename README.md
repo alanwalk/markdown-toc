@@ -98,8 +98,8 @@ This extension is created by Alan Walk. If you have any questions, contact him a
 This forked repository is maintained by me and anyone who would like to contribute. The EOL fixed was contributed by [roborourke](https://github.com/roborourke/markdown-toc.git) and any one open new pull request with the hope of fixing the problem
 
 ## 8. License
-The package is Open Source Software released under the [MIT License](LICENSE). It's developed by AlanWalk.
+The package is Open Source Software released under the [MIT License](LICENSE). It's developed by AlanWalk, maintained by Hunter Tran
 
 ## 9. Links
-- [Source Code](https://github.com/AlanWalk/Markdown-TOC)
-- [Market](https://marketplace.visualstudio.com/items/AlanWalk.markdown-toc)
+- [Source Code](https://github.com/huntertran/markdown-toc)
+- [Market](https://marketplace.visualstudio.com/items?itemName=huntertran.markdown-toc)
