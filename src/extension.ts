@@ -3,17 +3,17 @@
 import {
     window,
     commands,
-    Disposable,
     ExtensionContext,
-    StatusBarAlignment,
-    StatusBarItem,
     TextDocument,
     workspace,
     Position,
     Range,
-    TextEditor,
     TextEditorEdit
 } from 'vscode';
+
+import { Header } from './models/Header';
+import { OptionKeys } from './models/OptionKeys';
+import { isNullOrUndefined } from 'util';
 
 const REGEXP_TOC_START = /\s*<!--(.*)TOC(.*)-->/gi;
 const REGEXP_TOC_STOP = /\s*<!--(.*)\/TOC(.*)-->/gi;
@@ -26,29 +26,31 @@ const REGEXP_CODE_BLOCK2 = /^~~~/;
 const REGEXP_ANCHOR = /\[.+\]\(#(.+)\)/
 const REGEXP_IGNORE_TITLE = /<!-- TOC ignore:true -->/
 
-const DEPTH_FROM = "depthFrom";
-const DEPTH_TO = "depthTo";
-const INSERT_ANCHOR = "insertAnchor";
-const WITH_LINKS = "withLinks";
-const ORDERED_LIST = "orderedList";
-const UPDATE_ON_SAVE = "updateOnSave";
-const ANCHOR_MODE = "anchorMode";
+const optionKeys = new OptionKeys();
 
-const LOWER_DEPTH_FROM = DEPTH_FROM.toLocaleLowerCase();
-const LOWER_DEPTH_TO = DEPTH_TO.toLocaleLowerCase();
-const LOWER_INSERT_ANCHOR = INSERT_ANCHOR.toLocaleLowerCase();
-const LOWER_WITH_LINKS = WITH_LINKS.toLocaleLowerCase();
-const LOWER_ORDERED_LIST = ORDERED_LIST.toLocaleLowerCase();
-const LOWER_UPDATE_ON_SAVE = UPDATE_ON_SAVE.toLocaleLowerCase();
-const LOWER_ANCHOR_MODE = ANCHOR_MODE.toLocaleLowerCase();
+// const DEPTH_FROM = "depthFrom";
+// const DEPTH_TO = "depthTo";
+// const INSERT_ANCHOR = "insertAnchor";
+// const WITH_LINKS = "withLinks";
+// const ORDERED_LIST = "orderedList";
+// const UPDATE_ON_SAVE = "updateOnSave";
+// const ANCHOR_MODE = "anchorMode";
 
-const ANCHOR_MODE_LIST =
-    [
-        "github.com",
-        "bitbucket.org",
-        "ghost.org",
-        "gitlab.com"
-    ]
+const LOWER_DEPTH_FROM = optionKeys.DEPTH_FROM.toLocaleLowerCase();
+const LOWER_DEPTH_TO = optionKeys.DEPTH_TO.toLocaleLowerCase();
+const LOWER_INSERT_ANCHOR = optionKeys.INSERT_ANCHOR.toLocaleLowerCase();
+const LOWER_WITH_LINKS = optionKeys.WITH_LINKS.toLocaleLowerCase();
+const LOWER_ORDERED_LIST = optionKeys.ORDERED_LIST.toLocaleLowerCase();
+const LOWER_UPDATE_ON_SAVE = optionKeys.UPDATE_ON_SAVE.toLocaleLowerCase();
+const LOWER_ANCHOR_MODE = optionKeys.ANCHOR_MODE.toLocaleLowerCase();
+
+// const ANCHOR_MODE_LIST =
+//     [
+//         "github.com",
+//         "bitbucket.org",
+//         "ghost.org",
+//         "gitlab.com"
+//     ]
 
 const EOL = require('os').EOL;
 
@@ -61,7 +63,7 @@ export function activate(context: ExtensionContext) {
     let disposable_deleteMarkdownToc = commands.registerCommand('extension.deleteMarkdownToc', () => { markdownTocTools.deleteMarkdownToc(); });
     let disposable_updateMarkdownSections = commands.registerCommand('extension.updateMarkdownSections', () => { markdownTocTools.updateMarkdownSections(); });
     let disposable_deleteMarkdownSections = commands.registerCommand('extension.deleteMarkdownSections', () => { markdownTocTools.deleteMarkdownSections(); });
-    let disposable_saveMarkdownToc = workspace.onDidSaveTextDocument((doc: TextDocument) => { markdownTocTools.notifyDocumentSave(); });
+    let disposable_saveMarkdownToc = workspace.onDidSaveTextDocument(() => { markdownTocTools.notifyDocumentSave(); });
 
     // Add to a list of disposables which are disposed when this extension is deactivated.
     context.subscriptions.push(disposable_updateMarkdownToc);
@@ -80,7 +82,7 @@ class MarkdownTocTools {
         WITH_LINKS: true,
         ORDERED_LIST: false,
         UPDATE_ON_SAVE: true,
-        ANCHOR_MODE: ANCHOR_MODE_LIST[0]
+        ANCHOR_MODE: optionKeys.ANCHOR_MODE_LIST[0]
     };
     optionsFlag: string[] = [];
     saveBySelf = false;
@@ -205,6 +207,7 @@ class MarkdownTocTools {
                 break;
             }
         }
+
         if ((start != null) && (stop != null)) {
             return new Range(start, stop);
         }
@@ -212,7 +215,7 @@ class MarkdownTocTools {
         return null;
     }
 
-    private updateOptions(tocRange: Range) {
+    private updateOptions(tocRange: Range | null) {
         this.loadConfigurations();
         this.loadCustomOptions(tocRange);
     }
@@ -227,9 +230,9 @@ class MarkdownTocTools {
         this.options.ANCHOR_MODE = <string>workspace.getConfiguration('markdown-toc').get('anchorMode');
     }
 
-    private loadCustomOptions(tocRange: Range) {
+    private loadCustomOptions(tocRange: Range | null) {
         this.optionsFlag = [];
-        if (tocRange == null) return;
+        if (tocRange == null || tocRange == null) return;
         let editor = window.activeTextEditor;
         if (editor == undefined) return;
         let optionsText = editor.document.lineAt(tocRange.start.line).text;
@@ -245,31 +248,31 @@ class MarkdownTocTools {
 
                 switch (key) {
                     case LOWER_DEPTH_FROM:
-                        this.optionsFlag.push(DEPTH_FROM);
+                        this.optionsFlag.push(optionKeys.DEPTH_FROM);
                         this.options.DEPTH_FROM = this.parseValidNumber(value);
                         break;
                     case LOWER_DEPTH_TO:
-                        this.optionsFlag.push(DEPTH_TO);
+                        this.optionsFlag.push(optionKeys.DEPTH_TO);
                         this.options.DEPTH_TO = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM);
                         break;
                     case LOWER_INSERT_ANCHOR:
-                        this.optionsFlag.push(INSERT_ANCHOR);
+                        this.optionsFlag.push(optionKeys.INSERT_ANCHOR);
                         this.options.INSERT_ANCHOR = this.parseBool(value);
                         break;
                     case LOWER_WITH_LINKS:
-                        this.optionsFlag.push(WITH_LINKS);
+                        this.optionsFlag.push(optionKeys.WITH_LINKS);
                         this.options.WITH_LINKS = this.parseBool(value);
                         break;
                     case LOWER_ORDERED_LIST:
-                        this.optionsFlag.push(ORDERED_LIST);
+                        this.optionsFlag.push(optionKeys.ORDERED_LIST);
                         this.options.ORDERED_LIST = this.parseBool(value);
                         break;
                     case LOWER_UPDATE_ON_SAVE:
-                        this.optionsFlag.push(UPDATE_ON_SAVE);
+                        this.optionsFlag.push(optionKeys.UPDATE_ON_SAVE);
                         this.options.UPDATE_ON_SAVE = this.parseBool(value);
                         break;
                     case LOWER_ANCHOR_MODE:
-                        this.optionsFlag.push(ANCHOR_MODE);
+                        this.optionsFlag.push(optionKeys.ANCHOR_MODE);
                         this.options.ANCHOR_MODE = this.parseValidAnchorMode(value);
                         break;
                 }
@@ -324,13 +327,13 @@ class MarkdownTocTools {
 
         let optionsText = [];
         optionsText.push('<!-- TOC ');
-        if (this.optionsFlag.indexOf(DEPTH_FROM) != -1) optionsText.push(DEPTH_FROM + ':' + this.options.DEPTH_FROM + ' ');
-        if (this.optionsFlag.indexOf(DEPTH_TO) != -1) optionsText.push(DEPTH_TO + ':' + this.options.DEPTH_TO + ' ');
-        if (this.optionsFlag.indexOf(INSERT_ANCHOR) != -1) optionsText.push(INSERT_ANCHOR + ':' + this.options.INSERT_ANCHOR + ' ');
-        if (this.optionsFlag.indexOf(ORDERED_LIST) != -1) optionsText.push(ORDERED_LIST + ':' + this.options.ORDERED_LIST + ' ');
-        if (this.optionsFlag.indexOf(UPDATE_ON_SAVE) != -1) optionsText.push(UPDATE_ON_SAVE + ':' + this.options.UPDATE_ON_SAVE + ' ');
-        if (this.optionsFlag.indexOf(WITH_LINKS) != -1) optionsText.push(WITH_LINKS + ':' + this.options.WITH_LINKS + ' ');
-        if (this.optionsFlag.indexOf(ANCHOR_MODE) != -1) optionsText.push(ANCHOR_MODE + ':' + this.options.ANCHOR_MODE + ' ');
+        if (this.optionsFlag.indexOf(optionKeys.DEPTH_FROM) != -1) optionsText.push(optionKeys.DEPTH_FROM + ':' + this.options.DEPTH_FROM + ' ');
+        if (this.optionsFlag.indexOf(optionKeys.DEPTH_TO) != -1) optionsText.push(optionKeys.DEPTH_TO + ':' + this.options.DEPTH_TO + ' ');
+        if (this.optionsFlag.indexOf(optionKeys.INSERT_ANCHOR) != -1) optionsText.push(optionKeys.INSERT_ANCHOR + ':' + this.options.INSERT_ANCHOR + ' ');
+        if (this.optionsFlag.indexOf(optionKeys.ORDERED_LIST) != -1) optionsText.push(optionKeys.ORDERED_LIST + ':' + this.options.ORDERED_LIST + ' ');
+        if (this.optionsFlag.indexOf(optionKeys.UPDATE_ON_SAVE) != -1) optionsText.push(optionKeys.UPDATE_ON_SAVE + ':' + this.options.UPDATE_ON_SAVE + ' ');
+        if (this.optionsFlag.indexOf(optionKeys.WITH_LINKS) != -1) optionsText.push(optionKeys.WITH_LINKS + ':' + this.options.WITH_LINKS + ' ');
+        if (this.optionsFlag.indexOf(optionKeys.ANCHOR_MODE) != -1) optionsText.push(optionKeys.ANCHOR_MODE + ':' + this.options.ANCHOR_MODE + ' ');
         optionsText.push('-->' + lineEnding);
 
         let text = [];
@@ -371,14 +374,15 @@ class MarkdownTocTools {
 
     private getHeaderList() {
 
-        let headerList = [];
+        let headerList: Header[] = [];
 
         let editor = window.activeTextEditor;
+
         if (editor != undefined) {
 
             let doc = editor.document;
 
-            let hashMap = {};
+            let hashMap: any = {};
             let isInCode = 0;
             let indicesOfDepth = Array.apply(null, new Array(6)).map(Number.prototype.valueOf, 0);
             for (let index = 0; index < doc.lineCount; index++) {
@@ -415,9 +419,8 @@ class MarkdownTocTools {
 
                 let title = lineText.substr(depth).trim();
                 let baseTitle = title.replace(/^(?:\d+\.)+/, "").trim(); // title without section number
-                title = title.replace(/\[(.+)]\([^)]*\)/gi, "$1");  // replace link
-                title = title.replace(/<!--.+-->/gi, "");           // replace comment
-                title = title.replace(/\#*_/gi, "").trim();         // replace special char
+
+                title = this.cleanUpTitle(title);
 
                 if (hashMap[title] == null) {
                     hashMap[title] = 0
@@ -426,19 +429,24 @@ class MarkdownTocTools {
                 }
 
                 let hash = this.getHash(title, this.options.ANCHOR_MODE, hashMap[title]);
-                headerList.push({
-                    line: index,
-                    depth: depth,
-                    title: title,
-                    hash: hash,
-                    range: new Range(index, 0, index, lineText.length),
-                    header: headerResult[1],
-                    orderedList: orderedListStr,
-                    baseTitle: baseTitle
-                });
+
+                let headerRange = new Range(index, 0, index, lineText.length);
+
+                headerList.push(new Header(index, depth, title, hash, headerRange, headerResult[1], orderedListStr, baseTitle));
             }
+
             return headerList;
         }
+
+        return headerList;
+    }
+
+    private cleanUpTitle(dirtyTitle: string) {
+        let title = dirtyTitle.replace(/\[(.+)]\([^)]*\)/gi, "$1");  // replace link
+        title = title.replace(/<!--.+-->/gi, "");           // replace comment
+        title = title.replace(/\#*_/gi, "").trim();         // replace special char
+
+        return title;
     }
 
     private getHash(headername: string, mode: string, repetition: number) {
@@ -458,10 +466,12 @@ class MarkdownTocTools {
     }
 
     private parseValidAnchorMode(value: string) {
-        if (ANCHOR_MODE_LIST.indexOf(value) != -1) {
+
+        if (optionKeys.ANCHOR_MODE_LIST.indexOf(value) != -1) {
             return value;
         }
-        return ANCHOR_MODE_LIST[0];
+
+        return optionKeys.ANCHOR_MODE_LIST[0];
     }
 
     private parseBool(value: string) {
