@@ -13,7 +13,7 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
     - [4.2. Unique Settings](#42-unique-settings)
 - [5. Contributors](#5-contributors)
 - [6. What's New?](#6-whats-new)
-- [7. Question](#7-question)
+- [7. Authors](#7-authors)
 - [8. License](#8-license)
 - [9. Links](#9-links)
 
@@ -102,4 +102,4 @@ The package is Open Source Software released under the [MIT License](LICENSE). I
 
 ## 9. Links
 - [Source Code](https://github.com/huntertran/markdown-toc)
-- [Market](https://marketplace.visualstudio.com/items?itemName=huntertran.markdown-toc)
+- [Market](https://marketplace.visualstudio.com/items?itemName=huntertran.auto-markdown-toc)
