@@ -24,3 +24,6 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(disposable_deleteMarkdownSections);
     context.subscriptions.push(disposable_saveMarkdownToc);
 }
+
+// this method is called when your extension is deactivated
+export function deactivate() {}

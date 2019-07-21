@@ -6,6 +6,8 @@ import {
     Range
 } from 'vscode'
 
+const extensionName:string = "markdown-toc";
+
 export class ConfigManager {
 
     optionKeys = new OptionKeys();
@@ -18,23 +20,33 @@ export class ConfigManager {
     }
 
     public loadConfigurations() {
-        this.options.DEPTH_FROM = <number>workspace.getConfiguration('markdown-toc').get('depthFrom');
-        this.options.DEPTH_TO = <number>workspace.getConfiguration('markdown-toc').get('depthTo');
-        this.options.INSERT_ANCHOR = <boolean>workspace.getConfiguration('markdown-toc').get('insertAnchor');
-        this.options.WITH_LINKS = <boolean>workspace.getConfiguration('markdown-toc').get('withLinks');
-        this.options.ORDERED_LIST = <boolean>workspace.getConfiguration('markdown-toc').get('orderedList');
-        this.options.UPDATE_ON_SAVE = <boolean>workspace.getConfiguration('markdown-toc').get('updateOnSave');
-        this.options.ANCHOR_MODE = <string>workspace.getConfiguration('markdown-toc').get('anchorMode');
+        this.options.DEPTH_FROM.value = <number>workspace.getConfiguration(extensionName).get(this.options.DEPTH_FROM.key);
+        this.options.DEPTH_TO.value = <number>workspace.getConfiguration(extensionName).get(this.options.DEPTH_TO.key);
+        this.options.INSERT_ANCHOR.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.INSERT_ANCHOR.key);
+        this.options.WITH_LINKS.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.WITH_LINKS.key);
+        this.options.ORDERED_LIST.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.ORDERED_LIST.key);
+        this.options.UPDATE_ON_SAVE.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.UPDATE_ON_SAVE.key);
+        this.options.ANCHOR_MODE.value = <string>workspace.getConfiguration(extensionName).get(this.options.ANCHOR_MODE.key);
     }
 
     public loadCustomOptions(tocRange: Range | null) {
         this.options.optionsFlag = [];
-        if (tocRange == null || tocRange == null) return;
+
+        if (tocRange == null) {
+            return
+        };
+
         let editor = window.activeTextEditor;
-        if (editor == undefined) return;
+        if (editor == undefined) {
+            return
+        };
+
         let optionsText = editor.document.lineAt(tocRange.start.line).text;
         let options = optionsText.match(this.optionKeys.REGEXP_TOC_CONFIG);
-        if (options == null) return;
+
+        if (options == null) {
+            return
+        };
 
         options.forEach(element => {
             let pair = this.optionKeys.REGEXP_TOC_CONFIG_ITEM.exec(element)
@@ -44,37 +56,36 @@ export class ConfigManager {
                 let value = pair[2];
 
                 switch (key) {
-                    case this.optionKeys.LOWER_DEPTH_FROM:
-                        this.options.optionsFlag.push(this.optionKeys.DEPTH_FROM);
-                        this.options.DEPTH_FROM = this.parseValidNumber(value);
+                    case this.options.DEPTH_FROM.lowerCaseKey:
+                        this.options.optionsFlag.push(key);
+                        this.options.DEPTH_FROM.value = this.parseValidNumber(value);
                         break;
-                    case this.optionKeys.LOWER_DEPTH_TO:
-                        this.options.optionsFlag.push(this.optionKeys.DEPTH_TO);
-                        this.options.DEPTH_TO = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM);
+                    case this.options.DEPTH_TO.lowerCaseKey:
+                        this.options.optionsFlag.push(key);
+                        this.options.DEPTH_TO.value = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM.value);
                         break;
-                    case this.optionKeys.LOWER_INSERT_ANCHOR:
-                        this.options.optionsFlag.push(this.optionKeys.INSERT_ANCHOR);
-                        this.options.INSERT_ANCHOR = this.parseBool(value);
+                    case this.options.INSERT_ANCHOR.lowerCaseKey:
+                        this.options.optionsFlag.push(key);
+                        this.options.INSERT_ANCHOR.value = this.parseBool(value);
                         break;
-                    case this.optionKeys.LOWER_WITH_LINKS:
-                        this.options.optionsFlag.push(this.optionKeys.WITH_LINKS);
-                        this.options.WITH_LINKS = this.parseBool(value);
+                    case this.options.WITH_LINKS.lowerCaseKey:
+                        this.options.optionsFlag.push(key);
+                        this.options.WITH_LINKS.value = this.parseBool(value);
                         break;
-                    case this.optionKeys.LOWER_ORDERED_LIST:
-                        this.options.optionsFlag.push(this.optionKeys.ORDERED_LIST);
-                        this.options.ORDERED_LIST = this.parseBool(value);
+                    case this.options.ORDERED_LIST.lowerCaseKey:
+                        this.options.optionsFlag.push(key);
+                        this.options.ORDERED_LIST.value = this.parseBool(value);
                         break;
-                    case this.optionKeys.LOWER_UPDATE_ON_SAVE:
-                        this.options.optionsFlag.push(this.optionKeys.UPDATE_ON_SAVE);
-                        this.options.UPDATE_ON_SAVE = this.parseBool(value);
+                    case this.options.UPDATE_ON_SAVE.lowerCaseKey:
+                        this.options.optionsFlag.push(key);
+                        this.options.UPDATE_ON_SAVE.value = this.parseBool(value);
                         break;
-                    case this.optionKeys.LOWER_ANCHOR_MODE:
-                        this.options.optionsFlag.push(this.optionKeys.ANCHOR_MODE);
-                        this.options.ANCHOR_MODE = this.parseValidAnchorMode(value);
+                    case this.options.ANCHOR_MODE.lowerCaseKey:
+                        this.options.optionsFlag.push(key);
+                        this.options.ANCHOR_MODE.value = this.parseValidAnchorMode(value);
                         break;
                 }
             }
-
         });
     }
 
