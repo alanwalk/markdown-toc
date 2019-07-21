@@ -1,5 +1,6 @@
 import { OptionKeys } from './OptionKeys';
 import { Dictionary } from './Dictionary';
+// import defaultSettings from '../data/defaultSettings.json';
 
 const optionKeys = new OptionKeys();
 
@@ -16,8 +17,10 @@ export class Options {
     UPDATE_ON_SAVE: Dictionary = new Dictionary("updateOnSave", true);
     ANCHOR_MODE: Dictionary = new Dictionary("anchorMode", optionKeys.ANCHOR_MODE_LIST[0]);
 
-    public getOptionValueByKey(key:string) {
-        switch(key) {
+    // settings: Dictionary[] = defaultSettings;
+
+    public getOptionValueByKey(key: string) {
+        switch (key) {
             case this.DEPTH_FROM.key:
                 return this.DEPTH_FROM.value;
             case this.DEPTH_TO.key:
@@ -34,4 +37,22 @@ export class Options {
                 return this.ANCHOR_MODE.value;
         }
     }
+
+    // public getSettingByKey(key: string) {
+    //     let settingIndex = this.settings.findIndex(item => item.lowerCaseKey == key.toLocaleLowerCase());
+    //     if (settingIndex > -1) {
+    //         return this.settings[settingIndex];
+    //     }
+
+    //     return undefined;
+    // }
+
+    // public getSettingValueByKey(key: string) {
+    //     let setting = this.getSettingByKey(key);
+    //     if (setting != undefined) {
+    //         return setting.value;
+    //     }
+
+    //     return undefined;
+    // }
 }

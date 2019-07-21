@@ -6,13 +6,22 @@ import {
     Range
 } from 'vscode'
 
-const extensionName:string = "markdown-toc";
+const extensionName: string = "markdown-toc";
+const EOL = require('os').EOL;
 
 export class ConfigManager {
 
     optionKeys = new OptionKeys();
 
     options = new Options();
+
+    // language configuration
+    lineEnding = <string>workspace.getConfiguration("files").get("eol");
+    tabSize = <number>workspace.getConfiguration("[markdown]")["editor.tabSize"];
+    insertSpaces = <boolean>workspace.getConfiguration("[markdown]")["editor.insertSpaces"];
+    
+    // special characters
+    tab = '\t';
 
     public updateOptions(tocRange: Range | null) {
         this.loadConfigurations();
@@ -27,6 +36,20 @@ export class ConfigManager {
         this.options.ORDERED_LIST.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.ORDERED_LIST.key);
         this.options.UPDATE_ON_SAVE.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.UPDATE_ON_SAVE.key);
         this.options.ANCHOR_MODE.value = <string>workspace.getConfiguration(extensionName).get(this.options.ANCHOR_MODE.key);
+
+        if (this.lineEnding === 'auto') {
+            this.lineEnding = <string>EOL;
+        }
+        if (this.tabSize === undefined || this.tabSize === null) {
+            this.tabSize = <number>workspace.getConfiguration("editor").get("tabSize");
+        }
+        if (this.insertSpaces === undefined || this.insertSpaces === null) {
+            this.insertSpaces = <boolean>workspace.getConfiguration("editor").get("insertSpaces");
+        }
+        
+        if (this.insertSpaces && this.tabSize > 0) {
+            this.tab = " ".repeat(this.tabSize);
+        }
     }
 
     public loadCustomOptions(tocRange: Range | null) {

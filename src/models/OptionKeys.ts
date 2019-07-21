@@ -32,4 +32,5 @@ export class OptionKeys {
     REGEXP_CODE_BLOCK2 = /^~~~/;
     REGEXP_ANCHOR = /\[.+\]\(#(.+)\)/
     REGEXP_IGNORE_TITLE = /<!-- TOC ignore:true -->/
+    REGEXP_HEADER_META = /^(\#*)\s*((\d*\.?)*)\s*(.+)/;
 }
