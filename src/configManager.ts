@@ -5,28 +5,9 @@ import {
     Range
 } from 'vscode'
 
-const optionKeys = new OptionKeys();
-
-const LOWER_DEPTH_FROM = optionKeys.DEPTH_FROM.toLocaleLowerCase();
-const LOWER_DEPTH_TO = optionKeys.DEPTH_TO.toLocaleLowerCase();
-const LOWER_INSERT_ANCHOR = optionKeys.INSERT_ANCHOR.toLocaleLowerCase();
-const LOWER_WITH_LINKS = optionKeys.WITH_LINKS.toLocaleLowerCase();
-const LOWER_ORDERED_LIST = optionKeys.ORDERED_LIST.toLocaleLowerCase();
-const LOWER_UPDATE_ON_SAVE = optionKeys.UPDATE_ON_SAVE.toLocaleLowerCase();
-const LOWER_ANCHOR_MODE = optionKeys.ANCHOR_MODE.toLocaleLowerCase();
-
-const REGEXP_TOC_START = /\s*<!--(.*)TOC(.*)-->/gi;
-const REGEXP_TOC_STOP = /\s*<!--(.*)\/TOC(.*)-->/gi;
-const REGEXP_TOC_CONFIG = /\w+[:=][\w.]+/gi;
-const REGEXP_TOC_CONFIG_ITEM = /(\w+)[:=]([\w.]+)/;
-const REGEXP_MARKDOWN_ANCHOR = /^<a id="markdown-.+" name=".+"><\/a\>/;
-const REGEXP_HEADER = /^(\#{1,6})\s*(.+)/;
-const REGEXP_CODE_BLOCK1 = /^```/;
-const REGEXP_CODE_BLOCK2 = /^~~~/;
-const REGEXP_ANCHOR = /\[.+\]\(#(.+)\)/
-const REGEXP_IGNORE_TITLE = /<!-- TOC ignore:true -->/
-
 export class ConfigManager {
+
+    optionKeys = new OptionKeys();
 
     options = {
         DEPTH_FROM: 1,
@@ -35,7 +16,7 @@ export class ConfigManager {
         WITH_LINKS: true,
         ORDERED_LIST: false,
         UPDATE_ON_SAVE: true,
-        ANCHOR_MODE: optionKeys.ANCHOR_MODE_LIST[0]
+        ANCHOR_MODE: this.optionKeys.ANCHOR_MODE_LIST[0]
     };
 
     optionsFlag: string[] = [];
@@ -61,43 +42,43 @@ export class ConfigManager {
         let editor = window.activeTextEditor;
         if (editor == undefined) return;
         let optionsText = editor.document.lineAt(tocRange.start.line).text;
-        let options = optionsText.match(REGEXP_TOC_CONFIG);
+        let options = optionsText.match(this.optionKeys.REGEXP_TOC_CONFIG);
         if (options == null) return;
 
         options.forEach(element => {
-            let pair = REGEXP_TOC_CONFIG_ITEM.exec(element)
+            let pair = this.optionKeys.REGEXP_TOC_CONFIG_ITEM.exec(element)
 
             if (pair != null) {
                 let key = pair[1].toLocaleLowerCase();
                 let value = pair[2];
 
                 switch (key) {
-                    case LOWER_DEPTH_FROM:
-                        this.optionsFlag.push(optionKeys.DEPTH_FROM);
+                    case this.optionKeys.LOWER_DEPTH_FROM:
+                        this.optionsFlag.push(this.optionKeys.DEPTH_FROM);
                         this.options.DEPTH_FROM = this.parseValidNumber(value);
                         break;
-                    case LOWER_DEPTH_TO:
-                        this.optionsFlag.push(optionKeys.DEPTH_TO);
+                    case this.optionKeys.LOWER_DEPTH_TO:
+                        this.optionsFlag.push(this.optionKeys.DEPTH_TO);
                         this.options.DEPTH_TO = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM);
                         break;
-                    case LOWER_INSERT_ANCHOR:
-                        this.optionsFlag.push(optionKeys.INSERT_ANCHOR);
+                    case this.optionKeys.LOWER_INSERT_ANCHOR:
+                        this.optionsFlag.push(this.optionKeys.INSERT_ANCHOR);
                         this.options.INSERT_ANCHOR = this.parseBool(value);
                         break;
-                    case LOWER_WITH_LINKS:
-                        this.optionsFlag.push(optionKeys.WITH_LINKS);
+                    case this.optionKeys.LOWER_WITH_LINKS:
+                        this.optionsFlag.push(this.optionKeys.WITH_LINKS);
                         this.options.WITH_LINKS = this.parseBool(value);
                         break;
-                    case LOWER_ORDERED_LIST:
-                        this.optionsFlag.push(optionKeys.ORDERED_LIST);
+                    case this.optionKeys.LOWER_ORDERED_LIST:
+                        this.optionsFlag.push(this.optionKeys.ORDERED_LIST);
                         this.options.ORDERED_LIST = this.parseBool(value);
                         break;
-                    case LOWER_UPDATE_ON_SAVE:
-                        this.optionsFlag.push(optionKeys.UPDATE_ON_SAVE);
+                    case this.optionKeys.LOWER_UPDATE_ON_SAVE:
+                        this.optionsFlag.push(this.optionKeys.UPDATE_ON_SAVE);
                         this.options.UPDATE_ON_SAVE = this.parseBool(value);
                         break;
-                    case LOWER_ANCHOR_MODE:
-                        this.optionsFlag.push(optionKeys.ANCHOR_MODE);
+                    case this.optionKeys.LOWER_ANCHOR_MODE:
+                        this.optionsFlag.push(this.optionKeys.ANCHOR_MODE);
                         this.options.ANCHOR_MODE = this.parseValidAnchorMode(value);
                         break;
                 }
@@ -123,10 +104,10 @@ export class ConfigManager {
 
     private parseValidAnchorMode(value: string) {
 
-        if (optionKeys.ANCHOR_MODE_LIST.indexOf(value) != -1) {
+        if (this.optionKeys.ANCHOR_MODE_LIST.indexOf(value) != -1) {
             return value;
         }
 
-        return optionKeys.ANCHOR_MODE_LIST[0];
+        return this.optionKeys.ANCHOR_MODE_LIST[0];
     }
 }

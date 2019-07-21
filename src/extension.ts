@@ -4,7 +4,6 @@ import {
     window,
     commands,
     ExtensionContext,
-    TextDocument,
     workspace,
     Position,
     Range,
@@ -13,44 +12,10 @@ import {
 
 import { Header } from './models/Header';
 import { OptionKeys } from './models/OptionKeys';
-import { isNullOrUndefined } from 'util';
-
-const REGEXP_TOC_START = /\s*<!--(.*)TOC(.*)-->/gi;
-const REGEXP_TOC_STOP = /\s*<!--(.*)\/TOC(.*)-->/gi;
-const REGEXP_TOC_CONFIG = /\w+[:=][\w.]+/gi;
-const REGEXP_TOC_CONFIG_ITEM = /(\w+)[:=]([\w.]+)/;
-const REGEXP_MARKDOWN_ANCHOR = /^<a id="markdown-.+" name=".+"><\/a\>/;
-const REGEXP_HEADER = /^(\#{1,6})\s*(.+)/;
-const REGEXP_CODE_BLOCK1 = /^```/;
-const REGEXP_CODE_BLOCK2 = /^~~~/;
-const REGEXP_ANCHOR = /\[.+\]\(#(.+)\)/
-const REGEXP_IGNORE_TITLE = /<!-- TOC ignore:true -->/
+import { ConfigManager } from './configManager';
 
 const optionKeys = new OptionKeys();
-
-// const DEPTH_FROM = "depthFrom";
-// const DEPTH_TO = "depthTo";
-// const INSERT_ANCHOR = "insertAnchor";
-// const WITH_LINKS = "withLinks";
-// const ORDERED_LIST = "orderedList";
-// const UPDATE_ON_SAVE = "updateOnSave";
-// const ANCHOR_MODE = "anchorMode";
-
-const LOWER_DEPTH_FROM = optionKeys.DEPTH_FROM.toLocaleLowerCase();
-const LOWER_DEPTH_TO = optionKeys.DEPTH_TO.toLocaleLowerCase();
-const LOWER_INSERT_ANCHOR = optionKeys.INSERT_ANCHOR.toLocaleLowerCase();
-const LOWER_WITH_LINKS = optionKeys.WITH_LINKS.toLocaleLowerCase();
-const LOWER_ORDERED_LIST = optionKeys.ORDERED_LIST.toLocaleLowerCase();
-const LOWER_UPDATE_ON_SAVE = optionKeys.UPDATE_ON_SAVE.toLocaleLowerCase();
-const LOWER_ANCHOR_MODE = optionKeys.ANCHOR_MODE.toLocaleLowerCase();
-
-// const ANCHOR_MODE_LIST =
-//     [
-//         "github.com",
-//         "bitbucket.org",
-//         "ghost.org",
-//         "gitlab.com"
-//     ]
+const configManager = new ConfigManager();
 
 const EOL = require('os').EOL;
 
@@ -135,7 +100,6 @@ class MarkdownTocTools {
         });
     }
 
-
     public updateMarkdownSections() {
         let tocRange = this.getTocRange();
         this.updateOptions(tocRange);
@@ -200,9 +164,9 @@ class MarkdownTocTools {
 
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
-            if ((start == null) && (lineText.match(REGEXP_TOC_START))) {
+            if ((start == null) && (lineText.match(optionKeys.REGEXP_TOC_START))) {
                 start = new Position(index, 0);
-            } else if (lineText.match(REGEXP_TOC_STOP)) {
+            } else if (lineText.match(optionKeys.REGEXP_TOC_STOP)) {
                 stop = new Position(index, lineText.length);
                 break;
             }
@@ -216,75 +180,14 @@ class MarkdownTocTools {
     }
 
     private updateOptions(tocRange: Range | null) {
-        this.loadConfigurations();
-        this.loadCustomOptions(tocRange);
-    }
-
-    private loadConfigurations() {
-        this.options.DEPTH_FROM = <number>workspace.getConfiguration('markdown-toc').get('depthFrom');
-        this.options.DEPTH_TO = <number>workspace.getConfiguration('markdown-toc').get('depthTo');
-        this.options.INSERT_ANCHOR = <boolean>workspace.getConfiguration('markdown-toc').get('insertAnchor');
-        this.options.WITH_LINKS = <boolean>workspace.getConfiguration('markdown-toc').get('withLinks');
-        this.options.ORDERED_LIST = <boolean>workspace.getConfiguration('markdown-toc').get('orderedList');
-        this.options.UPDATE_ON_SAVE = <boolean>workspace.getConfiguration('markdown-toc').get('updateOnSave');
-        this.options.ANCHOR_MODE = <string>workspace.getConfiguration('markdown-toc').get('anchorMode');
-    }
-
-    private loadCustomOptions(tocRange: Range | null) {
-        this.optionsFlag = [];
-        if (tocRange == null || tocRange == null) return;
-        let editor = window.activeTextEditor;
-        if (editor == undefined) return;
-        let optionsText = editor.document.lineAt(tocRange.start.line).text;
-        let options = optionsText.match(REGEXP_TOC_CONFIG);
-        if (options == null) return;
-
-        options.forEach(element => {
-            let pair = REGEXP_TOC_CONFIG_ITEM.exec(element)
-
-            if (pair != null) {
-                let key = pair[1].toLocaleLowerCase();
-                let value = pair[2];
-
-                switch (key) {
-                    case LOWER_DEPTH_FROM:
-                        this.optionsFlag.push(optionKeys.DEPTH_FROM);
-                        this.options.DEPTH_FROM = this.parseValidNumber(value);
-                        break;
-                    case LOWER_DEPTH_TO:
-                        this.optionsFlag.push(optionKeys.DEPTH_TO);
-                        this.options.DEPTH_TO = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM);
-                        break;
-                    case LOWER_INSERT_ANCHOR:
-                        this.optionsFlag.push(optionKeys.INSERT_ANCHOR);
-                        this.options.INSERT_ANCHOR = this.parseBool(value);
-                        break;
-                    case LOWER_WITH_LINKS:
-                        this.optionsFlag.push(optionKeys.WITH_LINKS);
-                        this.options.WITH_LINKS = this.parseBool(value);
-                        break;
-                    case LOWER_ORDERED_LIST:
-                        this.optionsFlag.push(optionKeys.ORDERED_LIST);
-                        this.options.ORDERED_LIST = this.parseBool(value);
-                        break;
-                    case LOWER_UPDATE_ON_SAVE:
-                        this.optionsFlag.push(optionKeys.UPDATE_ON_SAVE);
-                        this.options.UPDATE_ON_SAVE = this.parseBool(value);
-                        break;
-                    case LOWER_ANCHOR_MODE:
-                        this.optionsFlag.push(optionKeys.ANCHOR_MODE);
-                        this.options.ANCHOR_MODE = this.parseValidAnchorMode(value);
-                        break;
-                }
-            }
-
-        });
+        configManager.loadConfigurations();
+        configManager.loadCustomOptions(tocRange);
     }
 
     private insertAnchor(editBuilder: TextEditorEdit, headerList: any[]) {
         if (!this.options.INSERT_ANCHOR) return;
         headerList.forEach(element => {
-            let name = element.hash.match(REGEXP_ANCHOR)[1];
+            let name = element.hash.match(optionKeys.REGEXP_ANCHOR)[1];
             let text = ['<a id="markdown-', name, '" name="', name, '"></a>\n'];
             let insertPosition = new Position(element.line, 0);
             editBuilder.insert(insertPosition, text.join(''));
@@ -297,7 +200,7 @@ class MarkdownTocTools {
             let doc = editor.document;
             for (let index = 0; index < doc.lineCount; index++) {
                 let lineText = doc.lineAt(index).text;
-                if (lineText.match(REGEXP_MARKDOWN_ANCHOR) == null) continue;
+                if (lineText.match(optionKeys.REGEXP_MARKDOWN_ANCHOR) == null) continue;
 
                 let range = new Range(new Position(index, 0), new Position(index + 1, 0));
                 editBuilder.delete(range);
@@ -387,8 +290,8 @@ class MarkdownTocTools {
             let indicesOfDepth = Array.apply(null, new Array(6)).map(Number.prototype.valueOf, 0);
             for (let index = 0; index < doc.lineCount; index++) {
                 let lineText = doc.lineAt(index).text;
-                let codeResult1 = lineText.match(REGEXP_CODE_BLOCK1);
-                let codeResult2 = lineText.match(REGEXP_CODE_BLOCK2);
+                let codeResult1 = lineText.match(optionKeys.REGEXP_CODE_BLOCK1);
+                let codeResult2 = lineText.match(optionKeys.REGEXP_CODE_BLOCK2);
                 if (isInCode == 0) {
                     isInCode = codeResult1 != null ? 1 : (codeResult2 != null ? 2 : isInCode);
                 } else if (isInCode == 1) {
@@ -398,14 +301,14 @@ class MarkdownTocTools {
                 }
                 if (isInCode) continue;
 
-                let headerResult = lineText.match(REGEXP_HEADER);
+                let headerResult = lineText.match(optionKeys.REGEXP_HEADER);
                 if (headerResult == null) continue;
 
                 let depth = headerResult[1].length;
                 if (depth < this.options.DEPTH_FROM) continue;
                 if (depth > this.options.DEPTH_TO) continue;
 
-                if (lineText.match(REGEXP_IGNORE_TITLE)) continue;
+                if (lineText.match(optionKeys.REGEXP_IGNORE_TITLE)) continue;
 
                 for (var i = depth; i <= this.options.DEPTH_TO; i++) {
                     indicesOfDepth[depth] = 0;
@@ -452,30 +355,6 @@ class MarkdownTocTools {
     private getHash(headername: string, mode: string, repetition: number) {
         let anchor = require('anchor-markdown-header');
         return decodeURI(anchor(headername, mode, repetition));
-    }
-
-    private parseValidNumber(value: string) {
-        let num = parseInt(value);
-        if (num < 1) {
-            return 1;
-        }
-        if (num > 6) {
-            return 6;
-        }
-        return num;
-    }
-
-    private parseValidAnchorMode(value: string) {
-
-        if (optionKeys.ANCHOR_MODE_LIST.indexOf(value) != -1) {
-            return value;
-        }
-
-        return optionKeys.ANCHOR_MODE_LIST[0];
-    }
-
-    private parseBool(value: string) {
-        return value.toLocaleLowerCase() == 'true';
     }
 
     dispose() {
