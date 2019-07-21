@@ -1,4 +1,5 @@
 import { OptionKeys } from './models/OptionKeys';
+import { Options } from './models/Options';
 import {
     workspace,
     window,
@@ -9,17 +10,7 @@ export class ConfigManager {
 
     optionKeys = new OptionKeys();
 
-    options = {
-        DEPTH_FROM: 1,
-        DEPTH_TO: 6,
-        INSERT_ANCHOR: false,
-        WITH_LINKS: true,
-        ORDERED_LIST: false,
-        UPDATE_ON_SAVE: true,
-        ANCHOR_MODE: this.optionKeys.ANCHOR_MODE_LIST[0]
-    };
-
-    optionsFlag: string[] = [];
+    options = new Options();
 
     public updateOptions(tocRange: Range | null) {
         this.loadConfigurations();
@@ -37,7 +28,7 @@ export class ConfigManager {
     }
 
     public loadCustomOptions(tocRange: Range | null) {
-        this.optionsFlag = [];
+        this.options.optionsFlag = [];
         if (tocRange == null || tocRange == null) return;
         let editor = window.activeTextEditor;
         if (editor == undefined) return;
@@ -54,31 +45,31 @@ export class ConfigManager {
 
                 switch (key) {
                     case this.optionKeys.LOWER_DEPTH_FROM:
-                        this.optionsFlag.push(this.optionKeys.DEPTH_FROM);
+                        this.options.optionsFlag.push(this.optionKeys.DEPTH_FROM);
                         this.options.DEPTH_FROM = this.parseValidNumber(value);
                         break;
                     case this.optionKeys.LOWER_DEPTH_TO:
-                        this.optionsFlag.push(this.optionKeys.DEPTH_TO);
+                        this.options.optionsFlag.push(this.optionKeys.DEPTH_TO);
                         this.options.DEPTH_TO = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM);
                         break;
                     case this.optionKeys.LOWER_INSERT_ANCHOR:
-                        this.optionsFlag.push(this.optionKeys.INSERT_ANCHOR);
+                        this.options.optionsFlag.push(this.optionKeys.INSERT_ANCHOR);
                         this.options.INSERT_ANCHOR = this.parseBool(value);
                         break;
                     case this.optionKeys.LOWER_WITH_LINKS:
-                        this.optionsFlag.push(this.optionKeys.WITH_LINKS);
+                        this.options.optionsFlag.push(this.optionKeys.WITH_LINKS);
                         this.options.WITH_LINKS = this.parseBool(value);
                         break;
                     case this.optionKeys.LOWER_ORDERED_LIST:
-                        this.optionsFlag.push(this.optionKeys.ORDERED_LIST);
+                        this.options.optionsFlag.push(this.optionKeys.ORDERED_LIST);
                         this.options.ORDERED_LIST = this.parseBool(value);
                         break;
                     case this.optionKeys.LOWER_UPDATE_ON_SAVE:
-                        this.optionsFlag.push(this.optionKeys.UPDATE_ON_SAVE);
+                        this.options.optionsFlag.push(this.optionKeys.UPDATE_ON_SAVE);
                         this.options.UPDATE_ON_SAVE = this.parseBool(value);
                         break;
                     case this.optionKeys.LOWER_ANCHOR_MODE:
-                        this.optionsFlag.push(this.optionKeys.ANCHOR_MODE);
+                        this.options.optionsFlag.push(this.optionKeys.ANCHOR_MODE);
                         this.options.ANCHOR_MODE = this.parseValidAnchorMode(value);
                         break;
                 }
