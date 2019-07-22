@@ -7,6 +7,7 @@ export class HeaderMeta {
     orderedListString: string = "";
     // title without ordered number
     baseTitle: string = "";
+    dirtyTitle:string = "";
     range: Range;
 
     orderArray:number[] = [];
@@ -27,7 +28,7 @@ export class HeaderMeta {
     }
 
     public get hash(): string {
-        let title = this.cleanUpTitle(this.orderedListString + " " + this.baseTitle);
+        let title = this.cleanUpTitle(this.dirtyHeaderWithoutHeaderMark);
         let hashMap: any = {};
 
         if (hashMap[title] == null) {
@@ -38,6 +39,18 @@ export class HeaderMeta {
         }
 
         return this.getHash(title, this.anchorMode, hashMap[title]);
+    }
+
+    public get fullHeaderWithOrder():string {
+        return this.headerMark + " " + this.orderArray.join('.') + "." + this.baseTitle;
+    }
+
+    public get fullHeaderWithoutOrder():string{
+        return this.headerMark + " " + this.baseTitle;
+    }
+
+    public get dirtyHeaderWithoutHeaderMark():string{
+        return this.orderedListString + " " + this.dirtyTitle;
     }
 
     private getHash(headername: string, mode: string, repetition: number) {

@@ -37,22 +37,4 @@ export class Options {
                 return this.ANCHOR_MODE.value;
         }
     }
-
-    // public getSettingByKey(key: string) {
-    //     let settingIndex = this.settings.findIndex(item => item.lowerCaseKey == key.toLocaleLowerCase());
-    //     if (settingIndex > -1) {
-    //         return this.settings[settingIndex];
-    //     }
-
-    //     return undefined;
-    // }
-
-    // public getSettingValueByKey(key: string) {
-    //     let setting = this.getSettingByKey(key);
-    //     if (setting != undefined) {
-    //         return setting.value;
-    //     }
-
-    //     return undefined;
-    // }
 }

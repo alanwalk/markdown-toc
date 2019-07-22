@@ -5,7 +5,6 @@ import {
     TextEditorEdit,
     TextDocument
 } from 'vscode';
-import { Header } from './models/Header';
 import { HeaderMeta } from "./models/HeaderMeta";
 import { ConfigManager } from './configManager';
 
@@ -35,12 +34,11 @@ export class MarkdownTocTools {
                 editBuilder.delete(tocRange);
                 markdownTocTools.deleteAnchor(editBuilder);
             }
-            let headerList = markdownTocTools.getHeaderList();
 
             let headerMetaList = markdownTocTools.getHeaderMetaList();
 
-            markdownTocTools.createToc(editBuilder, headerList, insertPosition);
-            markdownTocTools.insertAnchor(editBuilder, headerList);
+            markdownTocTools.createToc(editBuilder, headerMetaList, insertPosition);
+            markdownTocTools.insertAnchor(editBuilder, headerMetaList);
         });
 
         return true;
@@ -63,13 +61,12 @@ export class MarkdownTocTools {
     public updateMarkdownSections() {
         let tocRange = this.getTocRange();
         this.updateOptions(tocRange);
-        let headerList = this.getHeaderList();
+        let headerList = this.getHeaderMetaList();
         let editor = window.activeTextEditor;
         if (editor != undefined) {
             editor.edit(function (editBuilder) {
                 headerList.forEach(element => {
-                    let newHeader = element.header + " " + element.orderedList + " " + element.baseTitle;
-                    editBuilder.replace(element.range, newHeader);
+                    editBuilder.replace(element.range, element.fullHeaderWithOrder);
                 });
             });
         }
@@ -77,13 +74,12 @@ export class MarkdownTocTools {
     public deleteMarkdownSections() {
         let tocRange = this.getTocRange();
         this.updateOptions(tocRange);
-        let headerList = this.getHeaderList();
+        let headerList = this.getHeaderMetaList();
         let editor = window.activeTextEditor;
         if (editor != undefined && headerList != undefined) {
             editor.edit(function (editBuilder) {
                 headerList.forEach(element => {
-                    let newHeader = element.header + " " + element.baseTitle;
-                    editBuilder.replace(element.range, newHeader);
+                    editBuilder.replace(element.range, element.fullHeaderWithoutOrder);
                 });
             });
         }
@@ -105,6 +101,7 @@ export class MarkdownTocTools {
             }
         }
     }
+
     // Private function
     private getTocRange() {
         let editor = window.activeTextEditor;
@@ -158,7 +155,7 @@ export class MarkdownTocTools {
         }
     }
 
-    private createToc(editBuilder: TextEditorEdit, headerList: Header[], insertPosition: Position) {
+    private createToc(editBuilder: TextEditorEdit, headerList: HeaderMeta[], insertPosition: Position) {
 
         let text: string[] = [];
 
@@ -190,7 +187,7 @@ export class MarkdownTocTools {
                 let row = [
                     this.configManager.tab.repeat(length),
                     this.configManager.options.ORDERED_LIST.value ? (++indicesOfDepth[length] + '. ') : '- ',
-                    this.configManager.options.WITH_LINKS.value ? element.hash : element.title
+                    this.configManager.options.WITH_LINKS.value ? element.hash : element.dirtyHeaderWithoutHeaderMark
                 ];
 
                 text.push(row.join(''));
@@ -234,12 +231,13 @@ export class MarkdownTocTools {
             let doc = editor.document;
 
             for (let index = 0; index < doc.lineCount; index++) {
-                let lineText = doc.lineAt(index).text;
+                let lineText = this.getNextLineIsNotInCode(index, doc);
 
                 let headerMeta = this.getHeaderMeta(lineText);
 
                 if (headerMeta.isHeader) {
                     headerMeta.orderArray = this.calculateHeaderOrder(headerMeta, headerMetaList);
+                    headerMeta.range = new Range(index, 0, index, lineText.length);
                     headerMetaList.push(headerMeta);
                 }
             }
@@ -248,72 +246,9 @@ export class MarkdownTocTools {
         return headerMetaList;
     }
 
-    private getHeaderList() {
-        let headerList: Header[] = [];
-        let editor = window.activeTextEditor;
-        if (editor != undefined) {
-            let doc = editor.document;
-            let hashMap: any = {};
-            // let isInCode = 0;
-            let indicesOfDepth = Array.apply(null, new Array(6)).map(Number.prototype.valueOf, 0);
+    private getNextLineIsNotInCode(index: number, doc: TextDocument) {
+        let lineText = doc.lineAt(index).text;
 
-            for (let index = 0; index < doc.lineCount; index++) {
-                let lineText = doc.lineAt(index).text;
-
-                // let codeResult1 = lineText.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK1);
-                // let codeResult2 = lineText.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK2);
-
-                // if (isInCode == 0) {
-                //     isInCode = codeResult1 != null ? 1 : (codeResult2 != null ? 2 : isInCode);
-                // }
-                // else if (isInCode == 1) {
-                //     isInCode = codeResult1 != null ? 0 : isInCode;
-                // }
-                // else if (isInCode == 2) {
-                //     isInCode = codeResult2 != null ? 0 : isInCode;
-                // }
-                // if (isInCode)
-                //     continue;
-
-                index = this.getNextLineIndexIsNotInCode(index, lineText, doc);
-
-                let headerResult = lineText.match(this.configManager.optionKeys.REGEXP_HEADER);
-                if (headerResult == null)
-                    continue;
-                let depth = headerResult[1].length;
-                if (depth < this.configManager.options.DEPTH_FROM.value)
-                    continue;
-                if (depth > this.configManager.options.DEPTH_TO.value)
-                    continue;
-                if (lineText.match(this.configManager.optionKeys.REGEXP_IGNORE_TITLE))
-                    continue;
-                for (var i = depth; i <= this.configManager.options.DEPTH_TO.value; i++) {
-                    indicesOfDepth[depth] = 0;
-                }
-                indicesOfDepth[depth - 1]++;
-                let orderedListStr = "";
-                for (var i = this.configManager.options.DEPTH_FROM.value - 1; i < depth; i++) {
-                    orderedListStr += indicesOfDepth[i].toString() + ".";
-                }
-                let title = lineText.substr(depth).trim();
-                let baseTitle = title.replace(/^(?:\d+\.)+/, "").trim(); // title without section number
-                title = this.cleanUpTitle(title);
-                if (hashMap[title] == null) {
-                    hashMap[title] = 0;
-                }
-                else {
-                    hashMap[title] += 1;
-                }
-                let hash = this.getHash(title, this.configManager.options.ANCHOR_MODE.value, hashMap[title]);
-                let headerRange = new Range(index, 0, index, lineText.length);
-                headerList.push(new Header(index, depth, title, hash, headerRange, headerResult[1], orderedListStr, baseTitle));
-            }
-            return headerList;
-        }
-        return headerList;
-    }
-
-    private getNextLineIndexIsNotInCode(index: number, lineText: string, doc: TextDocument) {
         let isCodeStyle1 = lineText.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK1) != null;
         let isCodeStyle2 = lineText.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK2) != null;
 
@@ -328,7 +263,7 @@ export class MarkdownTocTools {
             isCodeStyle2 = nextLine.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK2) != null;
         }
 
-        return nextIndex;
+        return doc.lineAt(nextIndex).text;
     }
 
     private getHeaderMeta(lineText: string) {
@@ -339,7 +274,7 @@ export class MarkdownTocTools {
         if (headerTextSplit != null) {
             headerMeta.headerMark = headerTextSplit[1];
             headerMeta.orderedListString = headerTextSplit[2];
-            headerMeta.baseTitle = headerTextSplit[4];
+            headerMeta.dirtyTitle = headerTextSplit[4];
         }
 
         return headerMeta;
@@ -384,18 +319,6 @@ export class MarkdownTocTools {
         }
 
         return [];
-    }
-
-    private cleanUpTitle(dirtyTitle: string) {
-        let title = dirtyTitle.replace(/\[(.+)]\([^)]*\)/gi, "$1"); // replace link
-        title = title.replace(/<!--.+-->/gi, ""); // replace comment
-        title = title.replace(/\#*_/gi, "").trim(); // replace special char
-        return title;
-    }
-
-    private getHash(headername: string, mode: string, repetition: number) {
-        let anchor = require('anchor-markdown-header');
-        return decodeURI(anchor(headername, mode, repetition));
     }
 
     dispose() {
