@@ -2,7 +2,8 @@ import {
     window,
     Position,
     Range,
-    TextEditorEdit} from 'vscode';
+    TextEditorEdit
+} from 'vscode';
 import { Header } from "./models/Header";
 import { ConfigManager } from './ConfigManager';
 import { HeaderManager } from './HeaderManager';
@@ -173,45 +174,87 @@ export class AutoMarkdownToc {
         text = text.concat(this.generateTocStartIndicator());
 
         //// HEADERS - NEW
-        
-
-        //// HEADERS
-        let indicesOfDepth = this.getIndiceOfDepth();
-        let waitResetList = Array.apply(null, new Array(indicesOfDepth.length)).map(Boolean.prototype.valueOf, false);
-        let minDepth = 6;
-
-        headerList.forEach(element => {
-            minDepth = Math.min(element.depth, minDepth);
+        let minimumRenderedDepth = headerList[0].depth;
+        headerList.forEach(header => {
+            minimumRenderedDepth = Math.min(minimumRenderedDepth, header.depth)
         });
 
-        let startDepth = Math.max(minDepth, this.configManager.options.DEPTH_FROM.value);
+        let tocRows: string[] = [];
 
-        headerList.forEach(element => {
-            if (element.depth <= this.configManager.options.DEPTH_TO.value) {
-                let length = element.depth - startDepth;
-                for (var index = 0; index < waitResetList.length; index++) {
-                    if (waitResetList[index] && (length < index)) {
-                        indicesOfDepth[index] = 0;
-                        waitResetList[index] = false;
-                    }
-                }
-
-                let row = [
-                    this.configManager.tab.repeat(length),
-                    this.configManager.options.ORDERED_LIST.value ? (++indicesOfDepth[length] + '. ') : '- ',
-                    this.configManager.options.WITH_LINKS.value ? element.hash : element.dirtyHeaderWithoutHeaderMark
-                ];
-
-                text.push(row.join(''));
-                waitResetList[length] = true;
+        headerList.forEach(header => {
+            if (header.depth >= this.configManager.options.DEPTH_FROM.value) {
+                let row = this.generateTocRow(header, minimumRenderedDepth);
+                tocRows.push(row);
             }
         });
+
+
+
+        // //// HEADERS
+        // let indicesOfDepth = this.getIndiceOfDepth();
+        // let waitResetList = Array.apply(null, new Array(indicesOfDepth.length)).map(Boolean.prototype.valueOf, false);
+        // let minDepth = 6;
+
+        // headerList.forEach(element => {
+        //     minDepth = Math.min(element.depth, minDepth);
+        // });
+
+        // let startDepth = Math.max(minDepth, this.configManager.options.DEPTH_FROM.value);
+
+        // headerList.forEach(element => {
+        //     if (element.depth <= this.configManager.options.DEPTH_TO.value) {
+        //         let length = element.depth - startDepth;
+        //         for (var index = 0; index < waitResetList.length; index++) {
+        //             if (waitResetList[index] && (length < index)) {
+        //                 indicesOfDepth[index] = 0;
+        //                 waitResetList[index] = false;
+        //             }
+        //         }
+
+        //         let row = [
+        //             this.configManager.tab.repeat(length),
+        //             this.configManager.options.ORDERED_LIST.value ? (++indicesOfDepth[length] + '. ') : '- ',
+        //             this.configManager.options.WITH_LINKS.value ? element.hash : element.dirtyHeaderWithoutHeaderMark
+        //         ];
+
+        //         text.push(row.join(''));
+        //         waitResetList[length] = true;
+        //     }
+        // });
 
         //// TOC END
         text.push(this.configManager.lineEnding + "<!-- /TOC -->");
 
         // insert
         editBuilder.insert(insertPosition, text.join(this.configManager.lineEnding));
+    }
+
+    private generateTocRow(header: Header, minimumRenderedDepth: number) {
+        let row: string[] = [];
+
+        // Indentation
+        // TODO: Bug here
+        // let indentRepeatTime = header.depth - Math.max(this.configManager.options.DEPTH_FROM.value, minimumRenderedDepth);
+        let indentRepeatTime = header.depth - this.configManager.options.DEPTH_FROM.value;
+        row.push(this.configManager.tab.repeat(indentRepeatTime));
+
+        // TOC with or without ordered numbers?
+        if (this.configManager.options.ORDERED_LIST.value) {
+            row.push(header.orderArray[header.orderArray.length - 1].toString() + ".");
+        } else {
+            row.push('-');
+        }
+
+        row.push(' ');
+
+        // TOC with or without link
+        if (this.configManager.options.WITH_LINKS.value) {
+            row.push(header.hash);
+        } else {
+            row.push(header.dirtyHeaderWithoutHeaderMark);
+        }
+
+        return row.join('');
     }
 
     private generateTocStartIndicator() {

@@ -67,8 +67,10 @@ export class HeaderManager {
     public calculateHeaderOrder(headerBeforePushToList: Header, headerList: Header[]) {
 
         if (headerList.length == 0) {
-            // special case: First header with depth = 1
-            return [1];
+            // special case: First header
+            let orderArray = new Array(headerBeforePushToList.depth);
+            orderArray[headerBeforePushToList.depth - 1] = 1;
+            return orderArray;
         }
 
         let lastheaderInList = headerList[headerList.length - 1];
@@ -81,6 +83,11 @@ export class HeaderManager {
                 let orderArray = Object.assign([], previousheader.orderArray);
                 orderArray[orderArray.length - 1]++;
 
+                return orderArray;
+            } else {
+                // special case: first header has greater level than second header
+                let orderArray = new Array(headerBeforePushToList.depth);
+                orderArray[headerBeforePushToList.depth - 1] = 1;
                 return orderArray;
             }
         }
