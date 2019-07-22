@@ -5,7 +5,7 @@ import {
     TextEditorEdit,
     TextDocument
 } from 'vscode';
-import { HeaderMeta } from "./models/HeaderMeta";
+import { Header } from "./models/Header";
 import { ConfigManager } from './configManager';
 
 export class MarkdownTocTools {
@@ -35,10 +35,10 @@ export class MarkdownTocTools {
                 markdownTocTools.deleteAnchor(editBuilder);
             }
 
-            let headerMetaList = markdownTocTools.getHeaderMetaList();
+            let headerList = markdownTocTools.getheaderList();
 
-            markdownTocTools.createToc(editBuilder, headerMetaList, insertPosition);
-            markdownTocTools.insertAnchor(editBuilder, headerMetaList);
+            markdownTocTools.createToc(editBuilder, headerList, insertPosition);
+            markdownTocTools.insertAnchor(editBuilder, headerList);
         });
 
         return true;
@@ -61,7 +61,7 @@ export class MarkdownTocTools {
     public updateMarkdownSections() {
         let tocRange = this.getTocRange();
         this.updateOptions(tocRange);
-        let headerList = this.getHeaderMetaList();
+        let headerList = this.getheaderList();
         let editor = window.activeTextEditor;
         if (editor != undefined) {
             editor.edit(function (editBuilder) {
@@ -74,7 +74,7 @@ export class MarkdownTocTools {
     public deleteMarkdownSections() {
         let tocRange = this.getTocRange();
         this.updateOptions(tocRange);
-        let headerList = this.getHeaderMetaList();
+        let headerList = this.getheaderList();
         let editor = window.activeTextEditor;
         if (editor != undefined && headerList != undefined) {
             editor.edit(function (editBuilder) {
@@ -155,7 +155,7 @@ export class MarkdownTocTools {
         }
     }
 
-    private createToc(editBuilder: TextEditorEdit, headerList: HeaderMeta[], insertPosition: Position) {
+    private createToc(editBuilder: TextEditorEdit, headerList: Header[], insertPosition: Position) {
 
         let text: string[] = [];
 
@@ -223,8 +223,8 @@ export class MarkdownTocTools {
         return Array.apply(null, new Array(this.configManager.options.DEPTH_TO.value - this.configManager.options.DEPTH_FROM.value + 1)).map(Number.prototype.valueOf, 0);
     }
 
-    private getHeaderMetaList() {
-        let headerMetaList: HeaderMeta[] = [];
+    private getheaderList() {
+        let headerList: Header[] = [];
         let editor = window.activeTextEditor;
 
         if (editor != undefined) {
@@ -233,17 +233,17 @@ export class MarkdownTocTools {
             for (let index = 0; index < doc.lineCount; index++) {
                 let lineText = this.getNextLineIsNotInCode(index, doc);
 
-                let headerMeta = this.getHeaderMeta(lineText);
+                let header = this.getheader(lineText);
 
-                if (headerMeta.isHeader) {
-                    headerMeta.orderArray = this.calculateHeaderOrder(headerMeta, headerMetaList);
-                    headerMeta.range = new Range(index, 0, index, lineText.length);
-                    headerMetaList.push(headerMeta);
+                if (header.isHeader) {
+                    header.orderArray = this.calculateHeaderOrder(header, headerList);
+                    header.range = new Range(index, 0, index, lineText.length);
+                    headerList.push(header);
                 }
             }
         }
 
-        return headerMetaList;
+        return headerList;
     }
 
     private getNextLineIsNotInCode(index: number, doc: TextDocument) {
@@ -266,53 +266,53 @@ export class MarkdownTocTools {
         return doc.lineAt(nextIndex).text;
     }
 
-    private getHeaderMeta(lineText: string) {
-        let headerMeta = new HeaderMeta(this.configManager.options.ANCHOR_MODE.value);
+    private getheader(lineText: string) {
+        let header = new Header(this.configManager.options.ANCHOR_MODE.value);
 
         let headerTextSplit = lineText.match(this.configManager.optionKeys.REGEXP_HEADER_META);
 
         if (headerTextSplit != null) {
-            headerMeta.headerMark = headerTextSplit[1];
-            headerMeta.orderedListString = headerTextSplit[2];
-            headerMeta.dirtyTitle = headerTextSplit[4];
+            header.headerMark = headerTextSplit[1];
+            header.orderedListString = headerTextSplit[2];
+            header.dirtyTitle = headerTextSplit[4];
         }
 
-        return headerMeta;
+        return header;
     }
 
-    private calculateHeaderOrder(headerMetaBeforePushToList: HeaderMeta, headerMetaList: HeaderMeta[]) {
+    private calculateHeaderOrder(headerBeforePushToList: Header, headerList: Header[]) {
 
-        if(headerMetaList.length == 0) {
+        if(headerList.length == 0) {
             // special case: First header with depth = 1
             return [1];
         }
 
-        let lastHeaderMetaInList = headerMetaList[headerMetaList.length - 1];
+        let lastheaderInList = headerList[headerList.length - 1];
 
-        if (headerMetaBeforePushToList.depth < lastHeaderMetaInList.depth) {
+        if (headerBeforePushToList.depth < lastheaderInList.depth) {
             // continue of the parent level
-            let previousHeaderMeta = headerMetaList.find(headerMeta => headerMeta.depth == headerMetaBeforePushToList.depth);
+            let previousheader = headerList.find(header => header.depth == headerBeforePushToList.depth);
             
-            if(previousHeaderMeta != undefined) {
-                let orderArray = Object.assign([], previousHeaderMeta.orderArray);
+            if(previousheader != undefined) {
+                let orderArray = Object.assign([], previousheader.orderArray);
                 orderArray[orderArray.length - 1]++;
 
                 return orderArray;
             }
         }
 
-        if(headerMetaBeforePushToList.depth > lastHeaderMetaInList.depth) {
+        if(headerBeforePushToList.depth > lastheaderInList.depth) {
             // child level of previous
             // order start with 1
-            let orderArray = Object.assign([], lastHeaderMetaInList.orderArray);
+            let orderArray = Object.assign([], lastheaderInList.orderArray);
             orderArray.push(1);
 
             return orderArray;
         }
 
-        if(headerMetaBeforePushToList.depth == lastHeaderMetaInList.depth) {
+        if(headerBeforePushToList.depth == lastheaderInList.depth) {
             // the same level, increase last item in orderArray
-            let orderArray = Object.assign([], lastHeaderMetaInList.orderArray);
+            let orderArray = Object.assign([], lastheaderInList.orderArray);
                 orderArray[orderArray.length - 1]++;
 
                 return orderArray;

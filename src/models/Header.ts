@@ -2,7 +2,7 @@ import {
     Range
 } from 'vscode';
 
-export class HeaderMeta {
+export class Header {
     headerMark: string = "";
     orderedListString: string = "";
     // title without ordered number
