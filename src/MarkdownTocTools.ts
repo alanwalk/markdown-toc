@@ -1,6 +1,5 @@
 import {
     window,
-    workspace,
     Position,
     Range,
     TextEditorEdit,
@@ -161,11 +160,13 @@ export class MarkdownTocTools {
 
     private createToc(editBuilder: TextEditorEdit, headerList: Header[], insertPosition: Position) {
 
-        let text:string[] = [];
+        let text: string[] = [];
 
+        //// TOC STAT
         // TODO: the custom option IS inside the toc start. need to split
         text = text.concat(this.generateTocStartIndicator());
 
+        //// HEADERS
         let indicesOfDepth = this.getIndiceOfDepth();
         let waitResetList = Array.apply(null, new Array(indicesOfDepth.length)).map(Boolean.prototype.valueOf, false);
         let minDepth = 6;
@@ -185,16 +186,22 @@ export class MarkdownTocTools {
                         waitResetList[index] = false;
                     }
                 }
+
                 let row = [
                     this.configManager.tab.repeat(length),
                     this.configManager.options.ORDERED_LIST.value ? (++indicesOfDepth[length] + '. ') : '- ',
                     this.configManager.options.WITH_LINKS.value ? element.hash : element.title
                 ];
+
                 text.push(row.join(''));
                 waitResetList[length] = true;
             }
         });
+
+        //// TOC END
         text.push(this.configManager.lineEnding + "<!-- /TOC -->");
+
+        // insert
         editBuilder.insert(insertPosition, text.join(this.configManager.lineEnding));
     }
 
@@ -232,6 +239,7 @@ export class MarkdownTocTools {
                 let headerMeta = this.getHeaderMeta(lineText);
 
                 if (headerMeta.isHeader) {
+                    headerMeta.orderArray = this.calculateHeaderOrder(headerMeta, headerMetaList);
                     headerMetaList.push(headerMeta);
                 }
             }
@@ -324,7 +332,7 @@ export class MarkdownTocTools {
     }
 
     private getHeaderMeta(lineText: string) {
-        let headerMeta = new HeaderMeta();
+        let headerMeta = new HeaderMeta(this.configManager.options.ANCHOR_MODE.value);
 
         let headerTextSplit = lineText.match(this.configManager.optionKeys.REGEXP_HEADER_META);
 
@@ -335,6 +343,47 @@ export class MarkdownTocTools {
         }
 
         return headerMeta;
+    }
+
+    private calculateHeaderOrder(headerMetaBeforePushToList: HeaderMeta, headerMetaList: HeaderMeta[]) {
+
+        if(headerMetaList.length == 0) {
+            // special case: First header with depth = 1
+            return [1];
+        }
+
+        let lastHeaderMetaInList = headerMetaList[headerMetaList.length - 1];
+
+        if (headerMetaBeforePushToList.depth < lastHeaderMetaInList.depth) {
+            // continue of the parent level
+            let previousHeaderMeta = headerMetaList.find(headerMeta => headerMeta.depth == headerMetaBeforePushToList.depth);
+            
+            if(previousHeaderMeta != undefined) {
+                let orderArray = Object.assign([], previousHeaderMeta.orderArray);
+                orderArray[orderArray.length - 1]++;
+
+                return orderArray;
+            }
+        }
+
+        if(headerMetaBeforePushToList.depth > lastHeaderMetaInList.depth) {
+            // child level of previous
+            // order start with 1
+            let orderArray = Object.assign([], lastHeaderMetaInList.orderArray);
+            orderArray.push(1);
+
+            return orderArray;
+        }
+
+        if(headerMetaBeforePushToList.depth == lastHeaderMetaInList.depth) {
+            // the same level, increase last item in orderArray
+            let orderArray = Object.assign([], lastHeaderMetaInList.orderArray);
+                orderArray[orderArray.length - 1]++;
+
+                return orderArray;
+        }
+
+        return [];
     }
 
     private cleanUpTitle(dirtyTitle: string) {

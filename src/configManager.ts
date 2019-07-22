@@ -3,9 +3,7 @@ import { Options } from './models/Options';
 import {
     workspace,
     window,
-    Range,
-    TextEditorCursorStyle
-} from 'vscode'
+    Range} from 'vscode'
 
 const extensionName: string = "markdown-toc";
 const EOL = require('os').EOL;
