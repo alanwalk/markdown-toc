@@ -3,7 +3,8 @@ import { Options } from './models/Options';
 import {
     workspace,
     window,
-    Range
+    Range,
+    TextEditorCursorStyle
 } from 'vscode'
 
 const extensionName: string = "markdown-toc";
@@ -16,10 +17,10 @@ export class ConfigManager {
     options = new Options();
 
     // language configuration
-    lineEnding = <string>workspace.getConfiguration("files").get("eol");
-    tabSize = <number>workspace.getConfiguration("[markdown]")["editor.tabSize"];
-    insertSpaces = <boolean>workspace.getConfiguration("[markdown]")["editor.insertSpaces"];
-    
+    lineEnding = <string>workspace.getConfiguration("files", null).get("eol");
+    tabSize = <number>workspace.getConfiguration("[markdown]", null)["editor.tabSize"];
+    insertSpaces = <boolean>workspace.getConfiguration("[markdown]", null)["editor.insertSpaces"];
+
     // special characters
     tab = '\t';
 
@@ -46,7 +47,7 @@ export class ConfigManager {
         if (this.insertSpaces === undefined || this.insertSpaces === null) {
             this.insertSpaces = <boolean>workspace.getConfiguration("editor").get("insertSpaces");
         }
-        
+
         if (this.insertSpaces && this.tabSize > 0) {
             this.tab = " ".repeat(this.tabSize);
         }

@@ -22,7 +22,7 @@ export class OptionKeys {
     // LOWER_UPDATE_ON_SAVE = this.UPDATE_ON_SAVE.toLocaleLowerCase();
     // LOWER_ANCHOR_MODE = this.ANCHOR_MODE.toLocaleLowerCase();
 
-    REGEXP_TOC_START = /\s*<!--(.*)TOC(.*)-->/gi;
+    REGEXP_TOC_START = /\s*<!--(.*)[^\/]TOC(.*)-->/gi;
     REGEXP_TOC_STOP = /\s*<!--(.*)\/TOC(.*)-->/gi;
     REGEXP_TOC_CONFIG = /\w+[:=][\w.]+/gi;
     REGEXP_TOC_CONFIG_ITEM = /(\w+)[:=]([\w.]+)/;

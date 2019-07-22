@@ -159,22 +159,12 @@ export class MarkdownTocTools {
         }
     }
 
-    private createToc(editBuilder: TextEditorEdit, headerList: any[], insertPosition: Position) {
+    private createToc(editBuilder: TextEditorEdit, headerList: Header[], insertPosition: Position) {
 
-        let optionsText = [];
+        let text:string[] = [];
 
-        optionsText.push('<!-- TOC ');
-
-        this.configManager.options.optionsFlag.forEach(optionKey => {
-            if (this.configManager.options.optionsFlag.indexOf(optionKey) != -1) {
-                optionsText.push(optionKey + ':' + this.configManager.options.getOptionValueByKey(optionKey) + ' ');
-            }
-        });
-
-        optionsText.push('-->' + this.configManager.lineEnding);
-
-        let text = [];
-        text.push(optionsText.join(''));
+        // TODO: the custom option IS inside the toc start. need to split
+        text = text.concat(this.generateTocStartIndicator());
 
         let indicesOfDepth = this.getIndiceOfDepth();
         let waitResetList = Array.apply(null, new Array(indicesOfDepth.length)).map(Boolean.prototype.valueOf, false);
@@ -208,23 +198,40 @@ export class MarkdownTocTools {
         editBuilder.insert(insertPosition, text.join(this.configManager.lineEnding));
     }
 
+    private generateTocStartIndicator() {
+        let tocStartIndicator: string[] = [];
+
+        tocStartIndicator.push('<!-- TOC ');
+
+        // custom options
+        this.configManager.options.optionsFlag.forEach(optionKey => {
+            if (this.configManager.options.optionsFlag.indexOf(optionKey) != -1) {
+                tocStartIndicator.push(optionKey + ':' + this.configManager.options.getOptionValueByKey(optionKey) + ' ');
+            }
+        });
+
+        tocStartIndicator.push('-->' + this.configManager.lineEnding);
+
+        return tocStartIndicator.join('');
+    }
+
     private getIndiceOfDepth() {
         return Array.apply(null, new Array(this.configManager.options.DEPTH_TO.value - this.configManager.options.DEPTH_FROM.value + 1)).map(Number.prototype.valueOf, 0);
     }
 
     private getHeaderMetaList() {
-        let headerMetaList:HeaderMeta[] = [];
+        let headerMetaList: HeaderMeta[] = [];
         let editor = window.activeTextEditor;
 
-        if(editor != undefined) {
+        if (editor != undefined) {
             let doc = editor.document;
-            
-            for(let index = 0;index < doc.lineCount; index++) {
+
+            for (let index = 0; index < doc.lineCount; index++) {
                 let lineText = doc.lineAt(index).text;
 
                 let headerMeta = this.getHeaderMeta(lineText);
 
-                if(headerMeta.isHeader()){
+                if (headerMeta.isHeader) {
                     headerMetaList.push(headerMeta);
                 }
             }
@@ -305,12 +312,12 @@ export class MarkdownTocTools {
         let nextIndex = index;
 
         while (isCodeStyle1 || isCodeStyle2) {
+            nextIndex = index + 1;
+
             let nextLine = doc.lineAt(nextIndex).text;
 
             isCodeStyle1 = nextLine.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK1) != null;
             isCodeStyle2 = nextLine.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK2) != null;
-
-            nextIndex = index + 1;
         }
 
         return nextIndex;
