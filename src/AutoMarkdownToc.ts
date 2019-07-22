@@ -26,7 +26,7 @@ export class AutoMarkdownToc {
         editor.edit(function (editBuilder) {
             let tocRange = autoMarkdownToc.getTocRange();
             autoMarkdownToc.updateOptions(tocRange);
-            if (isBySave && ((!autoMarkdownToc.configManager.options.UPDATE_ON_SAVE) || (tocRange == null))) {
+            if (isBySave && ((!autoMarkdownToc.configManager.options.UPDATE_ON_SAVE.value) || (tocRange == null))) {
                 return false
             };
 
@@ -67,6 +67,7 @@ export class AutoMarkdownToc {
         let headerList = this.headerManager.getHeaderList();
         let editor = window.activeTextEditor;
         if (editor != undefined) {
+
             editor.edit(function (editBuilder) {
                 headerList.forEach(element => {
                     editBuilder.replace(element.range, element.fullHeaderWithOrder);
@@ -170,6 +171,9 @@ export class AutoMarkdownToc {
         //// TOC STAT
         // TODO: the custom option IS inside the toc start. need to split
         text = text.concat(this.generateTocStartIndicator());
+
+        //// HEADERS - NEW
+        
 
         //// HEADERS
         let indicesOfDepth = this.getIndiceOfDepth();

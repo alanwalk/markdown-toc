@@ -6,7 +6,7 @@ export class Header {
     headerMark: string = "";
     orderedListString: string = "";
     // title without ordered number
-    baseTitle: string = "";
+    // baseTitle: string = "";
     dirtyTitle:string = "";
     range: Range;
 
@@ -42,11 +42,11 @@ export class Header {
     }
 
     public get fullHeaderWithOrder():string {
-        return this.headerMark + " " + this.orderArray.join('.') + "." + this.baseTitle;
+        return this.headerMark + " " + this.orderArray.join('.') + ". " + this.dirtyTitle;
     }
 
     public get fullHeaderWithoutOrder():string{
-        return this.headerMark + " " + this.baseTitle;
+        return this.headerMark + " " + this.dirtyTitle;
     }
 
     public get dirtyHeaderWithoutHeaderMark():string{
