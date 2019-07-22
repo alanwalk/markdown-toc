@@ -4,18 +4,18 @@ import {
     workspace
 } from 'vscode';
 
-import { MarkdownTocTools } from './MarkdownTocTools';
+import { AutoMarkdownToc } from './AutoMarkdownToc';
 
 export function activate(context: ExtensionContext) {
 
-    // create a MarkdownTocTools
-    let markdownTocTools = new MarkdownTocTools();
+    // create a AutoMarkdownToc
+    let autoMarkdownToc = new AutoMarkdownToc();
 
-    let disposable_updateMarkdownToc = commands.registerCommand('extension.updateMarkdownToc', () => { markdownTocTools.updateMarkdownToc(); });
-    let disposable_deleteMarkdownToc = commands.registerCommand('extension.deleteMarkdownToc', () => { markdownTocTools.deleteMarkdownToc(); });
-    let disposable_updateMarkdownSections = commands.registerCommand('extension.updateMarkdownSections', () => { markdownTocTools.updateMarkdownSections(); });
-    let disposable_deleteMarkdownSections = commands.registerCommand('extension.deleteMarkdownSections', () => { markdownTocTools.deleteMarkdownSections(); });
-    let disposable_saveMarkdownToc = workspace.onDidSaveTextDocument(() => { markdownTocTools.notifyDocumentSave(); });
+    let disposable_updateMarkdownToc = commands.registerCommand('extension.updateMarkdownToc', () => { autoMarkdownToc.updateMarkdownToc(); });
+    let disposable_deleteMarkdownToc = commands.registerCommand('extension.deleteMarkdownToc', () => { autoMarkdownToc.deleteMarkdownToc(); });
+    let disposable_updateMarkdownSections = commands.registerCommand('extension.updateMarkdownSections', () => { autoMarkdownToc.updateMarkdownSections(); });
+    let disposable_deleteMarkdownSections = commands.registerCommand('extension.deleteMarkdownSections', () => { autoMarkdownToc.deleteMarkdownSections(); });
+    let disposable_saveMarkdownToc = workspace.onDidSaveTextDocument(() => { autoMarkdownToc.notifyDocumentSave(); });
 
     // Add to a list of disposables which are disposed when this extension is deactivated.
     context.subscriptions.push(disposable_updateMarkdownToc);

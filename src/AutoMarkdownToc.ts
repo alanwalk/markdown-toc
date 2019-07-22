@@ -7,14 +7,14 @@ import { Header } from "./models/Header";
 import { ConfigManager } from './ConfigManager';
 import { HeaderManager } from './HeaderManager';
 
-export class MarkdownTocTools {
+export class AutoMarkdownToc {
 
     configManager = new ConfigManager();
     headerManager = new HeaderManager();
 
     // Public function
     public updateMarkdownToc(isBySave: boolean = false) {
-        let markdownTocTools = this;
+        let autoMarkdownToc = this;
         let editor = window.activeTextEditor;
 
         if (editor == undefined) {
@@ -24,9 +24,9 @@ export class MarkdownTocTools {
         let insertPosition = editor.selection.active;
 
         editor.edit(function (editBuilder) {
-            let tocRange = markdownTocTools.getTocRange();
-            markdownTocTools.updateOptions(tocRange);
-            if (isBySave && ((!markdownTocTools.configManager.options.UPDATE_ON_SAVE) || (tocRange == null))) {
+            let tocRange = autoMarkdownToc.getTocRange();
+            autoMarkdownToc.updateOptions(tocRange);
+            if (isBySave && ((!autoMarkdownToc.configManager.options.UPDATE_ON_SAVE) || (tocRange == null))) {
                 return false
             };
 
@@ -34,30 +34,30 @@ export class MarkdownTocTools {
             if (tocRange != null) {
                 insertPosition = tocRange.start;
                 editBuilder.delete(tocRange);
-                markdownTocTools.deleteAnchor(editBuilder);
+                autoMarkdownToc.deleteAnchor(editBuilder);
             }
 
-            let headerList = markdownTocTools.headerManager.getHeaderList();
+            let headerList = autoMarkdownToc.headerManager.getHeaderList();
 
-            markdownTocTools.createToc(editBuilder, headerList, insertPosition);
-            markdownTocTools.insertAnchor(editBuilder, headerList);
+            autoMarkdownToc.createToc(editBuilder, headerList, insertPosition);
+            autoMarkdownToc.insertAnchor(editBuilder, headerList);
         });
 
         return true;
     }
 
     public deleteMarkdownToc() {
-        let markdownTocTools = this;
+        let autoMarkdownToc = this;
         let editor = window.activeTextEditor;
         if (editor == undefined) {
             return false;
         }
         editor.edit(function (editBuilder) {
-            let tocRange = markdownTocTools.getTocRange();
+            let tocRange = autoMarkdownToc.getTocRange();
             if (tocRange == null)
                 return;
             editBuilder.delete(tocRange);
-            markdownTocTools.deleteAnchor(editBuilder);
+            autoMarkdownToc.deleteAnchor(editBuilder);
         });
     }
 
