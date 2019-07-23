@@ -208,7 +208,7 @@ export class AutoMarkdownToc {
         if (this.configManager.options.ORDERED_LIST.value) {
             row.push(header.orderArray[header.orderArray.length - 1].toString() + ".");
         } else {
-            row.push('-');
+            row.push(this.configManager.options.BULLET_CHAR.value);
         }
 
         row.push(' ');

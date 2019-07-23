@@ -35,6 +35,7 @@ export class ConfigManager {
         this.options.ORDERED_LIST.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.ORDERED_LIST.key);
         this.options.UPDATE_ON_SAVE.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.UPDATE_ON_SAVE.key);
         this.options.ANCHOR_MODE.value = <string>workspace.getConfiguration(extensionName).get(this.options.ANCHOR_MODE.key);
+        this.options.BULLET_CHAR.value = <string>workspace.getConfiguration(extensionName).get(this.options.BULLET_CHAR.key);
 
         if (this.lineEnding === 'auto') {
             this.lineEnding = <string>EOL;
@@ -106,6 +107,9 @@ export class ConfigManager {
                         this.options.optionsFlag.push(key);
                         this.options.ANCHOR_MODE.value = this.parseValidAnchorMode(value);
                         break;
+                    case this.options.BULLET_CHAR.lowerCaseKey:
+                        this.options.optionsFlag.push(key);
+                        this.options.BULLET_CHAR.value = value;
                 }
             }
         });

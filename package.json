@@ -111,6 +111,11 @@
                     "default": false,
                     "description": "Use ordered list (1. ..., 2. ...)."
                 },
+                "markdown-toc.bulletCharacter": {
+                    "type": "string",
+                    "default": "-",
+                    "description": "Bullet character for TOC"
+                },
                 "markdown-toc.updateOnSave": {
                     "type": "boolean",
                     "default": true,

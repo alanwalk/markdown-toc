@@ -1,6 +1,5 @@
 import { OptionKeys } from './OptionKeys';
 import { Dictionary } from './Dictionary';
-// import defaultSettings from '../data/defaultSettings.json';
 
 const optionKeys = new OptionKeys();
 
@@ -16,6 +15,7 @@ export class Options {
     ORDERED_LIST: Dictionary = new Dictionary("orderedList", false);
     UPDATE_ON_SAVE: Dictionary = new Dictionary("updateOnSave", true);
     ANCHOR_MODE: Dictionary = new Dictionary("anchorMode", optionKeys.ANCHOR_MODE_LIST[0]);
+    BULLET_CHAR: Dictionary = new Dictionary("bulletCharacter", "-");
 
     // settings: Dictionary[] = defaultSettings;
 
@@ -35,6 +35,8 @@ export class Options {
                 return this.UPDATE_ON_SAVE.value;
             case this.ANCHOR_MODE.key:
                 return this.ANCHOR_MODE.value;
+            case this.BULLET_CHAR.key:
+                return this.BULLET_CHAR.value;
         }
     }
 }
