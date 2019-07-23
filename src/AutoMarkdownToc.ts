@@ -138,16 +138,26 @@ export class AutoMarkdownToc {
         this.configManager.loadCustomOptions(tocRange);
     }
 
-    private insertAnchor(editBuilder: TextEditorEdit, headerList: any[]) {
+    private insertAnchor(editBuilder: TextEditorEdit, headerList: Header[]) {
         if (!this.configManager.options.INSERT_ANCHOR.value) {
             return
         };
 
-        headerList.forEach(element => {
-            let name = element.hash.match(this.configManager.optionKeys.REGEXP_ANCHOR)[1];
-            let text = ['<a id="markdown-', name, '" name="', name, '"></a>\n'];
-            let insertPosition = new Position(element.line, 0);
-            editBuilder.insert(insertPosition, text.join(''));
+        headerList.forEach(header => {
+            let anchorMatches = header.hash.match(this.configManager.optionKeys.REGEXP_ANCHOR);
+            if (anchorMatches != null) {
+                let name = anchorMatches[1];
+                let text = [
+                    this.configManager.lineEnding,
+                    '<a id="markdown-',
+                    name,
+                    '" name="',
+                    name,
+                    '"></a>'];
+
+                let insertPosition = new Position(header.range.end.line, header.range.end.character);
+                editBuilder.insert(insertPosition, text.join(''));
+            }
         });
     }
 
@@ -238,10 +248,6 @@ export class AutoMarkdownToc {
         tocStartIndicator.push('-->' + this.configManager.lineEnding);
 
         return tocStartIndicator.join('');
-    }
-
-    private getIndiceOfDepth() {
-        return Array.apply(null, new Array(this.configManager.options.DEPTH_TO.value - this.configManager.options.DEPTH_FROM.value + 1)).map(Number.prototype.valueOf, 0);
     }
 
     dispose() {
