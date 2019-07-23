@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.1] - 2019-07-23
+### FIxed:
+- Header with anchor now rendered with colors as default of vscode
+
 ## [2.1.0] - 2019-07-23
 ### Changed
 - Source code break down to functions and classess for easy maintainance and extension.
