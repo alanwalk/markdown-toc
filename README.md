@@ -1,4 +1,4 @@
-# Markdown-TOC
+# Auto Markdown TOC
 Generate TOC (table of contents) of headlines from parsed [markdown](https://en.wikipedia.org/wiki/Markdown) file.
 
 <!-- TOC depthFrom:2 -->
@@ -32,7 +32,7 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 
 ## 2. Installation
 ```
-ext install markdown-toc
+ext install auto-markdown-toc
 ```
 
 ## 3. Usage
@@ -49,6 +49,7 @@ ext install markdown-toc
 |---|---|---|
 |depthFrom|uint(1-6)|1|
 |depthTo|uint(1-6)|6|
+|bulletCharacter|string|"-"|
 |insertAnchor|bool|false|
 |withLinks|bool|true|
 |orderedList|bool|false|
@@ -56,12 +57,13 @@ ext install markdown-toc
 |anchorMode|github.com/bitbucket.org/ghost.org/gitlab.com|github.com|
 
 ### 4.1. Default Settings
-To change the default configuration settings for the Markdown-TOC extension, edit the user or workspace settings as described here. The available settings are as follows:
+To change the default configuration settings for the `Auto Markdown TOC` extension, edit the user or workspace settings as described here. The available settings are as follows:
 
 |attributes|values|defaults|
 |---|---|---|
 |markdown-toc.depthFrom|number(1-6)|1|
 |markdown-toc.depthTo|number(1-6)|6|
+|markdown-toc.bulletCharacter|string|"-"|
 |markdown-toc.insertAnchor|bool|false|
 |markdown-toc.withLinks|bool|true|
 |markdown-toc.orderedList|bool|false|
@@ -86,16 +88,17 @@ If you want to use a unique setting for a file, you can add attributes to `<!-- 
 - satokaz (Fix: Codeblock error)
 
 ## 6. What's New?
-[CHANGELOG](https://github.com/AlanWalk/Markdown-TOC/blob/master/CHANGELOG.md)
+[CHANGELOG](https://github.com/huntertran/markdown-toc/blob/master/CHANGELOG.md)
 
 
 ## 7. Authors
-This extension is created by Alan Walk. If you have any questions, contact him at:
+
+This forked repository is maintained by me and anyone who would like to contribute. The EOL fixed was contributed by [roborourke](https://github.com/roborourke/markdown-toc.git) and any one open new pull request with the hope of fixing the problem.
+
+The original code is created by Alan Walk. If you have any questions, contact him at:
 - Mail : [alanwalk93@gmail.com](mailto:alanwalk93@gmail.com)
 - Twitter : [@AlanWalk93](https://twitter.com/AlanWalk93)
 - Github : [AlanWalk](https://github.com/AlanWalk)
-
-This forked repository is maintained by me and anyone who would like to contribute. The EOL fixed was contributed by [roborourke](https://github.com/roborourke/markdown-toc.git) and any one open new pull request with the hope of fixing the problem
 
 ## 8. License
 The package is Open Source Software released under the [MIT License](LICENSE). It's developed by AlanWalk, maintained by Hunter Tran

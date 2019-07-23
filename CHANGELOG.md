@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.0] - 2019-07-23
+### Changed
+- Source code break down to functions and classess for easy maintainance and extension.
+
+### Added
+- Custom bullet character for TOC using markdown-toc.bulletCharacter setting.
+
 ## [2.0.0] - 2019-07-19
 ### Fixed:
 - All TSLINT errors now fixed and (hopfully) working as original code.
