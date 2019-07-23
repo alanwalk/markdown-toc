@@ -67,11 +67,17 @@ export class AutoMarkdownToc {
         this.updateOptions(tocRange);
         let headerList = this.headerManager.getHeaderList();
         let editor = window.activeTextEditor;
+        let config = this.configManager;
         if (editor != undefined) {
-
+            let document = editor.document;
             editor.edit(function (editBuilder) {
-                headerList.forEach(element => {
-                    editBuilder.replace(element.range, element.fullHeaderWithOrder);
+                headerList.forEach(header => {
+
+                    if (header.range.start.line != 0 && !document.lineAt(header.range.start.line - 1).isEmptyOrWhitespace) {
+                        editBuilder.insert(new Position(header.range.start.line, 0), config.lineEnding);
+                    }
+
+                    editBuilder.replace(header.range, header.fullHeaderWithOrder);
                 });
             });
         }
