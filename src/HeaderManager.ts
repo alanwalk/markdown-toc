@@ -77,7 +77,17 @@ export class HeaderManager {
 
         if (headerBeforePushToList.depth < lastheaderInList.depth) {
             // continue of the parent level
-            let previousheader = headerList.find(header => header.depth == headerBeforePushToList.depth);
+
+            let previousheader = undefined;
+
+            for (let index = headerList.length - 1; index >= 0; index--) {
+                if(headerList[index].depth == headerBeforePushToList.depth){
+                    previousheader = headerList[index];
+                    break;
+                }
+            }
+
+            // let previousheader = headerList.find(header => header.depth == headerBeforePushToList.depth);
 
             if (previousheader != undefined) {
                 let orderArray = Object.assign([], previousheader.orderArray);

@@ -28,8 +28,8 @@ export class AutoMarkdownToc {
             let tocRange = autoMarkdownToc.getTocRange();
             autoMarkdownToc.updateOptions(tocRange);
             if (isBySave && ((!autoMarkdownToc.configManager.options.UPDATE_ON_SAVE.value) || (tocRange == null))) {
-                return false
-            };
+                return false;
+            }
 
             // save options, and delete last insert
             if (tocRange != null) {
@@ -55,8 +55,9 @@ export class AutoMarkdownToc {
         }
         editor.edit(function (editBuilder) {
             let tocRange = autoMarkdownToc.getTocRange();
-            if (tocRange == null)
+            if (tocRange == null) {
                 return;
+            }
             editBuilder.delete(tocRange);
             autoMarkdownToc.deleteAnchor(editBuilder);
         });
@@ -106,8 +107,9 @@ export class AutoMarkdownToc {
         let editor = window.activeTextEditor;
         if (editor != undefined) {
             let doc = editor.document;
-            if (doc.languageId != 'markdown')
+            if (doc.languageId != 'markdown') {
                 return;
+            }
             if (this.updateMarkdownToc(true)) {
                 doc.save();
                 this.configManager.options.saveBySelf = true;
@@ -146,8 +148,8 @@ export class AutoMarkdownToc {
 
     private insertAnchor(editBuilder: TextEditorEdit, headerList: Header[]) {
         if (!this.configManager.options.INSERT_ANCHOR.value) {
-            return
-        };
+            return;
+        }
 
         headerList.forEach(header => {
             let anchorMatches = header.hash.match(this.configManager.optionKeys.REGEXP_ANCHOR);
@@ -173,8 +175,9 @@ export class AutoMarkdownToc {
             let doc = editor.document;
             for (let index = 0; index < doc.lineCount; index++) {
                 let lineText = doc.lineAt(index).text;
-                if (lineText.match(this.configManager.optionKeys.REGEXP_MARKDOWN_ANCHOR) == null)
+                if (lineText.match(this.configManager.optionKeys.REGEXP_MARKDOWN_ANCHOR) == null) {
                     continue;
+                }
                 let range = new Range(new Position(index, 0), new Position(index + 1, 0));
                 editBuilder.delete(range);
             }
@@ -192,7 +195,7 @@ export class AutoMarkdownToc {
         //// HEADERS - NEW
         let minimumRenderedDepth = headerList[0].depth;
         headerList.forEach(header => {
-            minimumRenderedDepth = Math.min(minimumRenderedDepth, header.depth)
+            minimumRenderedDepth = Math.min(minimumRenderedDepth, header.depth);
         });
 
         let tocRows: string[] = [];
