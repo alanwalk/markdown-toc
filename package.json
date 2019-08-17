@@ -75,10 +75,12 @@
         "keybindings": [
             {
                 "command": "extension.updateMarkdownToc",
+                "when": "editorTextFocus && editorLangId == markdown",
                 "key": "ctrl+m t"
             },
             {
                 "command": "extension.updateMarkdownSections",
+                "when": "editorTextFocus && editorLangId == markdown",
                 "key": "ctrl+m s"
             }
         ],
