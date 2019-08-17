@@ -4,8 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.2] - 2019-08-17
+### Fixed:
+- Ordered number is wrong.
+- Some typo in readme and changelog.
+
 ## [2.1.1] - 2019-07-23
-### FIxed:
+### Fixed:
 - Header with anchor now rendered with colors as default of vscode
 
 ## [2.1.0] - 2019-07-23
@@ -32,7 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.5.6] - 2017-07-25
 ### Fixed
-- Fixed wrong section numbe.
+- Fixed wrong section number.
 - Fixed depthTo option is not recognized.
 
 ## [1.5.5] - 2017-05-23
@@ -45,7 +50,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.5.3] - 2017-05-18
 ### Changed
-- This's a error commit.
+- This is a error commit.
 
 ## [1.5.2] - 2017-05-10
 ### Changed
@@ -74,7 +79,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.4.5] - 2017-01-16
 ### Fixed
-- RrderedList option should reset sub-order.
+- OrderedList option should reset sub-order.
 
 ## [1.4.4] - 2017-01-16
 ### Changed
@@ -128,7 +133,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.1.2] - 2016-05-23
 ### Fixed
-- Recognised code to header list.
+- Recognized code to header list.
 - Delete anchor failed sometime.
 
 ## [1.1.1] - 2016-05-23
