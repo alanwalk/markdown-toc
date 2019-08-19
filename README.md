@@ -39,24 +39,29 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 
 ## 2. Installation
 <a id="markdown-2-installation" name="2-installation"></a>
+
 ```
 ext install auto-markdown-toc
 ```
 
 ## 3. Usage
 <a id="markdown-3-usage" name="3-usage"></a>
+
 ### 3.1. Insert TOC
 <a id="markdown-31-insert-toc" name="31-insert-toc"></a>
+
 ![Insert TOC](img/insert-toc.gif)
 
 ### 3.2. Insert Header Number Sections
 <a id="markdown-32-insert-header-number-sections" name="32-insert-header-number-sections"></a>
+
 **Tips:Section of header is begin with depthFrom**
 
 ![Insert Header Number Sections](img/insert-header-number-sections.gif)
 
 ## 4. Configuration
 <a id="markdown-4-configuration" name="4-configuration"></a>
+
 |attributes|values|defaults|
 |---|---|---|
 |depthFrom|uint(1-6)|1|
@@ -70,6 +75,7 @@ ext install auto-markdown-toc
 
 ### 4.1. Default Settings
 <a id="markdown-41-default-settings" name="41-default-settings"></a>
+
 To change the default configuration settings for the `Auto Markdown TOC` extension, edit the user or workspace settings as described here. The available settings are as follows:
 
 |attributes|values|defaults|
