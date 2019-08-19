@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.4] - 2019-08-18
+### Fixed:
+- Error when markdown document is not ending with a newline.
+
 ## [2.1.3] - 2019-08-17
 ### Added:
-- Conditions for key bindings
+- Conditions for key bindings.
 
 ## [2.1.2] - 2019-08-17
 ### Fixed:
