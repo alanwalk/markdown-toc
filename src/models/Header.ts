@@ -5,8 +5,6 @@ import {
 export class Header {
     headerMark: string = "";
     orderedListString: string = "";
-    // title without ordered number
-    // baseTitle: string = "";
     dirtyTitle:string = "";
     range: Range;
 

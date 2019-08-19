@@ -3,7 +3,7 @@ import { Options } from './models/Options';
 import {
     workspace,
     window,
-    Range} from 'vscode'
+    Range} from 'vscode';
 
 const extensionName: string = "markdown-toc";
 const EOL = require('os').EOL;
@@ -41,10 +41,10 @@ export class ConfigManager {
             this.lineEnding = <string>EOL;
         }
         if (this.tabSize === undefined || this.tabSize === null) {
-            this.tabSize = <number>workspace.getConfiguration("editor").get("tabSize");
+            this.tabSize = <number>workspace.getConfiguration("editor", null).get("tabSize");
         }
         if (this.insertSpaces === undefined || this.insertSpaces === null) {
-            this.insertSpaces = <boolean>workspace.getConfiguration("editor").get("insertSpaces");
+            this.insertSpaces = <boolean>workspace.getConfiguration("editor", null).get("insertSpaces");
         }
 
         if (this.insertSpaces && this.tabSize > 0) {
@@ -56,23 +56,23 @@ export class ConfigManager {
         this.options.optionsFlag = [];
 
         if (tocRange == null) {
-            return
-        };
+            return;
+        }
 
         let editor = window.activeTextEditor;
         if (editor == undefined) {
-            return
-        };
+            return;
+        }
 
         let optionsText = editor.document.lineAt(tocRange.start.line).text;
         let options = optionsText.match(this.optionKeys.REGEXP_TOC_CONFIG);
 
         if (options == null) {
-            return
-        };
+            return;
+        }
 
         options.forEach(element => {
-            let pair = this.optionKeys.REGEXP_TOC_CONFIG_ITEM.exec(element)
+            let pair = this.optionKeys.REGEXP_TOC_CONFIG_ITEM.exec(element);
 
             if (pair != null) {
                 let key = pair[1].toLocaleLowerCase();

@@ -52,7 +52,7 @@ export class HeaderManager {
 
         let nextIndex = index;
 
-        while (isCodeStyle1 || isCodeStyle2) {
+        while ((isCodeStyle1 || isCodeStyle2) && index < doc.lineCount - 1) {
             nextIndex = index + 1;
 
             let nextLine = doc.lineAt(nextIndex).text;
