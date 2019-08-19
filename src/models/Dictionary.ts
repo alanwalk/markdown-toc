@@ -3,7 +3,7 @@ export class Dictionary {
     lowerCaseKey:string;
     value: any;
 
-    constructor(key: string, value: any) {
+    constructor(key: string, value: string | number | string[] | boolean) {
         this.key = key;
         this.lowerCaseKey = key.toLocaleLowerCase();
         this.value = value;

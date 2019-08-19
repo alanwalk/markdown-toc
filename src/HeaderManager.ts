@@ -1,5 +1,5 @@
 import { Header } from "./models/Header";
-import { ConfigManager } from "./configManager";
+import { ConfigManager } from "./ConfigManager";
 import { TextDocument, window, Range } from "vscode";
 
 
