@@ -4,7 +4,19 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 
 <!-- TOC depthfrom:undefined -->
 
-
+- [1. Features](#1-features)
+- [2. Installation](#2-installation)
+- [3. Usage](#3-usage)
+    - [3.1. Insert TOC](#31-insert-toc)
+    - [3.2. Insert Header Number Sections](#32-insert-header-number-sections)
+- [4. Configuration](#4-configuration)
+    - [4.1. Default Settings](#41-default-settings)
+    - [4.2. Unique Settings](#42-unique-settings)
+- [5. Contributors](#5-contributors)
+- [6. What's New?](#6-whats-new)
+- [7. Authors](#7-authors)
+- [8. License](#8-license)
+- [9. Links](#9-links)
 
 <!-- /TOC -->
 
@@ -69,6 +81,7 @@ To change the default configuration settings for the `Auto Markdown TOC` extensi
 ### 4.2. Unique Settings
 <a id="markdown-42-unique-settings" name="42-unique-settings"></a>
 If you want to use a unique setting for a file, you can add attributes to `<!-- TOC -->` , just like:
+
 ```
 <!-- TOC depthFrom:2 orderedList:true -->
 
