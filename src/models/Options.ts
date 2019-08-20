@@ -1,7 +1,5 @@
-import { OptionKeys } from './OptionKeys';
 import { Dictionary } from './Dictionary';
-
-const optionKeys = new OptionKeys();
+import { AnchorMode } from './AnchorMode';
 
 export class Options {
     optionsFlag: string[] = [];
@@ -14,10 +12,8 @@ export class Options {
     WITH_LINKS: Dictionary = new Dictionary("withLinks", true);
     ORDERED_LIST: Dictionary = new Dictionary("orderedList", false);
     UPDATE_ON_SAVE: Dictionary = new Dictionary("updateOnSave", true);
-    ANCHOR_MODE: Dictionary = new Dictionary("anchorMode", optionKeys.ANCHOR_MODE_LIST[0]);
+    ANCHOR_MODE: Dictionary = new Dictionary("anchorMode", AnchorMode.github);
     BULLET_CHAR: Dictionary = new Dictionary("bulletCharacter", "-");
-
-    // settings: Dictionary[] = defaultSettings;
 
     public getOptionValueByKey(key: string) {
         switch (key) {

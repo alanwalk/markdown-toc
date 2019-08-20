@@ -2,7 +2,6 @@ import { Header } from "./models/Header";
 import { ConfigManager } from "./ConfigManager";
 import { TextDocument, window, Range } from "vscode";
 
-
 export class HeaderManager {
 
     configManager = new ConfigManager();
@@ -10,7 +9,7 @@ export class HeaderManager {
     public getHeader(lineText: string) {
         let header = new Header(this.configManager.options.ANCHOR_MODE.value);
 
-        let headerTextSplit = lineText.match(this.configManager.optionKeys.REGEXP_HEADER_META);
+        let headerTextSplit = lineText.match(this.configManager.regexStrings.REGEXP_HEADER_META);
 
         if (headerTextSplit != null) {
             header.headerMark = headerTextSplit[1];
@@ -47,8 +46,8 @@ export class HeaderManager {
     public getNextLineIsNotInCode(index: number, doc: TextDocument) {
         let lineText = doc.lineAt(index).text;
 
-        let isCodeStyle1 = lineText.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK1) != null;
-        let isCodeStyle2 = lineText.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK2) != null;
+        let isCodeStyle1 = lineText.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK1) != null;
+        let isCodeStyle2 = lineText.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK2) != null;
 
         let nextIndex = index;
 
@@ -57,8 +56,8 @@ export class HeaderManager {
 
             let nextLine = doc.lineAt(nextIndex).text;
 
-            isCodeStyle1 = nextLine.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK1) != null;
-            isCodeStyle2 = nextLine.match(this.configManager.optionKeys.REGEXP_CODE_BLOCK2) != null;
+            isCodeStyle1 = nextLine.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK1) != null;
+            isCodeStyle2 = nextLine.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK2) != null;
         }
 
         return doc.lineAt(nextIndex).text;

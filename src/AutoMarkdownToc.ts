@@ -7,6 +7,7 @@ import {
 import { Header } from "./models/Header";
 import { ConfigManager } from './ConfigManager';
 import { HeaderManager } from './HeaderManager';
+import { AnchorMode } from './models/AnchorMode';
 
 export class AutoMarkdownToc {
 
@@ -127,10 +128,10 @@ export class AutoMarkdownToc {
         let start, stop: Position | undefined;
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
-            if ((start == null) && (lineText.match(this.configManager.optionKeys.REGEXP_TOC_START))) {
+            if ((start == null) && (lineText.match(this.configManager.regexStrings.REGEXP_TOC_START))) {
                 start = new Position(index, 0);
             }
-            else if (lineText.match(this.configManager.optionKeys.REGEXP_TOC_STOP)) {
+            else if (lineText.match(this.configManager.regexStrings.REGEXP_TOC_STOP)) {
                 stop = new Position(index, lineText.length);
                 break;
             }
@@ -152,7 +153,7 @@ export class AutoMarkdownToc {
         }
 
         headerList.forEach(header => {
-            let anchorMatches = header.hash.match(this.configManager.optionKeys.REGEXP_ANCHOR);
+            let anchorMatches = header.hash.match(this.configManager.regexStrings.REGEXP_ANCHOR);
             if (anchorMatches != null) {
                 let name = anchorMatches[1];
                 let text = [
@@ -164,6 +165,14 @@ export class AutoMarkdownToc {
                     '"></a>'];
 
                 let insertPosition = new Position(header.range.end.line, header.range.end.character);
+
+                if (this.configManager.options.ANCHOR_MODE.value == AnchorMode.bitbucket) {
+                    text = text.slice(1);
+                    text.push(this.configManager.lineEnding);
+                    text.push(this.configManager.lineEnding);
+                    insertPosition = new Position(header.range.start.line, 0);
+                }
+
                 editBuilder.insert(insertPosition, text.join(''));
             }
         });
@@ -175,10 +184,17 @@ export class AutoMarkdownToc {
             let doc = editor.document;
             for (let index = 0; index < doc.lineCount; index++) {
                 let lineText = doc.lineAt(index).text;
-                if (lineText.match(this.configManager.optionKeys.REGEXP_MARKDOWN_ANCHOR) == null) {
+                if (lineText.match(this.configManager.regexStrings.REGEXP_MARKDOWN_ANCHOR) == null) {
                     continue;
                 }
-                let range = new Range(new Position(index, 0), new Position(index + 1, 0));
+
+                // To ensure the anchor will not insert an extra empty line
+                let startPosition = new Position(index, 0);
+                if(index > 0 && doc.lineAt(index).text == this.configManager.lineEnding){
+                    startPosition = new Position(index - 1, 0);
+                }
+
+                let range = new Range(startPosition, new Position(index + 1, 0));
                 editBuilder.delete(range);
             }
         }

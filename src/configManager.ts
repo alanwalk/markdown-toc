@@ -1,4 +1,4 @@
-import { OptionKeys } from './models/OptionKeys';
+import { RegexStrings } from './models/RegexStrings';
 import { Options } from './models/Options';
 import {
     workspace,
@@ -10,7 +10,7 @@ const EOL = require('os').EOL;
 
 export class ConfigManager {
 
-    optionKeys = new OptionKeys();
+    regexStrings = new RegexStrings();
 
     options = new Options();
 
@@ -65,14 +65,14 @@ export class ConfigManager {
         }
 
         let optionsText = editor.document.lineAt(tocRange.start.line).text;
-        let options = optionsText.match(this.optionKeys.REGEXP_TOC_CONFIG);
+        let options = optionsText.match(this.regexStrings.REGEXP_TOC_CONFIG);
 
         if (options == null) {
             return;
         }
 
         options.forEach(element => {
-            let pair = this.optionKeys.REGEXP_TOC_CONFIG_ITEM.exec(element);
+            let pair = this.regexStrings.REGEXP_TOC_CONFIG_ITEM.exec(element);
 
             if (pair != null) {
                 let key = pair[1].toLocaleLowerCase();
@@ -105,7 +105,7 @@ export class ConfigManager {
                         break;
                     case this.options.ANCHOR_MODE.lowerCaseKey:
                         this.options.optionsFlag.push(key);
-                        this.options.ANCHOR_MODE.value = this.parseValidAnchorMode(value);
+                        this.options.ANCHOR_MODE.value = value;
                         break;
                     case this.options.BULLET_CHAR.lowerCaseKey:
                         this.options.optionsFlag.push(key);
@@ -128,14 +128,5 @@ export class ConfigManager {
             return 6;
         }
         return num;
-    }
-
-    private parseValidAnchorMode(value: string) {
-
-        if (this.optionKeys.ANCHOR_MODE_LIST.indexOf(value) != -1) {
-            return value;
-        }
-
-        return this.optionKeys.ANCHOR_MODE_LIST[0];
     }
 }
