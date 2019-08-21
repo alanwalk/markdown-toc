@@ -204,11 +204,10 @@ export class AutoMarkdownToc {
 
         let text: string[] = [];
 
-        //// TOC STAT
-        // TODO: the custom option IS inside the toc start. need to split
+        //// TOC STAT: the custom option IS inside the toc start.
         text = text.concat(this.generateTocStartIndicator());
 
-        //// HEADERS - NEW
+        //// HEADERS
         let minimumRenderedDepth = headerList[0].depth;
         headerList.forEach(header => {
             minimumRenderedDepth = Math.min(minimumRenderedDepth, header.depth);

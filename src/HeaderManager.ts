@@ -36,7 +36,7 @@ export class HeaderManager {
                     header.orderArray = this.calculateHeaderOrder(header, headerList);
                     header.range = new Range(index, 0, index, lineText.length);
 
-                    if(header.depth <= this.configManager.options.DEPTH_TO.value){
+                    if (header.depth <= this.configManager.options.DEPTH_TO.value) {
                         headerList.push(header);
                     }
                 }
@@ -45,6 +45,20 @@ export class HeaderManager {
 
         return headerList;
     }
+
+    // private isHeaderValid(header: Header, headerList: Header[]) {
+    //     if (header.depth <= this.configManager.options.DEPTH_TO.value) {
+    //         if (this.configManager.options.ANCHOR_MODE.value == AnchorMode.github) {
+    //             if (header.depth == 1 && headerList.length == 0) {
+    //                 return false;
+    //             }
+
+    //             return true;
+    //         }
+    //     }
+
+    //     return false;
+    // }
 
     public getNextLineIsNotInCode(index: number, doc: TextDocument) {
         let lineText = doc.lineAt(index).text;
@@ -83,13 +97,11 @@ export class HeaderManager {
             let previousheader = undefined;
 
             for (let index = headerList.length - 1; index >= 0; index--) {
-                if(headerList[index].depth == headerBeforePushToList.depth){
+                if (headerList[index].depth == headerBeforePushToList.depth) {
                     previousheader = headerList[index];
                     break;
                 }
             }
-
-            // let previousheader = headerList.find(header => header.depth == headerBeforePushToList.depth);
 
             if (previousheader != undefined) {
                 let orderArray = Object.assign([], previousheader.orderArray);
