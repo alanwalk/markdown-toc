@@ -190,7 +190,7 @@ export class AutoMarkdownToc {
 
                 // To ensure the anchor will not insert an extra empty line
                 let startPosition = new Position(index, 0);
-                if(index > 0 && doc.lineAt(index).text == this.configManager.lineEnding){
+                if (index > 0 && doc.lineAt(index).text == this.configManager.lineEnding) {
                     startPosition = new Position(index - 1, 0);
                 }
 
@@ -263,16 +263,20 @@ export class AutoMarkdownToc {
 
         tocStartIndicator.push('<!-- TOC ');
 
+        this.generateCustomOptionsInTocStart(tocStartIndicator);
+
+        tocStartIndicator.push('-->' + this.configManager.lineEnding);
+
+        return tocStartIndicator.join('');
+    }
+
+    private generateCustomOptionsInTocStart(tocStartIndicator: string[]) {
         // custom options
         this.configManager.options.optionsFlag.forEach(optionKey => {
             if (this.configManager.options.optionsFlag.indexOf(optionKey) != -1) {
                 tocStartIndicator.push(optionKey + ':' + this.configManager.options.getOptionValueByKey(optionKey) + ' ');
             }
         });
-
-        tocStartIndicator.push('-->' + this.configManager.lineEnding);
-
-        return tocStartIndicator.join('');
     }
 
     dispose() {
