@@ -7,7 +7,7 @@ Generate TOC (table of contents) of headlines from parsed [markdown](https://en.
 [![Rating](https://vsmarketplacebadge.apphb.com/rating/huntertran.auto-markdown-toc.svg)](https://marketplace.visualstudio.com/items?itemName=huntertran.auto-markdown-toc)
 [![Build Status](https://travis-ci.org/huntertran/markdown-toc.svg?branch=master)](https://travis-ci.org/huntertran/markdown-toc)
 
-<!-- TOC depthfrom:undefined -->
+<!-- TOC depthfrom:2 -->
 
 - [1. Features](#1-features)
 - [2. Installation](#2-installation)

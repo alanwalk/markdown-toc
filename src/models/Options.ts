@@ -16,22 +16,22 @@ export class Options {
     BULLET_CHAR: Dictionary = new Dictionary("bulletCharacter", "-");
 
     public getOptionValueByKey(key: string) {
-        switch (key) {
-            case this.DEPTH_FROM.key:
+        switch (key.toLowerCase()) {
+            case this.DEPTH_FROM.key.toLowerCase():
                 return this.DEPTH_FROM.value;
-            case this.DEPTH_TO.key:
+            case this.DEPTH_TO.key.toLowerCase():
                 return this.DEPTH_TO.value;
-            case this.INSERT_ANCHOR.key:
+            case this.INSERT_ANCHOR.key.toLowerCase():
                 return this.INSERT_ANCHOR.value;
-            case this.WITH_LINKS.key:
+            case this.WITH_LINKS.key.toLowerCase():
                 return this.WITH_LINKS.value;
-            case this.ORDERED_LIST.key:
+            case this.ORDERED_LIST.key.toLowerCase():
                 return this.ORDERED_LIST.value;
-            case this.UPDATE_ON_SAVE.key:
+            case this.UPDATE_ON_SAVE.key.toLowerCase():
                 return this.UPDATE_ON_SAVE.value;
-            case this.ANCHOR_MODE.key:
+            case this.ANCHOR_MODE.key.toLowerCase():
                 return this.ANCHOR_MODE.value;
-            case this.BULLET_CHAR.key:
+            case this.BULLET_CHAR.key.toLowerCase():
                 return this.BULLET_CHAR.value;
         }
     }
