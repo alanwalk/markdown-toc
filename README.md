@@ -80,8 +80,8 @@ To change the default configuration settings for the `Auto Markdown TOC` extensi
 
 |attributes|values|defaults|
 |---|---|---|
-|markdown-toc.depthFrom|number(1-6)|1|
-|markdown-toc.depthTo|number(1-6)|6|
+|markdown-toc.depthFrom|number|1|
+|markdown-toc.depthTo|number|6|
 |markdown-toc.bulletCharacter|string|"-"|
 |markdown-toc.insertAnchor|bool|false|
 |markdown-toc.withLinks|bool|true|

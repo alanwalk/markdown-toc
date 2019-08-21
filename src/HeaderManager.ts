@@ -35,7 +35,10 @@ export class HeaderManager {
                 if (header.isHeader) {
                     header.orderArray = this.calculateHeaderOrder(header, headerList);
                     header.range = new Range(index, 0, index, lineText.length);
-                    headerList.push(header);
+
+                    if(header.depth <= this.configManager.options.DEPTH_TO.value){
+                        headerList.push(header);
+                    }
                 }
             }
         }

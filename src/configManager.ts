@@ -3,7 +3,8 @@ import { Options } from './models/Options';
 import {
     workspace,
     window,
-    Range} from 'vscode';
+    Range
+} from 'vscode';
 
 const extensionName: string = "markdown-toc";
 const EOL = require('os').EOL;
@@ -121,12 +122,11 @@ export class ConfigManager {
 
     private parseValidNumber(value: string) {
         let num = parseInt(value);
+
         if (num < 1) {
             return 1;
         }
-        if (num > 6) {
-            return 6;
-        }
+
         return num;
     }
 }
