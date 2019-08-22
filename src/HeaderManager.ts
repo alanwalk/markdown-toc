@@ -28,7 +28,13 @@ export class HeaderManager {
             let doc = editor.document;
 
             for (let index = 0; index < doc.lineCount; index++) {
-                let lineText = this.getNextLineIsNotInCode(index, doc);
+                index = this.getNextLineIndexIsNotInCode(index, doc);
+
+                if (index == doc.lineCount) {
+                    break;
+                }
+
+                let lineText = doc.lineAt(index).text;
 
                 let header = this.getHeader(lineText);
 
@@ -46,38 +52,26 @@ export class HeaderManager {
         return headerList;
     }
 
-    // private isHeaderValid(header: Header, headerList: Header[]) {
-    //     if (header.depth <= this.configManager.options.DEPTH_TO.value) {
-    //         if (this.configManager.options.ANCHOR_MODE.value == AnchorMode.github) {
-    //             if (header.depth == 1 && headerList.length == 0) {
-    //                 return false;
-    //             }
+    public getNextLineIndexIsNotInCode(index: number, doc: TextDocument) {
+        if (this.isLineStartOrEndOfCodeBlock(index, doc) && index < doc.lineCount - 1) {
+            index = index + 1;
 
-    //             return true;
-    //         }
-    //     }
-
-    //     return false;
-    // }
-
-    public getNextLineIsNotInCode(index: number, doc: TextDocument) {
-        let lineText = doc.lineAt(index).text;
-
-        let isCodeStyle1 = lineText.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK1) != null;
-        let isCodeStyle2 = lineText.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK2) != null;
-
-        let nextIndex = index;
-
-        while ((isCodeStyle1 || isCodeStyle2) && index < doc.lineCount - 1) {
-            nextIndex = index + 1;
-
-            let nextLine = doc.lineAt(nextIndex).text;
-
-            isCodeStyle1 = nextLine.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK1) != null;
-            isCodeStyle2 = nextLine.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK2) != null;
+            while (this.isLineStartOrEndOfCodeBlock(index, doc) == false && index < doc.lineCount - 1) {
+                index = index + 1;
+            }
+            return index + 1;
         }
 
-        return doc.lineAt(nextIndex).text;
+        return index;
+    }
+
+    private isLineStartOrEndOfCodeBlock(lineNumber: number, doc: TextDocument) {
+        let nextLine = doc.lineAt(lineNumber).text;
+
+        let isCodeStyle1 = nextLine.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK1) != null;
+        let isCodeStyle2 = nextLine.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK2) != null;
+
+        return isCodeStyle1 || isCodeStyle2;
     }
 
     public calculateHeaderOrder(headerBeforePushToList: Header, headerList: Header[]) {
