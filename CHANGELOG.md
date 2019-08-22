@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.2] - 2019-08-22
+### Fixed:
+- Ignore 'header' in code block
+
 ## [2.2.1] - 2019-08-21
 ### Fixed:
 - Custom options for each document is now working as expected.
