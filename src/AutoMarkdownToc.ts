@@ -15,62 +15,57 @@ export class AutoMarkdownToc {
     headerManager = new HeaderManager();
 
     // Public function
-    public updateMarkdownToc(isBySave: boolean = false) {
+    public updateMarkdownToc() {
         let autoMarkdownToc = this;
         let editor = window.activeTextEditor;
 
         if (editor == undefined) {
-            return false;
+            return;
         }
 
-        let insertPosition = editor.selection.active;
+        autoMarkdownToc.configManager.updateOptions();
+        let tocRange = autoMarkdownToc.getTocRange();
+        let headerList = autoMarkdownToc.headerManager.getHeaderList();
 
         editor.edit(function (editBuilder) {
-            let tocRange = autoMarkdownToc.getTocRange();
-            autoMarkdownToc.updateOptions(tocRange);
-            if (isBySave && ((!autoMarkdownToc.configManager.options.UPDATE_ON_SAVE.value) || (tocRange == null))) {
-                return false;
-            }
-
-            // save options, and delete last insert
-            if (tocRange != null) {
-                insertPosition = tocRange.start;
+            if (!tocRange.isSingleLine) {
                 editBuilder.delete(tocRange);
-                autoMarkdownToc.deleteAnchor(editBuilder);
+                autoMarkdownToc.deleteAnchors(editBuilder);
             }
 
-            let headerList = autoMarkdownToc.headerManager.getHeaderList();
-
-            autoMarkdownToc.createToc(editBuilder, headerList, insertPosition);
-            autoMarkdownToc.insertAnchor(editBuilder, headerList);
+            autoMarkdownToc.createToc(editBuilder, headerList, tocRange.start);
+            autoMarkdownToc.insertAnchors(editBuilder, headerList);
         });
-
-        return true;
     }
 
     public deleteMarkdownToc() {
         let autoMarkdownToc = this;
         let editor = window.activeTextEditor;
+
         if (editor == undefined) {
-            return false;
+            return;
         }
+
         editor.edit(function (editBuilder) {
             let tocRange = autoMarkdownToc.getTocRange();
-            if (tocRange == null) {
+            if (tocRange.isSingleLine) {
                 return;
             }
+
             editBuilder.delete(tocRange);
-            autoMarkdownToc.deleteAnchor(editBuilder);
+            autoMarkdownToc.deleteAnchors(editBuilder);
         });
     }
 
     public updateMarkdownSections() {
-        let tocRange = this.getTocRange();
-        this.updateOptions(tocRange);
+        this.configManager.updateOptions();
+
         let headerList = this.headerManager.getHeaderList();
         let editor = window.activeTextEditor;
         let config = this.configManager;
+
         if (editor != undefined) {
+            config.options.isOrderedListDetected = true;
             let document = editor.document;
             editor.edit(function (editBuilder) {
                 headerList.forEach(header => {
@@ -86,11 +81,13 @@ export class AutoMarkdownToc {
     }
 
     public deleteMarkdownSections() {
-        let tocRange = this.getTocRange();
-        this.updateOptions(tocRange);
+        this.configManager.updateOptions();
         let headerList = this.headerManager.getHeaderList();
         let editor = window.activeTextEditor;
+        let config = this.configManager;
+
         if (editor != undefined && headerList != undefined) {
+            config.options.isOrderedListDetected = false;
             editor.edit(function (editBuilder) {
                 headerList.forEach(element => {
                     editBuilder.replace(element.range, element.fullHeaderWithoutOrder);
@@ -99,86 +96,108 @@ export class AutoMarkdownToc {
         }
     }
 
-    public notifyDocumentSave() {
-        // Prevent save again
-        if (this.configManager.options.saveBySelf) {
-            this.configManager.options.saveBySelf = false;
-            return;
-        }
-        let editor = window.activeTextEditor;
-        if (editor != undefined) {
-            let doc = editor.document;
-            if (doc.languageId != 'markdown') {
-                return;
-            }
-            if (this.updateMarkdownToc(true)) {
-                doc.save();
-                this.configManager.options.saveBySelf = true;
-            }
-        }
-    }
+    // public notifyDocumentSave() {
+    //     // Prevent save again
+    //     if (this.configManager.options.isProgrammaticallySave) {
+    //         this.configManager.options.isProgrammaticallySave = false;
+    //         return;
+    //     }
 
-    // Private function
+    //     let editor = window.activeTextEditor;
+    //     if (editor != undefined) {
+    //         let doc = editor.document;
+    //         if (doc.languageId != 'markdown') {
+    //             return;
+    //         }
+
+    //         if (this.updateMarkdownToc(true)) {
+    //             doc.save();
+    //             this.configManager.options.isProgrammaticallySave = true;
+    //         }
+    //     }
+    // }
+
+    /**
+     * Get TOC range, in case of no TOC, return the active line
+     * In case of the editor is not available, return the first line
+     */
     private getTocRange() {
         let editor = window.activeTextEditor;
+
         if (editor == undefined) {
-            return null;
+            return new Range(0, 0, 0, 0);
         }
+
         let doc = editor.document;
-        let start, stop: Position | undefined;
+        let start, end: Position | undefined;
+
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
-            if ((start == null) && (lineText.match(this.configManager.regexStrings.REGEXP_TOC_START))) {
+
+            if ((start == undefined) && (lineText.match(this.configManager.regexStrings.REGEXP_TOC_START))) {
                 start = new Position(index, 0);
             }
             else if (lineText.match(this.configManager.regexStrings.REGEXP_TOC_STOP)) {
-                stop = new Position(index, lineText.length);
+                end = new Position(index, lineText.length);
                 break;
             }
         }
-        if ((start != null) && (stop != null)) {
-            return new Range(start, stop);
+
+        if ((start == undefined) || (end == undefined)) {
+            if (start != undefined) {
+                end = start;
+            } else if (end != undefined) {
+                start = end;
+            } else {
+                start = editor.selection.active;
+                end = editor.selection.active;
+            }
         }
-        return null;
+
+        return new Range(start, end);
     }
 
-    private updateOptions(tocRange: Range | null) {
-        this.configManager.loadConfigurations();
-        this.configManager.loadCustomOptions(tocRange);
+    /**
+     * insert anchor for a header
+     * @param editBuilder 
+     * @param header 
+     */
+    private insertAnchor(editBuilder: TextEditorEdit, header: Header) {
+        let anchorMatches = header.hash.match(this.configManager.regexStrings.REGEXP_ANCHOR);
+        if (anchorMatches != null) {
+            let name = anchorMatches[1];
+            let text = [
+                this.configManager.lineEnding,
+                '<a id="markdown-',
+                name,
+                '" name="',
+                name,
+                '"></a>'];
+
+            let insertPosition = new Position(header.range.end.line, header.range.end.character);
+
+            if (this.configManager.options.ANCHOR_MODE.value == AnchorMode.bitbucket) {
+                text = text.slice(1);
+                text.push(this.configManager.lineEnding);
+                text.push(this.configManager.lineEnding);
+                insertPosition = new Position(header.range.start.line, 0);
+            }
+
+            editBuilder.insert(insertPosition, text.join(''));
+        }
     }
 
-    private insertAnchor(editBuilder: TextEditorEdit, headerList: Header[]) {
+    private insertAnchors(editBuilder: TextEditorEdit, headerList: Header[]) {
         if (!this.configManager.options.INSERT_ANCHOR.value) {
             return;
         }
 
         headerList.forEach(header => {
-            let anchorMatches = header.hash.match(this.configManager.regexStrings.REGEXP_ANCHOR);
-            if (anchorMatches != null) {
-                let name = anchorMatches[1];
-                let text = [
-                    this.configManager.lineEnding,
-                    '<a id="markdown-',
-                    name,
-                    '" name="',
-                    name,
-                    '"></a>'];
-
-                let insertPosition = new Position(header.range.end.line, header.range.end.character);
-
-                if (this.configManager.options.ANCHOR_MODE.value == AnchorMode.bitbucket) {
-                    text = text.slice(1);
-                    text.push(this.configManager.lineEnding);
-                    text.push(this.configManager.lineEnding);
-                    insertPosition = new Position(header.range.start.line, 0);
-                }
-
-                editBuilder.insert(insertPosition, text.join(''));
-            }
+            this.insertAnchor(editBuilder, header);
         });
     }
 
-    private deleteAnchor(editBuilder: TextEditorEdit) {
+    private deleteAnchors(editBuilder: TextEditorEdit) {
         let editor = window.activeTextEditor;
         if (editor != undefined) {
             let doc = editor.document;

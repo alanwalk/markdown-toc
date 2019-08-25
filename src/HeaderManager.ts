@@ -47,9 +47,24 @@ export class HeaderManager {
                     }
                 }
             }
+
+            // violation of clean code
+            this.detectAutoOrderedHeader(headerList);
         }
 
         return headerList;
+    }
+
+    private detectAutoOrderedHeader(headerList: Header[]) {
+
+        this.configManager.options.isOrderedListDetected = false;
+
+        for (let index = 0; index < headerList.length; index++) {
+            if (headerList[index].orderedListString != undefined && headerList[index].orderedListString != '') {
+                this.configManager.options.isOrderedListDetected = true;
+                break;
+            }
+        }
     }
 
     public getNextLineIndexIsNotInCode(index: number, doc: TextDocument) {

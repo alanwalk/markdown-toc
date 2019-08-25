@@ -19,13 +19,14 @@ export class ConfigManager {
     lineEnding = <string>workspace.getConfiguration("files", null).get("eol");
     tabSize = <number>workspace.getConfiguration("[markdown]", null)["editor.tabSize"];
     insertSpaces = <boolean>workspace.getConfiguration("[markdown]", null)["editor.insertSpaces"];
+    autoSave = false;
 
     // special characters
     tab = '\t';
 
-    public updateOptions(tocRange: Range | null) {
+    public updateOptions() {
         this.loadConfigurations();
-        this.loadCustomOptions(tocRange);
+        this.loadCustomOptions();
     }
 
     public loadConfigurations() {
@@ -37,6 +38,7 @@ export class ConfigManager {
         this.options.UPDATE_ON_SAVE.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.UPDATE_ON_SAVE.key);
         this.options.ANCHOR_MODE.value = <string>workspace.getConfiguration(extensionName).get(this.options.ANCHOR_MODE.key);
         this.options.BULLET_CHAR.value = <string>workspace.getConfiguration(extensionName).get(this.options.BULLET_CHAR.key);
+        this.options.DETECT_AUTO_SET_SECTION.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.DETECT_AUTO_SET_SECTION.key);
 
         if (this.lineEnding === 'auto') {
             this.lineEnding = <string>EOL;
@@ -51,69 +53,81 @@ export class ConfigManager {
         if (this.insertSpaces && this.tabSize > 0) {
             this.tab = " ".repeat(this.tabSize);
         }
+
+        if (<string>workspace.getConfiguration("files", null).get("autoSave") != "off") {
+            this.autoSave = true;
+        }
     }
 
-    public loadCustomOptions(tocRange: Range | null) {
+    public loadCustomOptions() {
         this.options.optionsFlag = [];
-
-        if (tocRange == null) {
-            return;
-        }
 
         let editor = window.activeTextEditor;
         if (editor == undefined) {
             return;
         }
 
-        let optionsText = editor.document.lineAt(tocRange.start.line).text;
-        let options = optionsText.match(this.regexStrings.REGEXP_TOC_CONFIG);
+        for (let index = 0; index < editor.document.lineCount; index++) {
+            let lineText = editor.document.lineAt(index).text;
 
-        if (options == null) {
-            return;
+            if (lineText.match(this.regexStrings.REGEXP_TOC_START)) {
+                let options = lineText.match(this.regexStrings.REGEXP_TOC_CONFIG);
+
+                if (options != null) {
+                    options.forEach(element => {
+                        let pair = this.regexStrings.REGEXP_TOC_CONFIG_ITEM.exec(element);
+
+                        if (pair != null) {
+                            let key = pair[1].toLocaleLowerCase();
+                            let value = pair[2];
+
+                            switch (key) {
+                                case this.options.DEPTH_FROM.lowerCaseKey:
+                                    this.options.optionsFlag.push(key);
+                                    this.options.DEPTH_FROM.value = this.parseValidNumber(value);
+                                    break;
+                                case this.options.DEPTH_TO.lowerCaseKey:
+                                    this.options.optionsFlag.push(key);
+                                    this.options.DEPTH_TO.value = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM.value);
+                                    break;
+                                case this.options.INSERT_ANCHOR.lowerCaseKey:
+                                    this.options.optionsFlag.push(key);
+                                    this.options.INSERT_ANCHOR.value = this.parseBool(value);
+                                    break;
+                                case this.options.WITH_LINKS.lowerCaseKey:
+                                    this.options.optionsFlag.push(key);
+                                    this.options.WITH_LINKS.value = this.parseBool(value);
+                                    break;
+                                case this.options.ORDERED_LIST.lowerCaseKey:
+                                    this.options.optionsFlag.push(key);
+                                    this.options.ORDERED_LIST.value = this.parseBool(value);
+                                    break;
+                                case this.options.UPDATE_ON_SAVE.lowerCaseKey:
+                                    this.options.optionsFlag.push(key);
+                                    this.options.UPDATE_ON_SAVE.value = this.parseBool(value);
+                                    break;
+                                case this.options.ANCHOR_MODE.lowerCaseKey:
+                                    this.options.optionsFlag.push(key);
+                                    this.options.ANCHOR_MODE.value = value;
+                                    break;
+                                case this.options.BULLET_CHAR.lowerCaseKey:
+                                    this.options.optionsFlag.push(key);
+                                    this.options.BULLET_CHAR.value = value;
+                                    break;
+                                case this.options.DETECT_AUTO_SET_SECTION.lowerCaseKey:
+                                    this.options.optionsFlag.push(key);
+                                    this.options.DETECT_AUTO_SET_SECTION.value = value;
+                                    break;
+                            }
+                        }
+                    });
+                }
+
+                break;
+            }
         }
 
-        options.forEach(element => {
-            let pair = this.regexStrings.REGEXP_TOC_CONFIG_ITEM.exec(element);
-
-            if (pair != null) {
-                let key = pair[1].toLocaleLowerCase();
-                let value = pair[2];
-
-                switch (key) {
-                    case this.options.DEPTH_FROM.lowerCaseKey:
-                        this.options.optionsFlag.push(key);
-                        this.options.DEPTH_FROM.value = this.parseValidNumber(value);
-                        break;
-                    case this.options.DEPTH_TO.lowerCaseKey:
-                        this.options.optionsFlag.push(key);
-                        this.options.DEPTH_TO.value = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM.value);
-                        break;
-                    case this.options.INSERT_ANCHOR.lowerCaseKey:
-                        this.options.optionsFlag.push(key);
-                        this.options.INSERT_ANCHOR.value = this.parseBool(value);
-                        break;
-                    case this.options.WITH_LINKS.lowerCaseKey:
-                        this.options.optionsFlag.push(key);
-                        this.options.WITH_LINKS.value = this.parseBool(value);
-                        break;
-                    case this.options.ORDERED_LIST.lowerCaseKey:
-                        this.options.optionsFlag.push(key);
-                        this.options.ORDERED_LIST.value = this.parseBool(value);
-                        break;
-                    case this.options.UPDATE_ON_SAVE.lowerCaseKey:
-                        this.options.optionsFlag.push(key);
-                        this.options.UPDATE_ON_SAVE.value = this.parseBool(value);
-                        break;
-                    case this.options.ANCHOR_MODE.lowerCaseKey:
-                        this.options.optionsFlag.push(key);
-                        this.options.ANCHOR_MODE.value = value;
-                        break;
-                    case this.options.BULLET_CHAR.lowerCaseKey:
-                        this.options.optionsFlag.push(key);
-                        this.options.BULLET_CHAR.value = value;
-                }
-            }
-        });
+        return;
     }
 
     private parseBool(value: string) {

@@ -133,6 +133,11 @@
                         "ghost.org",
                         "gitlab.com"
                     ]
+                },
+                "markdown-toc.detectAndAutoSetSection":{
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Auto set header sections when detected"
                 }
             }
         }
