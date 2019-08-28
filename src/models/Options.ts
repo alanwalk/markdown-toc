@@ -14,7 +14,7 @@ export class Options {
     INSERT_ANCHOR: Dictionary = new Dictionary("insertAnchor", false);
     WITH_LINKS: Dictionary = new Dictionary("withLinks", true);
     ORDERED_LIST: Dictionary = new Dictionary("orderedList", false);
-    UPDATE_ON_SAVE: Dictionary = new Dictionary("updateOnSave", true);
+    // UPDATE_ON_SAVE: Dictionary = new Dictionary("updateOnSave", true);
     ANCHOR_MODE: Dictionary = new Dictionary("anchorMode", AnchorMode.github);
     BULLET_CHAR: Dictionary = new Dictionary("bulletCharacter", "-");
     DETECT_AUTO_SET_SECTION: Dictionary = new Dictionary("detectAndAutoSetSection", true);
@@ -31,8 +31,8 @@ export class Options {
                 return this.WITH_LINKS.value;
             case this.ORDERED_LIST.lowerCaseKey:
                 return this.ORDERED_LIST.value;
-            case this.UPDATE_ON_SAVE.lowerCaseKey:
-                return this.UPDATE_ON_SAVE.value;
+            // case this.UPDATE_ON_SAVE.lowerCaseKey:
+            //     return this.UPDATE_ON_SAVE.value;
             case this.ANCHOR_MODE.lowerCaseKey:
                 return this.ANCHOR_MODE.value;
             case this.BULLET_CHAR.lowerCaseKey:

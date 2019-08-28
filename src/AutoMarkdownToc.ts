@@ -2,7 +2,8 @@ import {
     window,
     Position,
     Range,
-    TextEditorEdit
+    TextEditorEdit,
+    TextDocument
 } from 'vscode';
 import { Header } from "./models/Header";
 import { ConfigManager } from './ConfigManager';
@@ -14,7 +15,27 @@ export class AutoMarkdownToc {
     configManager = new ConfigManager();
     headerManager = new HeaderManager();
 
-    // Public function
+    public onDidSaveTextDocument(event: TextDocument) {
+        // Prevent save loop
+        if (this.configManager.options.isProgrammaticallySave) {
+            this.configManager.options.isProgrammaticallySave = false;
+            return;
+        }
+
+        let editor = window.activeTextEditor;
+        if (editor != undefined) {
+            let doc = editor.document;
+
+            if (doc.languageId != 'markdown') {
+                return;
+            }
+
+            this.updateMarkdownToc();
+            this.configManager.options.isProgrammaticallySave = true;
+            doc.save();
+        }
+    }
+
     public updateMarkdownToc() {
         let autoMarkdownToc = this;
         let editor = window.activeTextEditor;
@@ -26,16 +47,25 @@ export class AutoMarkdownToc {
         autoMarkdownToc.configManager.updateOptions();
         let tocRange = autoMarkdownToc.getTocRange();
         let headerList = autoMarkdownToc.headerManager.getHeaderList();
+        let document = editor.document;
 
-        editor.edit(function (editBuilder) {
+        editor.edit(editBuilder => {
             if (!tocRange.isSingleLine) {
                 editBuilder.delete(tocRange);
                 autoMarkdownToc.deleteAnchors(editBuilder);
             }
 
+            if (this.configManager.options.DETECT_AUTO_SET_SECTION.value) {
+                autoMarkdownToc.updateHeadersWithSections(editBuilder, headerList, document);
+
+                //rebuild header list, because headers have changed
+                headerList = autoMarkdownToc.headerManager.getHeaderList();
+            }
+
             autoMarkdownToc.createToc(editBuilder, headerList, tocRange.start);
             autoMarkdownToc.insertAnchors(editBuilder, headerList);
         });
+
     }
 
     public deleteMarkdownToc() {
@@ -57,6 +87,19 @@ export class AutoMarkdownToc {
         });
     }
 
+    public updateHeadersWithSections(editBuilder: TextEditorEdit, headerList: Header[], document: TextDocument) {
+        headerList.forEach(header => {
+
+            if (header.range.start.line != 0 && !document.lineAt(header.range.start.line - 1).isEmptyOrWhitespace) {
+                editBuilder.insert(new Position(header.range.start.line, 0), this.configManager.lineEnding);
+            }
+
+            editBuilder.replace(header.range, header.fullHeaderWithOrder);
+
+            // header.orderedListString = 
+        });
+    }
+
     public updateMarkdownSections() {
         this.configManager.updateOptions();
 
@@ -67,15 +110,8 @@ export class AutoMarkdownToc {
         if (editor != undefined) {
             config.options.isOrderedListDetected = true;
             let document = editor.document;
-            editor.edit(function (editBuilder) {
-                headerList.forEach(header => {
-
-                    if (header.range.start.line != 0 && !document.lineAt(header.range.start.line - 1).isEmptyOrWhitespace) {
-                        editBuilder.insert(new Position(header.range.start.line, 0), config.lineEnding);
-                    }
-
-                    editBuilder.replace(header.range, header.fullHeaderWithOrder);
-                });
+            editor.edit(editBuilder => {
+                this.updateHeadersWithSections(editBuilder, headerList, document);
             });
         }
     }
@@ -95,27 +131,6 @@ export class AutoMarkdownToc {
             });
         }
     }
-
-    // public notifyDocumentSave() {
-    //     // Prevent save again
-    //     if (this.configManager.options.isProgrammaticallySave) {
-    //         this.configManager.options.isProgrammaticallySave = false;
-    //         return;
-    //     }
-
-    //     let editor = window.activeTextEditor;
-    //     if (editor != undefined) {
-    //         let doc = editor.document;
-    //         if (doc.languageId != 'markdown') {
-    //             return;
-    //         }
-
-    //         if (this.updateMarkdownToc(true)) {
-    //             doc.save();
-    //             this.configManager.options.isProgrammaticallySave = true;
-    //         }
-    //     }
-    // }
 
     /**
      * Get TOC range, in case of no TOC, return the active line

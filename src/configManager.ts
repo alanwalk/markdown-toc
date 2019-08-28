@@ -2,8 +2,7 @@ import { RegexStrings } from './models/RegexStrings';
 import { Options } from './models/Options';
 import {
     workspace,
-    window,
-    Range
+    window
 } from 'vscode';
 
 const extensionName: string = "markdown-toc";
@@ -35,7 +34,7 @@ export class ConfigManager {
         this.options.INSERT_ANCHOR.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.INSERT_ANCHOR.key);
         this.options.WITH_LINKS.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.WITH_LINKS.key);
         this.options.ORDERED_LIST.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.ORDERED_LIST.key);
-        this.options.UPDATE_ON_SAVE.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.UPDATE_ON_SAVE.key);
+        // this.options.UPDATE_ON_SAVE.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.UPDATE_ON_SAVE.key);
         this.options.ANCHOR_MODE.value = <string>workspace.getConfiguration(extensionName).get(this.options.ANCHOR_MODE.key);
         this.options.BULLET_CHAR.value = <string>workspace.getConfiguration(extensionName).get(this.options.BULLET_CHAR.key);
         this.options.DETECT_AUTO_SET_SECTION.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.DETECT_AUTO_SET_SECTION.key);
@@ -102,10 +101,10 @@ export class ConfigManager {
                                     this.options.optionsFlag.push(key);
                                     this.options.ORDERED_LIST.value = this.parseBool(value);
                                     break;
-                                case this.options.UPDATE_ON_SAVE.lowerCaseKey:
-                                    this.options.optionsFlag.push(key);
-                                    this.options.UPDATE_ON_SAVE.value = this.parseBool(value);
-                                    break;
+                                // case this.options.UPDATE_ON_SAVE.lowerCaseKey:
+                                //     this.options.optionsFlag.push(key);
+                                //     this.options.UPDATE_ON_SAVE.value = this.parseBool(value);
+                                //     break;
                                 case this.options.ANCHOR_MODE.lowerCaseKey:
                                     this.options.optionsFlag.push(key);
                                     this.options.ANCHOR_MODE.value = value;
