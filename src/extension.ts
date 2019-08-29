@@ -17,7 +17,7 @@ export function activate(context: ExtensionContext) {
     let deleteMarkdownSections = commands.registerCommand('extension.deleteMarkdownSections', () => { autoMarkdownToc.deleteMarkdownSections(); });
 
     // Events
-    let saveMarkdownToc = workspace.onDidSaveTextDocument((event) => { autoMarkdownToc.onDidSaveTextDocument(event); });
+    let saveMarkdownToc = workspace.onDidSaveTextDocument(() => { autoMarkdownToc.onDidSaveTextDocument(); });
 
     // Add to a list of disposables which are disposed when this extension is deactivated.
     context.subscriptions.push(updateMarkdownToc);

@@ -15,7 +15,11 @@ export class AutoMarkdownToc {
     configManager = new ConfigManager();
     headerManager = new HeaderManager();
 
-    public onDidSaveTextDocument(event: TextDocument) {
+    public onDidSaveTextDocument() {
+        if (!this.configManager.options.UPDATE_ON_SAVE.value) {
+            return;
+        }
+
         // Prevent save loop
         if (this.configManager.options.isProgrammaticallySave) {
             this.configManager.options.isProgrammaticallySave = false;
@@ -95,8 +99,6 @@ export class AutoMarkdownToc {
             }
 
             editBuilder.replace(header.range, header.fullHeaderWithOrder);
-
-            // header.orderedListString = 
         });
     }
 
