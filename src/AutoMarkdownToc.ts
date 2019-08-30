@@ -34,9 +34,13 @@ export class AutoMarkdownToc {
                 return;
             }
 
-            this.updateMarkdownToc();
-            this.configManager.options.isProgrammaticallySave = true;
-            doc.save();
+            let tocRange = this.getTocRange();
+
+            if (!tocRange.isSingleLine) {
+                this.updateMarkdownToc();
+                this.configManager.options.isProgrammaticallySave = true;
+                doc.save();
+            }
         }
     }
 
@@ -59,7 +63,7 @@ export class AutoMarkdownToc {
                 autoMarkdownToc.deleteAnchors(editBuilder);
             }
 
-            if (this.configManager.options.DETECT_AUTO_SET_SECTION.value) {
+            if (this.configManager.options.DETECT_AUTO_SET_SECTION.value && this.configManager.options.isOrderedListDetected) {
                 autoMarkdownToc.updateHeadersWithSections(editBuilder, headerList, document);
 
                 //rebuild header list, because headers have changed
@@ -69,7 +73,6 @@ export class AutoMarkdownToc {
             autoMarkdownToc.createToc(editBuilder, headerList, tocRange.start);
             autoMarkdownToc.insertAnchors(editBuilder, headerList);
         });
-
     }
 
     public deleteMarkdownToc() {
@@ -180,7 +183,7 @@ export class AutoMarkdownToc {
      * @param header 
      */
     private insertAnchor(editBuilder: TextEditorEdit, header: Header) {
-        let anchorMatches = header.hash.match(this.configManager.regexStrings.REGEXP_ANCHOR);
+        let anchorMatches = header.hash(header.tocWithoutOrder).match(this.configManager.regexStrings.REGEXP_ANCHOR);
         if (anchorMatches != null) {
             let name = anchorMatches[1];
             let text = [
@@ -274,23 +277,26 @@ export class AutoMarkdownToc {
         let indentRepeatTime = header.depth - Math.max(this.configManager.options.DEPTH_FROM.value, minimumRenderedDepth);
         row.push(this.configManager.tab.repeat(indentRepeatTime));
 
-        // TOC with or without ordered numbers?
-        if (this.configManager.options.ORDERED_LIST.value) {
-            row.push(header.orderArray[header.orderArray.length - 1].toString() + ".");
-        } else {
-            row.push(this.configManager.options.BULLET_CHAR.value);
-        }
+        row.push(this.configManager.options.BULLET_CHAR.value);
 
         row.push(' ');
 
-        // TOC with or without link
+        // TOC with or without link and order
         if (this.configManager.options.WITH_LINKS.value) {
-            row.push(header.hash);
+            row.push(header.hash(this.getTocString(header)));
         } else {
-            row.push(header.dirtyHeaderWithoutHeaderMark);
+            row.push(this.getTocString(header));
         }
 
         return row.join('');
+    }
+
+    private getTocString(header: Header) {
+        if (this.configManager.options.ORDERED_LIST.value) {
+            return header.tocWithOrder;
+        } else {
+            return header.tocWithoutOrder;
+        }
     }
 
     private generateTocStartIndicator() {

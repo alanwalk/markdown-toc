@@ -1,6 +1,7 @@
 import {
     Range
 } from 'vscode';
+import { AnchorMode } from './AnchorMode';
 
 export class Header {
     headerMark: string = "";
@@ -10,9 +11,9 @@ export class Header {
 
     orderArray:number[] = [];
 
-    anchorMode: string = "";
+    anchorMode: AnchorMode = AnchorMode.github;
 
-    constructor(anchorMode: string) {
+    constructor(anchorMode: AnchorMode) {
         this.anchorMode = anchorMode;
         this.range = new Range(0, 0, 0, 0);
     }
@@ -25,8 +26,8 @@ export class Header {
         return this.headerMark != "";
     }
 
-    public get hash(): string {
-        let title = this.cleanUpTitle(this.dirtyHeaderWithoutHeaderMark);
+    public hash(tocString: string): string {
+        let title = this.cleanUpTitle(tocString);
         let hashMap: any = {};
 
         if (hashMap[title] == null) {
@@ -39,19 +40,23 @@ export class Header {
         return this.getHash(title, this.anchorMode, hashMap[title]);
     }
 
+    public get tocWithoutOrder(): string {
+        return this.dirtyTitle;
+    }
+
+    public get tocWithOrder(): string {
+        return this.orderArray.join('.') + ". " + this.tocWithoutOrder;
+    }
+
     public get fullHeaderWithOrder():string {
-        return this.headerMark + " " + this.orderArray.join('.') + ". " + this.dirtyTitle;
+        return this.headerMark + " " + this.tocWithOrder;
     }
 
     public get fullHeaderWithoutOrder():string{
-        return this.headerMark + " " + this.dirtyTitle;
+        return this.headerMark + " " + this.tocWithoutOrder;
     }
 
-    public get dirtyHeaderWithoutHeaderMark():string{
-        return this.orderedListString + " " + this.dirtyTitle;
-    }
-
-    private getHash(headername: string, mode: string, repetition: number) {
+    private getHash(headername: string, mode: AnchorMode, repetition: number) {
         let anchor = require('anchor-markdown-header');
         return decodeURI(anchor(headername, mode, repetition));
     }
