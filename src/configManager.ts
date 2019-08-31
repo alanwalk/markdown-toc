@@ -5,23 +5,9 @@ import {
     window
 } from 'vscode';
 
-const extensionName: string = "markdown-toc";
-const EOL = require('os').EOL;
-
 export class ConfigManager {
 
-    regexStrings = new RegexStrings();
-
     options = new Options();
-
-    // language configuration
-    lineEnding = <string>workspace.getConfiguration("files", null).get("eol");
-    tabSize = <number>workspace.getConfiguration("[markdown]", null)["editor.tabSize"];
-    insertSpaces = <boolean>workspace.getConfiguration("[markdown]", null)["editor.insertSpaces"];
-    autoSave = false;
-
-    // special characters
-    tab = '\t';
 
     public updateOptions() {
         this.loadConfigurations();
@@ -29,32 +15,37 @@ export class ConfigManager {
     }
 
     public loadConfigurations() {
-        this.options.DEPTH_FROM.value = <number>workspace.getConfiguration(extensionName).get(this.options.DEPTH_FROM.key);
-        this.options.DEPTH_TO.value = <number>workspace.getConfiguration(extensionName).get(this.options.DEPTH_TO.key);
-        this.options.INSERT_ANCHOR.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.INSERT_ANCHOR.key);
-        this.options.WITH_LINKS.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.WITH_LINKS.key);
-        this.options.ORDERED_LIST.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.ORDERED_LIST.key);
-        this.options.UPDATE_ON_SAVE.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.UPDATE_ON_SAVE.key);
-        this.options.ANCHOR_MODE.value = <string>workspace.getConfiguration(extensionName).get(this.options.ANCHOR_MODE.key);
-        this.options.BULLET_CHAR.value = <string>workspace.getConfiguration(extensionName).get(this.options.BULLET_CHAR.key);
-        this.options.DETECT_AUTO_SET_SECTION.value = <boolean>workspace.getConfiguration(extensionName).get(this.options.DETECT_AUTO_SET_SECTION.key);
+        this.options.DEPTH_FROM.value = <number>workspace.getConfiguration(this.options.extensionName).get(this.options.DEPTH_FROM.key);
+        this.options.DEPTH_TO.value = <number>workspace.getConfiguration(this.options.extensionName).get(this.options.DEPTH_TO.key);
+        this.options.INSERT_ANCHOR.value = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.INSERT_ANCHOR.key);
+        this.options.WITH_LINKS.value = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.WITH_LINKS.key);
+        this.options.ORDERED_LIST.value = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.ORDERED_LIST.key);
+        this.options.UPDATE_ON_SAVE.value = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.UPDATE_ON_SAVE.key);
+        this.options.ANCHOR_MODE.value = <string>workspace.getConfiguration(this.options.extensionName).get(this.options.ANCHOR_MODE.key);
+        this.options.BULLET_CHAR.value = <string>workspace.getConfiguration(this.options.extensionName).get(this.options.BULLET_CHAR.key);
+        this.options.DETECT_AUTO_SET_SECTION.value = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.DETECT_AUTO_SET_SECTION.key);
 
-        if (this.lineEnding === 'auto') {
-            this.lineEnding = <string>EOL;
-        }
-        if (this.tabSize === undefined || this.tabSize === null) {
-            this.tabSize = <number>workspace.getConfiguration("editor", null).get("tabSize");
-        }
-        if (this.insertSpaces === undefined || this.insertSpaces === null) {
-            this.insertSpaces = <boolean>workspace.getConfiguration("editor", null).get("insertSpaces");
+        this.options.lineEnding = <string>workspace.getConfiguration("files", null).get("eol");
+        if (this.options.lineEnding === 'auto') {
+            this.options.lineEnding = <string>this.options.EOL;
         }
 
-        if (this.insertSpaces && this.tabSize > 0) {
-            this.tab = " ".repeat(this.tabSize);
+        this.options.tabSize = <number>workspace.getConfiguration("[markdown]", null)["editor.tabSize"];
+        if (this.options.tabSize === undefined || this.options.tabSize === null) {
+            this.options.tabSize = <number>workspace.getConfiguration("editor", null).get("tabSize");
+        }
+
+        this.options.insertSpaces = <boolean>workspace.getConfiguration("[markdown]", null)["editor.insertSpaces"];
+        if (this.options.insertSpaces === undefined || this.options.insertSpaces === null) {
+            this.options.insertSpaces = <boolean>workspace.getConfiguration("editor", null).get("insertSpaces");
+        }
+
+        if (this.options.insertSpaces && this.options.tabSize > 0) {
+            this.options.tab = " ".repeat(this.options.tabSize);
         }
 
         if (<string>workspace.getConfiguration("files", null).get("autoSave") != "off") {
-            this.autoSave = true;
+            this.options.autoSave = true;
         }
     }
 
@@ -69,12 +60,12 @@ export class ConfigManager {
         for (let index = 0; index < editor.document.lineCount; index++) {
             let lineText = editor.document.lineAt(index).text;
 
-            if (lineText.match(this.regexStrings.REGEXP_TOC_START)) {
-                let options = lineText.match(this.regexStrings.REGEXP_TOC_CONFIG);
+            if (lineText.match(RegexStrings.Instance.REGEXP_TOC_START)) {
+                let options = lineText.match(RegexStrings.Instance.REGEXP_TOC_CONFIG);
 
                 if (options != null) {
                     options.forEach(element => {
-                        let pair = this.regexStrings.REGEXP_TOC_CONFIG_ITEM.exec(element);
+                        let pair = RegexStrings.Instance.REGEXP_TOC_CONFIG_ITEM.exec(element);
 
                         if (pair != null) {
                             let key = pair[1].toLocaleLowerCase();
@@ -127,6 +118,30 @@ export class ConfigManager {
         }
 
         return;
+    }
+
+
+    public getOptionValueByKey(key: string) {
+        switch (key.toLowerCase()) {
+            case this.options.DEPTH_FROM.lowerCaseKey:
+                return this.options.DEPTH_FROM.value;
+            case this.options.DEPTH_TO.lowerCaseKey:
+                return this.options.DEPTH_TO.value;
+            case this.options.INSERT_ANCHOR.lowerCaseKey:
+                return this.options.INSERT_ANCHOR.value;
+            case this.options.WITH_LINKS.lowerCaseKey:
+                return this.options.WITH_LINKS.value;
+            case this.options.ORDERED_LIST.lowerCaseKey:
+                return this.options.ORDERED_LIST.value;
+            case this.options.UPDATE_ON_SAVE.lowerCaseKey:
+                return this.options.UPDATE_ON_SAVE.value;
+            case this.options.ANCHOR_MODE.lowerCaseKey:
+                return this.options.ANCHOR_MODE.value;
+            case this.options.BULLET_CHAR.lowerCaseKey:
+                return this.options.BULLET_CHAR.value;
+            case this.options.DETECT_AUTO_SET_SECTION.lowerCaseKey:
+                return this.options.DETECT_AUTO_SET_SECTION.value;
+        }
     }
 
     private parseBool(value: string) {

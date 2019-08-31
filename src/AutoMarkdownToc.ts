@@ -9,6 +9,7 @@ import { Header } from "./models/Header";
 import { ConfigManager } from './ConfigManager';
 import { HeaderManager } from './HeaderManager';
 import { AnchorMode } from './models/AnchorMode';
+import { RegexStrings } from './models/RegexStrings';
 
 export class AutoMarkdownToc {
 
@@ -98,7 +99,7 @@ export class AutoMarkdownToc {
         headerList.forEach(header => {
 
             if (header.range.start.line != 0 && !document.lineAt(header.range.start.line - 1).isEmptyOrWhitespace) {
-                editBuilder.insert(new Position(header.range.start.line, 0), this.configManager.lineEnding);
+                editBuilder.insert(new Position(header.range.start.line, 0), this.configManager.options.lineEnding);
             }
 
             editBuilder.replace(header.range, header.fullHeaderWithOrder);
@@ -154,10 +155,10 @@ export class AutoMarkdownToc {
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
 
-            if ((start == undefined) && (lineText.match(this.configManager.regexStrings.REGEXP_TOC_START))) {
+            if ((start == undefined) && (lineText.match(RegexStrings.Instance.REGEXP_TOC_START))) {
                 start = new Position(index, 0);
             }
-            else if (lineText.match(this.configManager.regexStrings.REGEXP_TOC_STOP)) {
+            else if (lineText.match(RegexStrings.Instance.REGEXP_TOC_STOP)) {
                 end = new Position(index, lineText.length);
                 break;
             }
@@ -183,11 +184,11 @@ export class AutoMarkdownToc {
      * @param header 
      */
     private insertAnchor(editBuilder: TextEditorEdit, header: Header) {
-        let anchorMatches = header.hash(header.tocWithoutOrder).match(this.configManager.regexStrings.REGEXP_ANCHOR);
+        let anchorMatches = header.hash(header.tocWithoutOrder).match(RegexStrings.Instance.REGEXP_ANCHOR);
         if (anchorMatches != null) {
             let name = anchorMatches[1];
             let text = [
-                this.configManager.lineEnding,
+                this.configManager.options.lineEnding,
                 '<a id="markdown-',
                 name,
                 '" name="',
@@ -198,8 +199,8 @@ export class AutoMarkdownToc {
 
             if (this.configManager.options.ANCHOR_MODE.value == AnchorMode.bitbucket) {
                 text = text.slice(1);
-                text.push(this.configManager.lineEnding);
-                text.push(this.configManager.lineEnding);
+                text.push(this.configManager.options.lineEnding);
+                text.push(this.configManager.options.lineEnding);
                 insertPosition = new Position(header.range.start.line, 0);
             }
 
@@ -223,13 +224,13 @@ export class AutoMarkdownToc {
             let doc = editor.document;
             for (let index = 0; index < doc.lineCount; index++) {
                 let lineText = doc.lineAt(index).text;
-                if (lineText.match(this.configManager.regexStrings.REGEXP_MARKDOWN_ANCHOR) == null) {
+                if (lineText.match(RegexStrings.Instance.REGEXP_MARKDOWN_ANCHOR) == null) {
                     continue;
                 }
 
                 // To ensure the anchor will not insert an extra empty line
                 let startPosition = new Position(index, 0);
-                if (index > 0 && doc.lineAt(index).text == this.configManager.lineEnding) {
+                if (index > 0 && doc.lineAt(index).text == this.configManager.options.lineEnding) {
                     startPosition = new Position(index - 1, 0);
                 }
 
@@ -261,13 +262,13 @@ export class AutoMarkdownToc {
             }
         });
 
-        text.push(tocRows.join(this.configManager.lineEnding));
+        text.push(tocRows.join(this.configManager.options.lineEnding));
 
         //// TOC END
-        text.push(this.configManager.lineEnding + "<!-- /TOC -->");
+        text.push(this.configManager.options.lineEnding + "<!-- /TOC -->");
 
         // insert
-        editBuilder.insert(insertPosition, text.join(this.configManager.lineEnding));
+        editBuilder.insert(insertPosition, text.join(this.configManager.options.lineEnding));
     }
 
     private generateTocRow(header: Header, minimumRenderedDepth: number) {
@@ -275,7 +276,7 @@ export class AutoMarkdownToc {
 
         // Indentation
         let indentRepeatTime = header.depth - Math.max(this.configManager.options.DEPTH_FROM.value, minimumRenderedDepth);
-        row.push(this.configManager.tab.repeat(indentRepeatTime));
+        row.push(this.configManager.options.tab.repeat(indentRepeatTime));
 
         row.push(this.configManager.options.BULLET_CHAR.value);
 
@@ -306,7 +307,7 @@ export class AutoMarkdownToc {
 
         this.generateCustomOptionsInTocStart(tocStartIndicator);
 
-        tocStartIndicator.push('-->' + this.configManager.lineEnding);
+        tocStartIndicator.push('-->' + this.configManager.options.lineEnding);
 
         return tocStartIndicator.join('');
     }
@@ -315,7 +316,7 @@ export class AutoMarkdownToc {
         // custom options
         this.configManager.options.optionsFlag.forEach(optionKey => {
             if (this.configManager.options.optionsFlag.indexOf(optionKey) != -1) {
-                tocStartIndicator.push(optionKey + ':' + this.configManager.options.getOptionValueByKey(optionKey) + ' ');
+                tocStartIndicator.push(optionKey + ':' + this.configManager.getOptionValueByKey(optionKey) + ' ');
             }
         });
     }

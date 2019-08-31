@@ -9,4 +9,12 @@ export class RegexStrings {
     REGEXP_ANCHOR = /\[.+\]\(#(.+)\)/;
     REGEXP_IGNORE_TITLE = /<!-- TOC ignore:true -->/;
     REGEXP_HEADER_META = /^(\#*)\s*((\d*\.?)*)\s*(.+)/;
+
+    private static _instance: RegexStrings;
+
+    private constructor() { }
+
+    public static get Instance() {
+        return this._instance || (this._instance = new this());
+    }
 }

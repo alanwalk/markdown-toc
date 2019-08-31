@@ -19,26 +19,15 @@ export class Options {
     BULLET_CHAR: Dictionary = new Dictionary("bulletCharacter", "-");
     DETECT_AUTO_SET_SECTION: Dictionary = new Dictionary("detectAndAutoSetSection", true);
 
-    public getOptionValueByKey(key: string) {
-        switch (key.toLowerCase()) {
-            case this.DEPTH_FROM.lowerCaseKey:
-                return this.DEPTH_FROM.value;
-            case this.DEPTH_TO.lowerCaseKey:
-                return this.DEPTH_TO.value;
-            case this.INSERT_ANCHOR.lowerCaseKey:
-                return this.INSERT_ANCHOR.value;
-            case this.WITH_LINKS.lowerCaseKey:
-                return this.WITH_LINKS.value;
-            case this.ORDERED_LIST.lowerCaseKey:
-                return this.ORDERED_LIST.value;
-            case this.UPDATE_ON_SAVE.lowerCaseKey:
-                return this.UPDATE_ON_SAVE.value;
-            case this.ANCHOR_MODE.lowerCaseKey:
-                return this.ANCHOR_MODE.value;
-            case this.BULLET_CHAR.lowerCaseKey:
-                return this.BULLET_CHAR.value;
-            case this.DETECT_AUTO_SET_SECTION.lowerCaseKey:
-                return this.DETECT_AUTO_SET_SECTION.value;
-        }
-    }
+    extensionName: string = "markdown-toc";
+    EOL = require('os').EOL;
+
+    // language configuration
+    lineEnding: string = "";
+    tabSize: number = 2;
+    insertSpaces: boolean = false;
+    autoSave: boolean = false;
+
+    // special characters
+    tab = '\t';
 }

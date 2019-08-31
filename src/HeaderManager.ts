@@ -1,6 +1,7 @@
 import { Header } from "./models/Header";
 import { ConfigManager } from "./ConfigManager";
 import { TextDocument, window, Range } from "vscode";
+import { RegexStrings } from "./models/RegexStrings";
 
 export class HeaderManager {
 
@@ -9,7 +10,7 @@ export class HeaderManager {
     public getHeader(lineText: string) {
         let header = new Header(this.configManager.options.ANCHOR_MODE.value);
 
-        let headerTextSplit = lineText.match(this.configManager.regexStrings.REGEXP_HEADER_META);
+        let headerTextSplit = lineText.match(RegexStrings.Instance.REGEXP_HEADER_META);
 
         if (headerTextSplit != null) {
             header.headerMark = headerTextSplit[1];
@@ -84,8 +85,8 @@ export class HeaderManager {
     private isLineStartOrEndOfCodeBlock(lineNumber: number, doc: TextDocument) {
         let nextLine = doc.lineAt(lineNumber).text;
 
-        let isCodeStyle1 = nextLine.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK1) != null;
-        let isCodeStyle2 = nextLine.match(this.configManager.regexStrings.REGEXP_CODE_BLOCK2) != null;
+        let isCodeStyle1 = nextLine.match(RegexStrings.Instance.REGEXP_CODE_BLOCK1) != null;
+        let isCodeStyle2 = nextLine.match(RegexStrings.Instance.REGEXP_CODE_BLOCK2) != null;
 
         return isCodeStyle1 || isCodeStyle2;
     }
