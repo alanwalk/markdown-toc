@@ -15,15 +15,15 @@ export class ConfigManager {
     }
 
     public loadConfigurations() {
-        this.options.DEPTH_FROM.value = <number>workspace.getConfiguration(this.options.extensionName).get(this.options.DEPTH_FROM.key);
-        this.options.DEPTH_TO.value = <number>workspace.getConfiguration(this.options.extensionName).get(this.options.DEPTH_TO.key);
-        this.options.INSERT_ANCHOR.value = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.INSERT_ANCHOR.key);
-        this.options.WITH_LINKS.value = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.WITH_LINKS.key);
-        this.options.ORDERED_LIST.value = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.ORDERED_LIST.key);
-        this.options.UPDATE_ON_SAVE.value = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.UPDATE_ON_SAVE.key);
-        this.options.ANCHOR_MODE.value = <string>workspace.getConfiguration(this.options.extensionName).get(this.options.ANCHOR_MODE.key);
-        this.options.BULLET_CHAR.value = <string>workspace.getConfiguration(this.options.extensionName).get(this.options.BULLET_CHAR.key);
-        this.options.DETECT_AUTO_SET_SECTION.value = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.DETECT_AUTO_SET_SECTION.key);
+        this.options.DEPTH_FROM.workspaceValue = <number>workspace.getConfiguration(this.options.extensionName).get(this.options.DEPTH_FROM.key);
+        this.options.DEPTH_TO.workspaceValue = <number>workspace.getConfiguration(this.options.extensionName).get(this.options.DEPTH_TO.key);
+        this.options.INSERT_ANCHOR.workspaceValue = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.INSERT_ANCHOR.key);
+        this.options.WITH_LINKS.workspaceValue = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.WITH_LINKS.key);
+        this.options.ORDERED_LIST.workspaceValue = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.ORDERED_LIST.key);
+        this.options.UPDATE_ON_SAVE.workspaceValue = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.UPDATE_ON_SAVE.key);
+        this.options.ANCHOR_MODE.workspaceValue = <string>workspace.getConfiguration(this.options.extensionName).get(this.options.ANCHOR_MODE.key);
+        this.options.BULLET_CHAR.workspaceValue = <string>workspace.getConfiguration(this.options.extensionName).get(this.options.BULLET_CHAR.key);
+        this.options.DETECT_AUTO_SET_SECTION.workspaceValue = <boolean>workspace.getConfiguration(this.options.extensionName).get(this.options.DETECT_AUTO_SET_SECTION.key);
 
         this.options.lineEnding = <string>workspace.getConfiguration("files", null).get("eol");
         if (this.options.lineEnding === 'auto') {
@@ -49,6 +49,10 @@ export class ConfigManager {
         }
     }
 
+    /**
+     * DEPRECATED
+     * use single line unique options instead
+     */
     public loadCustomOptions() {
         this.options.optionsFlag = [];
 
@@ -74,39 +78,39 @@ export class ConfigManager {
                             switch (key) {
                                 case this.options.DEPTH_FROM.lowerCaseKey:
                                     this.options.optionsFlag.push(key);
-                                    this.options.DEPTH_FROM.value = this.parseValidNumber(value);
+                                    this.options.DEPTH_FROM.uniqueValue = this.parseValidNumber(value);
                                     break;
                                 case this.options.DEPTH_TO.lowerCaseKey:
                                     this.options.optionsFlag.push(key);
-                                    this.options.DEPTH_TO.value = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM.value);
+                                    this.options.DEPTH_TO.uniqueValue = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM.value);
                                     break;
                                 case this.options.INSERT_ANCHOR.lowerCaseKey:
                                     this.options.optionsFlag.push(key);
-                                    this.options.INSERT_ANCHOR.value = this.parseBool(value);
+                                    this.options.INSERT_ANCHOR.uniqueValue = this.parseBool(value);
                                     break;
                                 case this.options.WITH_LINKS.lowerCaseKey:
                                     this.options.optionsFlag.push(key);
-                                    this.options.WITH_LINKS.value = this.parseBool(value);
+                                    this.options.WITH_LINKS.uniqueValue = this.parseBool(value);
                                     break;
                                 case this.options.ORDERED_LIST.lowerCaseKey:
                                     this.options.optionsFlag.push(key);
-                                    this.options.ORDERED_LIST.value = this.parseBool(value);
+                                    this.options.ORDERED_LIST.uniqueValue = this.parseBool(value);
                                     break;
                                 case this.options.UPDATE_ON_SAVE.lowerCaseKey:
                                     this.options.optionsFlag.push(key);
-                                    this.options.UPDATE_ON_SAVE.value = this.parseBool(value);
+                                    this.options.UPDATE_ON_SAVE.uniqueValue = this.parseBool(value);
                                     break;
                                 case this.options.ANCHOR_MODE.lowerCaseKey:
                                     this.options.optionsFlag.push(key);
-                                    this.options.ANCHOR_MODE.value = value;
+                                    this.options.ANCHOR_MODE.uniqueValue = value;
                                     break;
                                 case this.options.BULLET_CHAR.lowerCaseKey:
                                     this.options.optionsFlag.push(key);
-                                    this.options.BULLET_CHAR.value = value;
+                                    this.options.BULLET_CHAR.uniqueValue = value;
                                     break;
                                 case this.options.DETECT_AUTO_SET_SECTION.lowerCaseKey:
                                     this.options.optionsFlag.push(key);
-                                    this.options.DETECT_AUTO_SET_SECTION.value = value;
+                                    this.options.DETECT_AUTO_SET_SECTION.uniqueValue = value;
                                     break;
                             }
                         }

@@ -1,11 +1,20 @@
 export class Dictionary {
     key: string;
     lowerCaseKey: string;
-    value: any;
+    workspaceValue: any;
+    uniqueValue: any;
 
-    constructor(key: string, value: string | number | string[] | boolean) {
+    constructor(key: string, defaultWorkspaceValue: string | number | string[] | boolean) {
         this.key = key;
         this.lowerCaseKey = key.toLocaleLowerCase();
-        this.value = value;
+        this.workspaceValue = defaultWorkspaceValue;
+    }
+
+    public get value(){
+        if(this.uniqueValue != undefined){
+            return this.workspaceValue;
+        }
+
+        return this.workspaceValue;
     }
 }
