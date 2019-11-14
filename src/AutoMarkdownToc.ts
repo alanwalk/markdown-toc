@@ -14,7 +14,7 @@ import { RegexStrings } from './models/RegexStrings';
 export class AutoMarkdownToc {
 
     configManager = new ConfigManager();
-    headerManager = new HeaderManager();
+    headerManager = new HeaderManager(this.configManager);
 
     public onDidSaveTextDocument() {
         if (!this.configManager.options.UPDATE_ON_SAVE.value) {
@@ -180,8 +180,8 @@ export class AutoMarkdownToc {
 
     /**
      * insert anchor for a header
-     * @param editBuilder 
-     * @param header 
+     * @param editBuilder
+     * @param header
      */
     private insertAnchor(editBuilder: TextEditorEdit, header: Header) {
         let anchorMatches = header.hash(header.tocWithoutOrder).match(RegexStrings.Instance.REGEXP_ANCHOR);

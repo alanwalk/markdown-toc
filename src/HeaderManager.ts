@@ -4,8 +4,11 @@ import { TextDocument, window, Range } from "vscode";
 import { RegexStrings } from "./models/RegexStrings";
 
 export class HeaderManager {
+    configManager: ConfigManager;
 
-    configManager = new ConfigManager();
+    constructor(configManager: ConfigManager) {
+        this.configManager = configManager;
+    }
 
     public getHeader(lineText: string) {
         let header = new Header(this.configManager.options.ANCHOR_MODE.value);
