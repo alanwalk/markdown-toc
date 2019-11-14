@@ -10,9 +10,9 @@ export class Dictionary {
         this.workspaceValue = defaultWorkspaceValue;
     }
 
-    public get value(){
-        if(this.uniqueValue != undefined){
-            return this.workspaceValue;
+    public get value() {
+        if (this.uniqueValue != undefined) {
+            return this.uniqueValue;
         }
 
         return this.workspaceValue;
