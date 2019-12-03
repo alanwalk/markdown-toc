@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [3.0.2] - 2019-12-03
+## [3.0.3] - 2019-12-03
 ### Fixed:
 - Set default detecting and auto insert section number to FALSE
 
