@@ -17,7 +17,7 @@ export class Options {
     UPDATE_ON_SAVE: Dictionary = new Dictionary("updateOnSave", true);
     ANCHOR_MODE: Dictionary = new Dictionary("anchorMode", AnchorMode.github);
     BULLET_CHAR: Dictionary = new Dictionary("bulletCharacter", "-");
-    DETECT_AUTO_SET_SECTION: Dictionary = new Dictionary("detectAndAutoSetSection", true);
+    DETECT_AUTO_SET_SECTION: Dictionary = new Dictionary("detectAndAutoSetSection", false);
 
     extensionName: string = "markdown-toc";
     EOL = require('os').EOL;
