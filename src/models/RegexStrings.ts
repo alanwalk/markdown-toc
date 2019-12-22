@@ -14,7 +14,6 @@ export class RegexStrings {
     REGEXP_UNIQUE_CONFIG_STOP = /\s*<!--(.*)\/TOC UNIQUE CONFIGS(.*)-->/gi;
     REGEXP_UNIQUE_CONFIG_LINE = /\s*<!--( *)(\w+)[:](\w+)( *)-->/gi;
 
-
     private static _instance: RegexStrings;
 
     private constructor() { }
