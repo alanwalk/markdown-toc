@@ -12,7 +12,8 @@ import {
     Position,
     Range,
     TextEditor,
-    TextEditorEdit
+    TextEditorEdit,
+    EndOfLine
 } from 'vscode';
 
 const REGEXP_TOC_START          = /\s*<!--(.*)TOC(.*)-->/gi;
@@ -275,16 +276,11 @@ class MarkdownTocTools {
     }
 
     private createToc(editBuilder : TextEditorEdit, headerList : any[], insertPosition : Position) {
-        let lineEnding      = <string>  workspace.getConfiguration("files").get("eol");
-        let tabSize         = <number>  workspace.getConfiguration("[markdown]")["editor.tabSize"];
-        let insertSpaces    = <boolean> workspace.getConfiguration("[markdown]")["editor.insertSpaces"];
+        if (!window.activeTextEditor) return;
 
-        if(tabSize === undefined || tabSize === null) {
-            tabSize = <number> workspace.getConfiguration("editor").get("tabSize");
-        }
-        if(insertSpaces === undefined || insertSpaces === null) {
-            insertSpaces = <boolean> workspace.getConfiguration("editor").get("insertSpaces");
-        }
+        let lineEnding   = window.activeTextEditor.document.eol === EndOfLine.LF ? '\n' : '\r\n';
+        let tabSize      = window.activeTextEditor.options.tabSize as number;
+        let insertSpaces = window.activeTextEditor.options.insertSpaces as boolean;
 
         let tab = '\t';
         if (insertSpaces && tabSize > 0) {
