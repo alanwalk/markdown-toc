@@ -126,7 +126,6 @@ class MarkdownTocTools {
         });
     }
 
-
     public updateMarkdownSections() {
         let tocRange = this.getTocRange();
         this.updateOptions(tocRange);
@@ -375,9 +374,10 @@ class MarkdownTocTools {
 
             let title = lineText.substr(depth).trim();
             let baseTitle = title.replace(/^(?:\d+\.)+/, "").trim(); // title without section number
-            title = title.replace(/\[(.+)]\([^)]*\)/gi, "$1");  // replace link
-            title = title.replace(/<!--.+-->/gi, "");           // replace comment
-            title = title.replace(/\#*_/gi, "").trim();         // replace special char
+            title = title.replace(/\[(.+)]\([^)]*\)/gi, "$1");       // replace link
+            title = title.replace(/<!--.+-->/gi, "");                // replace comment
+            title = title.replace(/\#/gi, "").trim();                // replace special char
+            title = title.replace(/\b[_*]|[*_]\b/gi, "");            // replace bold and italic marks
 
             if (!(title in hashMap)) {
                 hashMap[title] = 0;
