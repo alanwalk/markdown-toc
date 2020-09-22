@@ -81,7 +81,7 @@ class MarkdownTocTools {
         UPDATE_ON_SAVE  : true,
         ANCHOR_MODE     : ANCHOR_MODE_LIST[0]
     };
-    optionsFlag : string[] = [];
+    optionsFlag : { [key: string]: boolean } = {};
     saveBySelf = false;
 
     // Public function
@@ -207,11 +207,12 @@ class MarkdownTocTools {
     }
 
     private loadCustomOptions(tocRange : Range | null) {
-        this.optionsFlag = [];
         if (tocRange === null || !window.activeTextEditor) return;
         let optionsText = window.activeTextEditor.document.lineAt(tocRange.start.line).text;
         let options = optionsText.match(REGEXP_TOC_CONFIG);
         if (options === null) return;
+
+        this.optionsFlag = {};
 
         options.forEach(element => {
             let pair = REGEXP_TOC_CONFIG_ITEM.exec(element);
@@ -221,31 +222,31 @@ class MarkdownTocTools {
 
             switch (key) {
                 case LOWER_DEPTH_FROM:
-                    this.optionsFlag.push(DEPTH_FROM);
+                    this.optionsFlag[DEPTH_FROM] = true;
                     this.options.DEPTH_FROM = this.parseValidNumber(value);
                     break;
                 case LOWER_DEPTH_TO:
-                    this.optionsFlag.push(DEPTH_TO);
+                    this.optionsFlag[DEPTH_TO] = true;
                     this.options.DEPTH_TO = Math.max(this.parseValidNumber(value), this.options.DEPTH_FROM);
                     break;
                 case LOWER_INSERT_ANCHOR:
-                    this.optionsFlag.push(INSERT_ANCHOR);
+                    this.optionsFlag[INSERT_ANCHOR] = true;
                     this.options.INSERT_ANCHOR = this.parseBool(value);
                     break;
                 case LOWER_WITH_LINKS:
-                    this.optionsFlag.push(WITH_LINKS);
+                    this.optionsFlag[WITH_LINKS] = true;
                     this.options.WITH_LINKS = this.parseBool(value);
                     break;
                 case LOWER_ORDERED_LIST:
-                    this.optionsFlag.push(ORDERED_LIST);
+                    this.optionsFlag[ORDERED_LIST] = true;
                     this.options.ORDERED_LIST = this.parseBool(value);
                     break;
                 case LOWER_UPDATE_ON_SAVE:
-                    this.optionsFlag.push(UPDATE_ON_SAVE);
+                    this.optionsFlag[UPDATE_ON_SAVE] = true;
                     this.options.UPDATE_ON_SAVE = this.parseBool(value);
                     break;
                 case LOWER_ANCHOR_MODE:
-                    this.optionsFlag.push(ANCHOR_MODE);
+                    this.optionsFlag[ANCHOR_MODE] = true;
                     this.options.ANCHOR_MODE = this.parseValidAnchorMode(value);
                     break;
             }
@@ -288,13 +289,13 @@ class MarkdownTocTools {
 
         let optionsText = [];
         optionsText.push('<!-- TOC ');
-        if (this.optionsFlag.indexOf(DEPTH_FROM)     !== -1) optionsText.push(DEPTH_FROM      + ':' + this.options.DEPTH_FROM     + ' ');
-        if (this.optionsFlag.indexOf(DEPTH_TO)       !== -1) optionsText.push(DEPTH_TO        + ':' + this.options.DEPTH_TO       + ' ');
-        if (this.optionsFlag.indexOf(INSERT_ANCHOR)  !== -1) optionsText.push(INSERT_ANCHOR   + ':' + this.options.INSERT_ANCHOR  + ' ');
-        if (this.optionsFlag.indexOf(ORDERED_LIST)   !== -1) optionsText.push(ORDERED_LIST    + ':' + this.options.ORDERED_LIST   + ' ');
-        if (this.optionsFlag.indexOf(UPDATE_ON_SAVE) !== -1) optionsText.push(UPDATE_ON_SAVE  + ':' + this.options.UPDATE_ON_SAVE + ' ');
-        if (this.optionsFlag.indexOf(WITH_LINKS)     !== -1) optionsText.push(WITH_LINKS      + ':' + this.options.WITH_LINKS     + ' ');
-        if (this.optionsFlag.indexOf(ANCHOR_MODE)    !== -1) optionsText.push(ANCHOR_MODE     + ':' + this.options.ANCHOR_MODE    + ' ');
+        if (DEPTH_FROM     in this.optionsFlag) optionsText.push(DEPTH_FROM     + ':' + this.options.DEPTH_FROM     + ' ');
+        if (DEPTH_TO       in this.optionsFlag) optionsText.push(DEPTH_TO       + ':' + this.options.DEPTH_TO       + ' ');
+        if (INSERT_ANCHOR  in this.optionsFlag) optionsText.push(INSERT_ANCHOR  + ':' + this.options.INSERT_ANCHOR  + ' ');
+        if (ORDERED_LIST   in this.optionsFlag) optionsText.push(ORDERED_LIST   + ':' + this.options.ORDERED_LIST   + ' ');
+        if (UPDATE_ON_SAVE in this.optionsFlag) optionsText.push(UPDATE_ON_SAVE + ':' + this.options.UPDATE_ON_SAVE + ' ');
+        if (WITH_LINKS     in this.optionsFlag) optionsText.push(WITH_LINKS     + ':' + this.options.WITH_LINKS     + ' ');
+        if (ANCHOR_MODE    in this.optionsFlag) optionsText.push(ANCHOR_MODE    + ':' + this.options.ANCHOR_MODE    + ' ');
         optionsText.push('-->' + lineEnding);
 
         let text = [];
