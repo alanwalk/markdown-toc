@@ -403,7 +403,7 @@ class MarkdownTocTools {
 
     private getHash(headername : string, mode : string, repetition : number) {
         let anchor = require('anchor-markdown-header');
-        return decodeURI(anchor(headername, mode, repetition));
+        return anchor(headername, mode, repetition);
     }
 
     private parseValidNumber(value : string) {
