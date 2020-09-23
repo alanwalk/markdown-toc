@@ -178,7 +178,7 @@ class MarkdownTocTools {
 
         for (let index = 0; index < doc.lineCount; index++) {
             let lineText = doc.lineAt(index).text;
-            if ((start === null) && (lineText.match(REGEXP_TOC_START))) {
+            if (start === null && lineText.match(REGEXP_TOC_START) && !lineText.match(REGEXP_IGNORE_TITLE)) {
                 start = new Position(index, 0);
             } else if (lineText.match(REGEXP_TOC_STOP)) {
                 stop = new Position(index, lineText.length);
