@@ -24,7 +24,7 @@ const REGEXP_MARKDOWN_ANCHOR    = /^<a id="markdown-.+" name=".+"><\/a\>/;
 const REGEXP_HEADER             = /^(\#{1,6})\s*(.+)/;
 const REGEXP_CODE_BLOCK1        = /^```/;
 const REGEXP_CODE_BLOCK2        = /^~~~/;
-const REGEXP_ANCHOR             = /\[.+\]\(#(.+)\)/;
+const REGEXP_ANCHOR             = /^\[([^\]]+)\]\(#(.+)\)$/;
 const REGEXP_IGNORE_TITLE       = /<!-- TOC ignore:true -->/;
 
 const DEPTH_FROM                = "depthFrom";
@@ -256,7 +256,7 @@ class MarkdownTocTools {
     private insertAnchor(editBuilder : TextEditorEdit, headerList : any[]) {
         if (!this.options.INSERT_ANCHOR) return;
         headerList.forEach(element => {
-            let name = element.hash.match(REGEXP_ANCHOR)[1];
+            let name = element.hash.match(REGEXP_ANCHOR)[2];
             let text = [ '<a id="markdown-', name, '" name="', name, '"></a>\n' ];
             let insertPosition = new Position(element.line, 0);
             editBuilder.insert(insertPosition, text.join(''));
@@ -380,13 +380,7 @@ class MarkdownTocTools {
             title = title.replace(/\#/gi, "").trim();                // replace special char
             title = title.replace(/\b[_*]|[*_]\b/gi, "");            // replace bold and italic marks
 
-            if (!(title in hashMap)) {
-                hashMap[title] = 0;
-            } else {
-                hashMap[title] += 1;
-            }
-
-            let hash = this.getHash(title, this.options.ANCHOR_MODE, hashMap[title]);
+            let hash = this.getHash(title, this.options.ANCHOR_MODE, hashMap);
             headerList.push({
                 line : index,
                 depth : depth,
@@ -401,9 +395,39 @@ class MarkdownTocTools {
         return headerList;
     }
 
-    private getHash(headername : string, mode : string, repetition : number) {
-        let anchor = require('anchor-markdown-header');
-        return anchor(headername, mode, repetition);
+    private getHash(headername : string, mode : string, hashMap: { [key: string]: number }) {
+        // Get the link format for headername (force repetition = 0)
+        let anchor = require('anchor-markdown-header')(headername, mode, 0);
+
+        // Decompose the anchor into its two components
+        let match = anchor.match(REGEXP_ANCHOR);
+        if (!match || match.length < 3) return anchor;
+        let [title, hash] = match.slice(1, 3);
+
+        // Check if the hash is repeated
+        if (!(hash in hashMap)) {
+            hashMap[hash] = 0;
+        } else {
+            hashMap[hash] += 1;
+
+            // Add the repetition number to the hash
+            switch (mode) {
+            case "github.com":
+                hash = `${hash}-${hashMap[hash]}`;
+                break;
+            case "bitbucket.org":
+                hash = `${hash}_${hashMap[hash]}`;
+                break;
+            case "ghost.org":
+                hash = `${hash}-${hashMap[hash]}`;
+                break;
+            case "gitlab.com":
+                hash = `${hash}-${hashMap[hash]}`;
+                break;
+            }
+        }
+
+        return `[${title}](#${hash})`;
     }
 
     private parseValidNumber(value : string) {
