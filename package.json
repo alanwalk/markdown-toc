@@ -1,145 +1,151 @@
 {
-    "name": "markdown-toc",
-    "displayName": "Markdown TOC",
-    "description": "Markdown TOC(Table Of Contents) Plugin for Visual Studio Code.",
-    "version": "1.6.0",
-    "icon": "img/markdown-toc.png",
-    "license": "MIT",
-    "author": {
-        "email": "alanwalk93@gmail.com",
-        "name": "Alan Walk",
-        "url": "https://blog.otorb.com"
-    },
-    "bugs": {
-        "url": "https://github.com/AlanWalk/Markdown-TOC/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/AlanWalk/Markdown-TOC.git"
-    },
-    "keywords": [
-        "markdown",
-        "toc"
-    ],
-    "homepage": "https://github.com/AlanWalk/Markdown-TOC",
-    "publisher": "AlanWalk",
-    "engines": {
-        "vscode": "^1.0.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onLanguage:markdown"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "commands": [
-        {
-            "command": "extension.updateMarkdownToc",
-            "title": "Markdown TOC: Insert/Update"
-        },
-        {
-            "command": "extension.deleteMarkdownToc",
-            "title": "Markdown TOC: Delete"
-        },
-        {
-            "command": "extension.updateMarkdownSections",
-            "title": "Markdown Sections: Insert/Update"
-        },
-        {
-            "command": "extension.deleteMarkdownSections",
-            "title": "Markdown Sections: Delete"
-        }],
-        "menus": {
-            "editor/context": [
-                {
-                    "when": "editorLangId == 'markdown'",
-                    "command": "extension.updateMarkdownToc"
-                },
-                {
-                    "when": "editorLangId == 'markdown'",
-                    "command": "extension.deleteMarkdownToc"
-                },
-                {
-                    "when": "editorLangId == 'markdown'",
-                    "command": "extension.updateMarkdownSections"
-                },
-                {
-                    "when": "editorLangId == 'markdown'",
-                    "command": "extension.deleteMarkdownSections"
-                }
-            ]
-        },
-        "keybindings":[
-            {
-                "command": "extension.updateMarkdownToc",
-                "key": "ctrl+m t"
-            },
-            {
-                "command": "extension.updateMarkdownSections",
-                "key": "ctrl+m s"
-            }
-        ],
-        "configuration": {
-            "type": "object",
-            "title": "Markdown TOC configuration",
-            "properties": {
-                "markdown-toc.depthFrom": {
-                    "type": "number",
-                    "default": 1,
-                    "description": "Depth control [1-6]."
-                },
-                "markdown-toc.depthTo": {
-                    "type": "number",
-                    "default": 6,
-                    "description": "Depth control [1-6]."
-                },
-                "markdown-toc.insertAnchor": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Auto insert anchor for link."
-                },
-                "markdown-toc.withLinks": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Auto insert link."
-                },
-                "markdown-toc.orderedList": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Use ordered list (1. ..., 2. ...)."
-                },
-                "markdown-toc.updateOnSave": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Auto update on save."
-                },
-                "markdown-toc.anchorMode": {
-                    "type": "string",
-                    "default": "github.com",
-                    "description": "anchor mode.",
+	"name": "markdown-toc",
+	"displayName": "Markdown TOC",
+	"description": "Markdown TOC(Table Of Contents) Plugin for Visual Studio Code.",
+	"version": "1.6.0",
+	"icon": "img/markdown-toc.png",
+	"license": "MIT",
+	"author": {
+		"email": "alanwalk93@gmail.com",
+		"name": "Alan Walk",
+		"url": "https://blog.otorb.com"
+	},
+	"bugs": {
+		"url": "https://github.com/AlanWalk/Markdown-TOC/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/AlanWalk/Markdown-TOC.git"
+	},
+	"keywords": [
+		"markdown",
+		"toc"
+	],
+	"homepage": "https://github.com/AlanWalk/Markdown-TOC",
+	"publisher": "AlanWalk",
+	"engines": {
+		"vscode": "^1.0.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:markdown"
+	],
+	"main": "./out/src/extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.updateMarkdownToc",
+				"title": "Markdown TOC: Insert/Update"
+			},
+			{
+				"command": "extension.deleteMarkdownToc",
+				"title": "Markdown TOC: Delete"
+			},
+			{
+				"command": "extension.updateMarkdownSections",
+				"title": "Markdown Sections: Insert/Update"
+			},
+			{
+				"command": "extension.deleteMarkdownSections",
+				"title": "Markdown Sections: Delete"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"when": "editorLangId == 'markdown'",
+					"command": "extension.updateMarkdownToc"
+				},
+				{
+					"when": "editorLangId == 'markdown'",
+					"command": "extension.deleteMarkdownToc"
+				},
+				{
+					"when": "editorLangId == 'markdown'",
+					"command": "extension.updateMarkdownSections"
+				},
+				{
+					"when": "editorLangId == 'markdown'",
+					"command": "extension.deleteMarkdownSections"
+				}
+			]
+		},
+		"keybindings": [
+			{
+				"command": "extension.updateMarkdownToc",
+				"key": "ctrl+m t"
+			},
+			{
+				"command": "extension.updateMarkdownSections",
+				"key": "ctrl+m s"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Markdown TOC configuration",
+			"properties": {
+				"markdown-toc.depthFrom": {
+					"type": "number",
+					"default": 1,
+					"description": "Depth control [1-6]."
+				},
+				"markdown-toc.depthTo": {
+					"type": "number",
+					"default": 6,
+					"description": "Depth control [1-6]."
+				},
+				"markdown-toc.insertAnchor": {
+					"type": "boolean",
+					"default": false,
+					"description": "Auto insert anchor for link."
+				},
+				"markdown-toc.withLinks": {
+					"type": "boolean",
+					"default": true,
+					"description": "Auto insert link."
+				},
+				"markdown-toc.orderedList": {
+					"type": "boolean",
+					"default": false,
+					"description": "Use ordered list (1. ..., 2. ...)."
+				},
+				"markdown-toc.updateOnSave": {
+					"type": "boolean",
+					"default": true,
+					"description": "Auto update on save."
+				},
+				"markdown-toc.anchorMode": {
+					"type": "string",
+					"default": "github.com",
+					"description": "anchor mode.",
 					"enum": [
 						"github.com",
 						"bitbucket.org",
 						"ghost.org",
-                        "gitlab.com"
+						"gitlab.com"
 					]
-                }
-            }
-        }
-    },
-    "scripts": {
-        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
-    },
-    "dependencies": {
-        "anchor-markdown-header": "^0.5.7"
-    },
-    "devDependencies": {
-        "anchor-markdown-header": "^0.5.7",
-        "typescript": "^1.8.5",
-        "vscode": "^0.11.0"
-    }
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./"
+	},
+	"dependencies": {
+		"anchor-markdown-header": "^0.5.7"
+	},
+	"devDependencies": {
+		"@types/node": "^14.11.1",
+		"@types/vscode": "^1.49.0",
+		"@typescript-eslint/eslint-plugin": "^4.2.0",
+		"@typescript-eslint/parser": "^4.2.0",
+		"eslint": "^7.9.0",
+		"typescript": "^4.0.3",
+		"vscode-test": "^1.0.0"
+	}
 }
